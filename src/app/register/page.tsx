@@ -159,11 +159,8 @@ export default function RegisterPage() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="relative z-10 text-xs text-[#6e778d] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-t border-white/10 pt-6">
+        <div className="relative z-10 text-xs text-[#6e778d] border-t border-white/10 pt-6">
           <span>&copy; {new Date().getFullYear()} Picura. All rights reserved.</span>
-          <Link href="/" className="hover:text-white transition">
-            &larr; Kembali ke Beranda
-          </Link>
         </div>
       </div>
 
