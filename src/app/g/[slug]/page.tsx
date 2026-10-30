@@ -78,28 +78,28 @@ export default function GalleryPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-brand-primary">
-        <Loader2 className="w-8 h-8 animate-spin text-brand-violet mb-3" />
-        <p className="text-xs font-semibold text-brand-muted">Memuat galeri foto...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] text-white">
+        <Loader2 className="w-8 h-8 animate-spin text-white mb-3" />
+        <p className="text-xs font-mono text-slate-400">Memuat galeri foto...</p>
       </div>
     );
   }
 
   if (isExpired) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50 text-center">
-        <div className="w-14 h-14 bg-slate-200 text-slate-500 rounded-2xl flex items-center justify-center mb-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#050505] text-center text-white">
+        <div className="w-14 h-14 glass text-slate-400 rounded-2xl flex items-center justify-center mb-4 border border-white/10">
           <Clock className="w-7 h-7" />
         </div>
-        <h2 className="font-heading font-extrabold text-2xl text-brand-primary mb-1">
+        <h2 className="font-heading font-extrabold text-2xl text-white mb-1">
           Masa Aktif Berakhir
         </h2>
-        <p className="text-xs text-brand-muted max-w-sm mb-6">
+        <p className="text-xs text-slate-400 max-w-sm mb-6">
           Tautan galeri ini telah melewati batas waktu kadaluarsa. Silakan hubungi fotografer atau studio untuk meminta perpanjangan akses.
         </p>
         <Link
           href="/"
-          className="text-xs font-bold text-brand-violet hover:underline"
+          className="text-xs font-mono text-white underline underline-offset-4"
         >
           Kembali ke Beranda
         </Link>
@@ -109,17 +109,17 @@ export default function GalleryPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50 text-center">
-        <div className="w-14 h-14 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center mb-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#050505] text-center text-white">
+        <div className="w-14 h-14 glass text-accent-rose rounded-2xl flex items-center justify-center mb-4 border border-accent-rose/20">
           <AlertCircle className="w-7 h-7" />
         </div>
-        <h2 className="font-heading font-extrabold text-2xl text-brand-primary mb-1">
+        <h2 className="font-heading font-extrabold text-2xl text-white mb-1">
           Galeri Tidak Ditemukan
         </h2>
-        <p className="text-xs text-brand-muted max-w-sm mb-6">{error}</p>
+        <p className="text-xs text-slate-400 max-w-sm mb-6">{error}</p>
         <Link
           href="/"
-          className="text-xs font-bold text-brand-violet hover:underline"
+          className="text-xs font-mono text-white underline underline-offset-4"
         >
           Kembali ke Beranda
         </Link>

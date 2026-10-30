@@ -1,199 +1,112 @@
-# Picura Indonesia
+# Picura - Refined Glass Design System
 
-## Overview
+# Summary
 
-**Product:** Picura Indonesia **Surface type:** dashboard **Audience:** Business users and internal teams **Brand character:** Data-driven application interface with a rich, diverse color palette and 5 typefaces.
+A sophisticated glass-themed fintech dashboard with a minimalist black and white primary aesthetic, using high-blur glass surfaces, subtle ambient lighting, and vibrant accent colors for data visualization and micro-interactions.
 
-> **Note:** Surface detection confidence is low. Verify the inferred audience and brand context before relying on this file.
+# Style
 
-### Design Principles
+The style essence is **'Refined Glass'**. It relies on a neutral grayscale base with backdrop blurs fixed at 35px. Borders are thin (1px) and translucent white. Typography is clean and modern, using Outfit for branding/headers and Inter for body text. Animations are smooth and use custom cubic-beziers for a premium, weighty feel. Depth is created through layered glass effects rather than heavy shadows.
 
-- Data visibility — the most important metric should be visible without interaction.  
-- Progressive disclosure — surface summaries, reveal detail on demand.  
-- Efficiency over decoration — every pixel should communicate state or enable action.
+## Spec
 
-## Colors
+* **Base Canvas:** Deep black base (`#050505`) with a subtle grain texture overlay (35% opacity).
+* **Glass Panels:** `backdrop-filter: blur(35px) saturate(150%)`.
+* **Glass Backgrounds:** Linear gradients from top-to-bottom: `linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%)`.
+* **Glass Soft:** `backdrop-filter: blur(20px)`, `rgba(255,255,255,0.035)`.
+* **Glass Strong:** `backdrop-filter: blur(35px)`, `linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 100%)`.
+* **Borders & Highlights:** 1px solid border at `rgba(255,255,255,0.10)` with an inner white highlight `box-shadow: inset 0 1px 0 rgba(255,255,255,0.14)`.
+* **Typography:**
+  - Headers / Branding: `Outfit`, Semibold (600), tracking `-0.025em`.
+  - Body Text: `Inter`, 400-500 weight.
+  - Data / Currency / Codes: `JetBrains Mono`, 500-600 weight.
+* **Color Palette:**
+  - Primary Base: `#050505`
+  - Primary White: `#FFFFFF`
+  - Secondary Slate: `#94A3B8`
+  - Slate Muted: `#64748B`
+  - Accent Blue: `#3B82F6` (Usage / Analytics)
+  - Accent Emerald: `#10B981` (Savings / Success / Settled)
+  - Accent Rose: `#F43F5E` (Spending / Quota Limits)
+  - Accent Amber: `#F59E0B` (Pending / Warnings)
+* **Animations:** All transitions must use `cubic-bezier(0.16, 1, 0.3, 1)` with a duration of `0.3s` to `0.6s`.
 
-| Token | Value | Role |
-| :---- | :---- | :---- |
-| \--border-color | `#D0D5DD` | Border |
-| color-17 | `#F3F3F3` | Background |
-| color-18 | `#F9F9F8` | Background |
-| color-12 | `#D6E4FF` | Surface |
-| color-13 | `#E6E6E6` | Surface |
-| color-14 | `#FFE1DF` | Surface |
-| color-1 | `#101828` | Text Primary |
-| color-2 | `#454444` | Text Primary |
-| color-3 | `#0000EE` | Text Primary |
-| color-5 | `#6B7280` | Text Secondary |
-| color-4 | `#155EEF` | Accent |
-| color-6 | `#FF0000` | Accent |
-| color-7 | `#17B26A` | Accent |
-| color-8 | `#76A4FF` | Accent |
-| color-9 | `#FFAB9D` | Background Dark |
-| color-10 | `#D1D1D1` | Text Light |
-| color-15 | `#E8E8E8` | Text Light |
-| color-16 | `#EBEBEB` | Text Light |
-| color-19 | `#FFFFFF` | Text Light |
+---
 
-## Typography
+# Layout & Structure
 
-**Font stack:** Inter, Inter Display, Manrope, sans-serif, Times New Roman
+A classic dashboard structure featuring a fixed-width left sidebar and a flexible main content area. Content is organized into a modular bento-style grid with varying card sizes to establish visual hierarchy.
 
-| Level | Size | Usage |
-| :---- | :---- | :---- |
-| text-xs | 10px | Captions, metadata |
-| text-sm | 12px | Labels, secondary text |
-| text-base | 14px | Body text (default) |
-| text-lg | 16px | Subheadings, emphasis |
-| text-xl | 18px | Section headings |
-| text-2xl | 20px | Section headings |
-| text-3xl | 24px | Section headings |
-| text-4xl | 30px | Section headings |
-| text-9 | 32px | General use |
+## Sidebar
+* **Width:** 280px.
+* **Background:** `glass-soft` (blur 20px, 3.5% opacity).
+* **Layout:** Vertical flex (`h-screen sticky top-0`).
+* **Elements:**
+  - Top logo area (44px square white box with black character `P`).
+  - Navigation links with 17px icons and 14px text.
+  - Floating 'wallet card' at the bottom with a `float` animation (`translateY: -6px`, 5s duration).
 
-**Weight scale:** 400 · 500 · 600 · 700 **Line heights:** 48px · 28px · 18px · 12px · 16.8px · 22px · 24px · 38.4px · 25.5px · 36px · 20px · 14.4px · 32px · 26px · 38px · 42px · 16px
+## Header
+* **Layout:** Horizontal flex.
+* **Left:** 30px display heading in `Outfit` with 14px date/greeting subtext.
+* **Right:** 
+  - 224px wide glass search bar.
+  - White primary button with heavy glow `shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)]`.
+  - Circular avatar (40px) with slate gradient.
 
-## Spacing
+## Hero Balance Section
+* **Style:** Large `glass-strong` card (blur 35px, 14% top opacity).
+* **Layout:** Flex-between.
+* **Left:** `Outfit` 48px balance display with 11px uppercase labels. Bottom stats row with 18px semibold figures and 1px top border.
+* **Right:** Large SVG area (420px x 130px) featuring a smooth white line chart with a `shimmerLine` stroke-dash animation.
 
-**Base unit:** 4px
+## Metrics Grid
+* **Structure:** Three-column grid. Each card is `glass` (35px blur).
+* **Card 1 (Rose Accent):** Spending / Quota Consumption with small SVG area chart (`h-14`) at the bottom.
+* **Card 2 (Blue Accent):** API Usage / Photo Processing with small SVG area chart (`h-14`) at the bottom.
+* **Card 3 (Emerald Accent):** Savings / Completed Selections with small SVG area chart (`h-14`) at the bottom.
 
-`space-1: 1px` · `space-2: 2px` · `space-3: 3px` · `space-4: 4px` · `space-5: 5px` · `space-6: 6px` · `space-7: 8px` · `space-8: 10px` · `space-9: 12px` · `space-10: 16px` · `space-11: 20px` · `space-12: 24px` · `space-13: 26px` · `space-14: 27px` · `space-15: 32px` · `space-16: 48px` · `space-17: 64px` · `space-18: 74px` · `space-19: 111px`
+## Recent Activity
+* **Style:** Full-width `glass-strong` panel.
+* **Header:** Title with 'View all' action link.
+* **Content:** Vertical list of rows with hover states `background: rgba(255,255,255,0.025)`.
+* **Row Elements:**
+  - 40px rounded-xl glass boxes for icons with themed colors (Blue, Emerald, Amber).
+  - Activity details & timestamp.
+  - Right-aligned monospaced currency/metric values (`JetBrains Mono`).
 
-## Shapes
+---
 
-**Border radius:** `radius-sm: 1px` · `radius-md: 2px` · `radius-lg: 4px` · `radius-xl: 6px` · `radius-full: 8px` · `radius-6: 10px` · `radius-7: 12px` · `radius-8: 16px` · `radius-9: 18px` · `radius-10: 24px` · `radius-11: 32px` · `radius-12: 48px` · `radius-13: 100px` · `radius-14: 999px` · `radius-15: 1000px`
+# Special Components
 
-## Elevation
+## Liquid Glass Card
+A multi-layered glass panel with sophisticated lighting effects:
+* `backdrop-filter: blur(35px) saturate(150%)`.
+* `background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%)`.
+* `box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 20px 40px -15px rgba(0,0,0,0.5)`.
+* 1px border gradient: `linear-gradient(135deg, rgba(255,255,255,0.28), rgba(255,255,255,0.02) 35%, rgba(255,255,255,0) 60%)`.
 
-- **shadow-sm:** `rgba(0, 0, 0, 0.2) 0px 1px 2px 0px, rgba(12, 17, 29, 0.15) 0px 0px 0px 1px inset, rgba(12, 17, 29, 0.08) 0px -2px 0px 0px inset`  
-- **shadow-md:** `rgba(0, 0, 0, 0.25) 0px 1px 2px 0px`  
-- **shadow-lg:** `rgb(186, 85, 68) 0px 4px 5.3px 0px`  
-- **shadow-xl:** `rgba(255, 255, 255, 0.6) 0px 0px 6px 1px`  
-- **shadow-5:** `rgba(0, 0, 0, 0.08) 0px 1px 7px 0px`  
-- **shadow-6:** `rgba(0, 0, 0, 0.16) 0px 8px 24px 0px`  
-- **shadow-7:** `rgba(0, 0, 80, 0.35) 0px 8px 32px 0px`
+## Ambient Background Glow
+Subtle, non-distracting background lighting to add depth to the dark base:
+* Top-left: `radial-gradient(circle, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 70%)` with a 55px blur filter.
+* Bottom-right: `radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 70%)`.
+* Dimensions: 640px – 720px each.
 
-## Motion
+## Segmented AI Usage Ring
+A multi-colored SVG donut chart with rounded caps and gap effects:
+* SVG radius 46, stroke-width 16.
+* Segments using `stroke-dasharray` and negative `stroke-dashoffset`:
+  - Blue (`#3B82F6`)
+  - Emerald (`#10B981`)
+  - Amber (`#F59E0B`)
+  - Slate (`#64748B`)
+* `stroke-linecap: round`.
 
-- **duration-fast:** `all`  
-- **duration-fast:** `none`  
-- **duration-base:** `background 0.2s`  
-- **duration-base:** `background 0.2s, transform 0.15s`  
-- **duration-base:** `background 0.25s`  
-- **duration-base:** `transform 0.3s, opacity 0.1s, visibility linear, bottom linear`  
-- **duration-slow:** `0.8s steps(1) infinite paused cursor-blink`
+---
 
-## Components
+# Special Notes & Guardrails
 
-- **Buttons:** 37 detected  
-- **Links:** 52 detected  
-- **Inputs:** 1 detected  
-- **Navigation:** 1 elements  
-- **Lists:** 1 detected  
-- **Images:** 132 detected
-
-## Do's and Don'ts
-
-### Do
-
-- Reference tokens by name, not raw values — agents and developers should use `color.text.primary`, not `#171717`.  
-- Define all interactive states: default, hover, focus-visible, active, disabled.  
-- Use the spacing scale for all padding, margin, and gap values.  
-- Write content in sentence case. Reserve ALL CAPS for acronyms only.  
-- Test every component at the smallest and largest breakpoint before shipping.
-
-### Don't
-
-- Do not introduce colors outside the extracted palette.  
-- Do not use arbitrary spacing values — stick to the scale.  
-- Do not mix border-radius values. Pin to the detected set (1px, 2px, 4px, 6px, 8px, 10px, 12px, 16px, 18px, 24px, 32px, 48px, 100px, 999px, 1000px).  
-- Do not use decorative shadows on data-dense layouts.  
-- Do not hide critical status information behind interactions.  
-- Do not ship components without defining hover, focus-visible, and disabled states.
-
-## Writing Tone
-
-Efficient, data-forward, action-oriented. Labels over sentences.
-
-## Authoring Workflow
-
-When creating or updating a component guideline for this system, follow this sequence:
-
-1. **State the intent** — one sentence on what the component does and why it exists.  
-2. **Map tokens** — list every color, spacing, typography, and radius token the component uses. No raw values.  
-3. **Define anatomy** — break the component into named parts (container, label, icon, etc.) with their token assignments.  
-4. **Specify states** — document every state: default, hover, focus-visible, active, disabled, loading, error, empty.  
-5. **Describe interactions** — keyboard, pointer, and touch behavior, including edge cases (long content, overflow, truncation).  
-6. **Add accessibility criteria** — write testable pass/fail checks (e.g. "focus ring must be visible at 3:1 contrast").  
-7. **List anti-patterns** — concrete examples of misuse with a brief explanation of why each is wrong.  
-8. **Close with a QA checklist** — a mechanical list of verifiable items (see Definition of Done below).
-
-## Required Output Structure
-
-Every component guideline produced from this system must contain these sections, in order:
-
-1. Overview — purpose, when to use, when not to use.  
-2. Tokens and foundations — all referenced tokens from the tables above.  
-3. Anatomy and variants — named parts, variant matrix, responsive behavior.  
-4. States and interactions — full state table, keyboard/pointer/touch behavior.  
-5. Accessibility — ARIA attributes, contrast requirements, focus management, screen reader behavior.  
-6. Content guidelines — copy length, tone, capitalisation, placeholder text rules.  
-7. Anti-patterns — explicit examples of what not to build, with reasoning.
-
-## Component Requirements
-
-Every component built against this system must:
-
-- Reference only tokens defined in the tables above — no hardcoded hex, px, or font values.  
-- Define all interactive states: default, hover, focus-visible, active, disabled, loading, error.  
-- Specify responsive behavior at the smallest and largest supported breakpoint.  
-- Handle edge cases: empty state, overflow / truncation, maximum content length.  
-- Include keyboard navigation (Tab, Enter, Escape, Arrow keys where applicable).  
-- Document ARIA roles, labels, and live-region behavior where relevant.  
-- Include known page component density: \- **Buttons:** 37 detected  
-- **Links:** 52 detected  
-- **Inputs:** 1 detected  
-- **Navigation:** 1 elements  
-- **Lists:** 1 detected  
-- **Images:** 132 detected
-
-## Definition of Done
-
-A component is not complete until every item below is checked:
-
-- Renders correctly in its default state (smoke test).  
-- All states documented and visually verified (hover, focus, disabled, loading, error, empty).  
-- All visual values use design tokens — zero hardcoded values.  
-- Keyboard navigation works without a pointer.  
-- No critical accessibility violations (contrast, ARIA, focus order).  
-- Tested at smallest and largest breakpoint.  
-- Anti-patterns section lists at least one concrete misuse example.  
-- Documentation covers purpose, usage, props/API, and limitations.
-
-# Picura Indonesia — Landing Page Specification
-
-## 1\. Hero Section
-
-**Headline:** Empower Your Business Decisions with Data-Driven Clarity  
-**Subheadline:** Picura Indonesia delivers real-time analytics and actionable insights designed for modern business users and internal teams.  
-**Primary CTA:** Request a Demo (Button token: `color-4 / #155EEF`, text: `color-19 / #FFFFFF`)  
-**Secondary CTA:** Explore Dashboard Features
-
-## 2\. Key Features & Capabilities
-
-- **Data Visibility:** Critical metrics are surfaced immediately upon load without requiring unnecessary interactions.  
-- **Progressive Disclosure:** Clean high-level summaries with rich details revealed effortlessly on demand.  
-- **Efficient Workflows:** Minimalist interface engineered specifically for speed and precision across complex data environments.
-
-## 3\. Design System Integration
-
-The landing page strictly adheres to the system tokens:
-
-- **Primary Background:** `color-18 (#F9F9F8)` and `color-17 (#F3F3F3)`  
-- **Text Tokens:** Primary headings use `color-1 (#101828)`, body copy uses `color-2 (#454444)`, and secondary labels use `color-5 (#6B7280)`  
-- **Accent Colors:** Primary actions leverage `color-4 (#155EEF)` with success/status indicators using `color-7 (#17B26A)`
-
-## 4\. Call to Action
-
-- Ready to transform your dashboard experience? Visit [Picura Indonesia](https://www.dicoding.com/) or get in touch with our team today.
+* **MUST:** Maintain the 35px blur and 1px border on all glass panels to ensure depth consistency.
+* **MUST NOT:** Use solid black or heavy flat shadows for panel definition; use border highlights and translucent layers instead.
+* **MUST:** Keep interactive elements like 'Quick Action' buttons on a `glass-soft` background to avoid visual clutter.
+* **MUST:** Animate all elements on entrance using a fade-up with staggered delays (`0.05s` increments) using `cubic-bezier(0.16, 1, 0.3, 1)`.

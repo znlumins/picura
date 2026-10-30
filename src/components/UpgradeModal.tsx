@@ -57,24 +57,24 @@ export default function UpgradeModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-brand-border animate-scaleUp overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="glass-strong rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-white/15 animate-fade-up overflow-hidden text-white font-sans">
         {/* Header */}
-        <div className="px-6 py-5 bg-gradient-to-r from-brand-primary to-slate-900 text-white relative flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="p-1 rounded-md bg-amber-400 text-slate-900">
-                <Crown className="w-4 h-4" />
+              <span className="p-1 rounded-md bg-white text-[#050505]">
+                <Crown className="w-3.5 h-3.5 text-amber-500" />
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
-                Tingkatkan Akun Picura
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-300">
+                Peningkatan Lisensi SaaS
               </span>
             </div>
-            <h3 className="font-heading font-extrabold text-xl">
-              Pilih Paket Langganan SaaS
+            <h3 className="font-heading font-extrabold text-xl text-white">
+              Pilih Paket Langganan Picura
             </h3>
-            <p className="text-xs text-slate-300">
-              Buat galeri tanpa batas dan tingkatkan profesionalitas studio Anda.
+            <p className="text-xs text-slate-400">
+              Buat galeri tanpa batas dan tingkatkan kecepatan operasional studio Anda.
             </p>
           </div>
           <button
@@ -91,40 +91,40 @@ export default function UpgradeModal({
             {/* Pro Freelance Card */}
             <div
               onClick={() => setSelectedTier("PRO_FREELANCE")}
-              className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+              className={`p-5 rounded-2xl border cursor-pointer transition-all ${
                 selectedTier === "PRO_FREELANCE"
-                  ? "border-brand-violet bg-brand-violetLight/40 shadow-md ring-2 ring-indigo-200"
-                  : "border-slate-200 hover:border-slate-300 bg-white"
+                  ? "border-white bg-white/[0.08] shadow-[0_0_20px_rgba(255,255,255,0.15)] ring-1 ring-white/30"
+                  : "border-white/10 hover:border-white/20 bg-white/[0.02]"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-violet text-white">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-accent-blue/20 text-accent-blue border border-accent-blue/30">
                   POPULAR
                 </span>
-                <UserCheck className="w-5 h-5 text-brand-violet" />
+                <UserCheck className="w-5 h-5 text-accent-blue" />
               </div>
-              <h4 className="font-heading font-extrabold text-base text-brand-primary">
+              <h4 className="font-heading font-extrabold text-base text-white">
                 Pro Freelance
               </h4>
               <div className="mt-2 mb-4">
-                <span className="text-2xl font-black text-brand-primary">Rp 99.000</span>
-                <span className="text-xs text-slate-500"> / bulan</span>
+                <span className="text-2xl font-heading font-black text-white">Rp 99.000</span>
+                <span className="text-xs text-slate-400 font-mono"> / bulan</span>
               </div>
-              <ul className="space-y-2 text-xs text-slate-600">
+              <ul className="space-y-2 text-xs text-slate-300">
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span><strong>Tanpa Batas Galeri Aktif</strong></span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span>Custom Watermark & Logo Studio</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span>Catatan Khusus Klien per Foto</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span>Prioritas Dukungan Teknis</span>
                 </li>
               </ul>
@@ -133,72 +133,68 @@ export default function UpgradeModal({
             {/* Studio Card */}
             <div
               onClick={() => setSelectedTier("STUDIO")}
-              className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+              className={`p-5 rounded-2xl border cursor-pointer transition-all ${
                 selectedTier === "STUDIO"
-                  ? "border-amber-500 bg-amber-50/50 shadow-md ring-2 ring-amber-200"
-                  : "border-slate-200 hover:border-slate-300 bg-white"
+                  ? "border-white bg-white/[0.08] shadow-[0_0_20px_rgba(255,255,255,0.15)] ring-1 ring-white/30"
+                  : "border-white/10 hover:border-white/20 bg-white/[0.02]"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-accent-amber/20 text-accent-amber border border-accent-amber/30">
                   AGENCY
                 </span>
-                <Building2 className="w-5 h-5 text-amber-600" />
+                <Building2 className="w-5 h-5 text-accent-amber" />
               </div>
-              <h4 className="font-heading font-extrabold text-base text-brand-primary">
+              <h4 className="font-heading font-extrabold text-base text-white">
                 Studio Scale
               </h4>
               <div className="mt-2 mb-4">
-                <span className="text-2xl font-black text-brand-primary">Rp 249.000</span>
-                <span className="text-xs text-slate-500"> / bulan</span>
+                <span className="text-2xl font-heading font-black text-white">Rp 249.000</span>
+                <span className="text-xs text-slate-400 font-mono"> / bulan</span>
               </div>
-              <ul className="space-y-2 text-xs text-slate-600">
+              <ul className="space-y-2 text-xs text-slate-300">
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span>Semua fitur Pro Freelance</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span>Multi-User Akun Tim (Admin & Editor)</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-accent-emerald shrink-0" />
                   <span>Custom Subdomain Galeri Klien</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-brand-emerald shrink-0" />
-                  <span>Dukungan Pratinjau Video Mentah</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-brand-emerald shrink-0" />
-            <div className="text-[11px] text-slate-500">
-              Didukung integrasi Payment Gateway resmi (Midtrans) dengan enkripsi SHA-512 dan pembayaran instan via QRIS, Virtual Account, & Kartu Kredit.
+          <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3">
+            <ShieldCheck className="w-5 h-5 text-accent-emerald shrink-0" />
+            <div className="text-[11px] text-slate-400">
+              Integrasi resmi Payment Gateway Midtrans dengan verifikasi SHA-512 dan pembayaran instan via QRIS, Virtual Account, & Kartu Kredit.
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-brand-border flex items-center justify-between">
-          <div className="text-xs text-slate-500">
-            Paket saat ini: <span className="font-bold text-slate-700">{currentTier}</span>
+        <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between bg-white/[0.02]">
+          <div className="text-xs font-mono text-slate-400">
+            Paket saat ini: <span className="font-bold text-white">{currentTier}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
               disabled={isProcessing}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-xl transition"
+              className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition"
             >
               Batal
             </button>
             <button
               onClick={() => handleUpgrade(true)}
               disabled={isProcessing}
-              className="px-5 py-2.5 bg-gradient-to-r from-brand-violet to-indigo-600 hover:from-brand-violetHover hover:to-indigo-700 text-white rounded-xl font-bold text-xs shadow-md transition flex items-center gap-2"
+              className="px-5 py-2.5 bg-white text-[#050505] font-heading font-bold text-xs shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 rounded-xl transition flex items-center gap-2"
             >
               {isProcessing ? (
                 <>
@@ -208,7 +204,7 @@ export default function UpgradeModal({
               ) : (
                 <>
                   <Zap className="w-3.5 h-3.5 fill-current" />
-                  <span>Aktifkan {selectedTier === "PRO_FREELANCE" ? "Pro Freelance" : "Studio"} Sekarang</span>
+                  <span>Aktifkan {selectedTier === "PRO_FREELANCE" ? "Pro Freelance" : "Studio"}</span>
                 </>
               )}
             </button>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Lock, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import AmbientGlow from "./AmbientGlow";
 
 interface PasswordPromptProps {
   galleryTitle: string;
@@ -38,28 +39,30 @@ export default function PasswordPrompt({
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-brand-border p-6 sm:p-8 text-center animate-fadeIn">
-        <div className="w-14 h-14 bg-brand-violetLight text-brand-violet rounded-2xl flex items-center justify-center mx-auto mb-4">
+    <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center px-4 py-12 relative font-sans">
+      <AmbientGlow />
+
+      <div className="max-w-md w-full glass-strong rounded-3xl border border-white/15 p-6 sm:p-8 text-center animate-fade-up relative z-10">
+        <div className="w-14 h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/15">
           <Lock className="w-7 h-7" />
         </div>
 
-        <h2 className="font-heading font-extrabold text-2xl text-brand-primary mb-1">
+        <h2 className="font-heading font-extrabold text-2xl text-white mb-1">
           Galeri Terproteksi
         </h2>
-        <p className="text-xs text-brand-muted mb-6">
+        <p className="text-xs text-slate-400 mb-6">
           Masukkan kata sandi atau PIN akses untuk membuka sesi foto{" "}
-          <strong className="text-brand-primary block mt-0.5">{galleryTitle}</strong>
+          <strong className="text-white block mt-0.5">{galleryTitle}</strong>
           {photographerName && (
-            <span className="block text-[11px] text-slate-400 mt-0.5">
+            <span className="block text-[11px] font-mono text-slate-500 mt-0.5">
               Oleh {photographerName}
             </span>
           )}
         </p>
 
         {errorMessage && (
-          <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2 text-left">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="mb-4 p-3 rounded-xl bg-accent-rose/15 border border-accent-rose/30 text-rose-300 text-xs flex items-center gap-2 text-left">
+            <AlertCircle className="w-4 h-4 shrink-0 text-accent-rose" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -70,8 +73,8 @@ export default function PasswordPrompt({
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Masukkan Kata Sandi / PIN"
-              className="w-full text-center text-lg font-bold tracking-widest px-4 py-3 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-violet focus:border-brand-violet transition placeholder:font-normal placeholder:tracking-normal placeholder:text-sm"
+              placeholder="Masukkan PIN / Kata Sandi"
+              className="w-full text-center text-lg font-mono font-bold tracking-widest px-4 py-3 rounded-xl border border-white/15 bg-white/[0.04] text-white focus:outline-none focus:border-white/40 transition placeholder:font-normal placeholder:tracking-normal placeholder:text-xs placeholder:text-slate-500"
               autoFocus
               required
             />
@@ -80,7 +83,7 @@ export default function PasswordPrompt({
           <button
             type="submit"
             disabled={isLoading || !password.trim()}
-            className="w-full py-3 px-4 rounded-xl bg-brand-violet hover:bg-brand-violetHover disabled:opacity-50 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-xl bg-white text-[#050505] font-heading font-bold text-sm shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 disabled:opacity-50 transition flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -96,9 +99,9 @@ export default function PasswordPrompt({
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-brand-emerald" />
-          <span>Privasi foto dilindungi standar keamanan Picura</span>
+        <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-1.5 text-[11px] font-mono text-slate-500">
+          <ShieldCheck className="w-3.5 h-3.5 text-accent-emerald" />
+          <span>Privasi foto dilindungi enkripsi Picura</span>
         </div>
       </div>
     </div>
