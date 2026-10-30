@@ -9,9 +9,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"picura-backend/database"
-	"picura-backend/middleware"
-	"picura-backend/services"
+	"picura/backend/database"
+	"picura/backend/middleware"
+	"picura/backend/services"
 )
 
 type PaymentHandler struct {

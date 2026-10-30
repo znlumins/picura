@@ -11,9 +11,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"picura-backend/database"
-	"picura-backend/middleware"
-	"picura-backend/services"
+	"picura/backend/database"
+	"picura/backend/middleware"
+	"picura/backend/services"
 )
 
 type GalleryHandler struct{}

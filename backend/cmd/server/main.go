@@ -8,11 +8,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"picura-backend/config"
-	"picura-backend/database"
-	"picura-backend/handlers"
-	"picura-backend/middleware"
-	"picura-backend/services"
+	"picura/backend/config"
+	"picura/backend/database"
+	"picura/backend/handlers"
+	"picura/backend/middleware"
+	"picura/backend/services"
 )
 
 func main() {

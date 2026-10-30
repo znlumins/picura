@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
-	"picura-backend/database"
+	"picura/backend/database"
 )
 
 type contextKey string

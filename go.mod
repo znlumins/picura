@@ -1,4 +1,4 @@
-module picura-backend
+module picura
 
 go 1.26.4
 
