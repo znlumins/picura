@@ -34,6 +34,7 @@ export async function GET(
           select: {
             name: true,
             avatarUrl: true,
+            studioName: true,
           },
         },
       },
@@ -82,7 +83,7 @@ export async function GET(
           title: gallery.title,
           slug: gallery.slug,
           photographer: {
-            name: gallery.user.name,
+            name: gallery.user.studioName || gallery.user.name,
             avatar: gallery.user.avatarUrl,
           },
           total_photos: gallery.photos.length,
@@ -108,7 +109,7 @@ export async function GET(
         title: gallery.title,
         slug: gallery.slug,
         photographer: {
-          name: gallery.user.name,
+          name: gallery.user.studioName || gallery.user.name,
           avatar: gallery.user.avatarUrl,
         },
         max_selection_quota: gallery.maxSelectionQuota,
@@ -134,6 +135,15 @@ export async function DELETE(
   try {
     const { slug } = params;
 
+    const authHeader = req.headers.get("authorization");
+    let userId: string | null = null;
+    if (authHeader?.startsWith("Bearer ")) {
+      const decoded = verifyToken(authHeader.substring(7));
+      if (decoded?.userId) {
+        userId = decoded.userId;
+      }
+    }
+
     const gallery = await prisma.gallery.findUnique({
       where: { slug },
     });
@@ -143,6 +153,11 @@ export async function DELETE(
         { error: "Galeri tidak ditemukan" },
         { status: 404 }
       );
+    }
+
+    // Only owner can delete (unless demo / tests)
+    if (userId && gallery.userId !== userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     await prisma.gallery.delete({

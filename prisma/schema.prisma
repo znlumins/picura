@@ -1,24 +1,28 @@
 // Prisma schema for Picura Platform
-// Compatible with both SQLite (local development & testing) and PostgreSQL (production)
+// Production-grade PostgreSQL database on Cloud
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {
   id                    String         @id @default(uuid())
   email                 String         @unique
   name                  String
+  passwordHash          String?
   googleId              String?        @unique
   googleAccessToken     String?
   googleRefreshToken    String?
   avatarUrl             String?
   subscriptionTier      String         @default("FREEMIUM") // FREEMIUM, PRO_FREELANCE, STUDIO
   subscriptionExpiresAt DateTime?
+  googleApiKey          String?        // Custom photographer Google Drive API Key
+  studioName            String?
+  studioWhatsapp        String?
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
 
@@ -71,7 +75,7 @@ model Selection {
   galleryId        String
   clientName       String?
   clientNotes      String?
-  selectedPhotoIds String   // JSON string of [{ drive_id, file_name, ... }]
+  selectedPhotoIds String   // JSON string of [{ file_id, filename }]
   totalSelected    Int
   submittedAt      DateTime @default(now())
 

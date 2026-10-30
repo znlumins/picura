@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { ensureSeedData } from "@/lib/seed";
 import { verifyToken, hashPassword } from "@/lib/auth";
-import { extractFolderId, fetchDrivePhotos } from "@/lib/google-drive";
+import { extractFolderId, fetchDrivePhotos, buildGoogleCdnUrl } from "@/lib/google-drive";
 import { normalizePhoneNumber } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
@@ -17,8 +16,6 @@ function generateSlug(title: string): string {
 }
 
 async function getAuthenticatedUser(req: Request) {
-  await ensureSeedData();
-
   const authHeader = req.headers.get("authorization");
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.substring(7);
@@ -31,17 +28,14 @@ async function getAuthenticatedUser(req: Request) {
     }
   }
 
-  // Fallback to demo user
-  return prisma.user.findFirst({
-    where: { email: "demo@picura.id" },
-  });
+  return null;
 }
 
 export async function GET(req: Request) {
   try {
     const user = await getAuthenticatedUser(req);
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Silakan login terlebih dahulu", status: "unauthenticated" }, { status: 401 });
     }
 
     const galleries = await prisma.gallery.findMany({
@@ -102,7 +96,7 @@ export async function GET(req: Request) {
   } catch (error: any) {
     console.error("Fetch galleries error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch galleries", details: error.message },
+      { error: "Gagal memuat galeri", details: error.message },
       { status: 500 }
     );
   }
@@ -112,7 +106,7 @@ export async function POST(req: Request) {
   try {
     const user = await getAuthenticatedUser(req);
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Silakan login terlebih dahulu", status: "unauthenticated" }, { status: 401 });
     }
 
     // Check tier quota limit (Freemium: max 2 active galleries)
@@ -143,6 +137,7 @@ export async function POST(req: Request) {
       password,
       editor_whatsapp,
       expires_at,
+      direct_files, // Optional array of { drive_file_id, file_name }
     } = body;
 
     if (!title || !title.trim()) {
@@ -154,7 +149,7 @@ export async function POST(req: Request) {
 
     if (!drive_folder_url || !drive_folder_url.trim()) {
       return NextResponse.json(
-        { error: "URL / Folder ID Google Drive wajib diisi" },
+        { error: "URL / ID Google Drive wajib diisi" },
         { status: 400 }
       );
     }
@@ -177,7 +172,7 @@ export async function POST(req: Request) {
     const cleanPhone = normalizePhoneNumber(editor_whatsapp);
     if (!cleanPhone || cleanPhone.length < 8) {
       return NextResponse.json(
-        { error: "Format nomor WhatsApp tidak valid" },
+        { error: "Format nomor WhatsApp tidak valid (contoh: 081234567890)" },
         { status: 400 }
       );
     }
@@ -189,7 +184,7 @@ export async function POST(req: Request) {
 
     const slug = generateSlug(title);
 
-    // Create gallery record
+    // Create gallery record in database
     const gallery = await prisma.gallery.create({
       data: {
         userId: user.id,
@@ -204,26 +199,55 @@ export async function POST(req: Request) {
       },
     });
 
-    // Ingest & cache photos from Google Drive
-    const drivePhotos = await fetchDrivePhotos(folderId, user.googleAccessToken);
-    if (drivePhotos && drivePhotos.length > 0) {
-      const records = drivePhotos.map((p) => ({
-        galleryId: gallery.id,
-        driveFileId: p.id,
-        fileName: p.name,
-        thumbnailUrl: p.thumbnailUrl,
-        webContentLink: p.previewUrl,
-      }));
+    let importedPhotosCount = 0;
 
-      for (const rec of records) {
-        await prisma.photoCache.create({ data: rec });
+    // 1. Fetch real photos from Google Drive API v3
+    const drivePhotos = await fetchDrivePhotos(
+      folderId,
+      user.googleAccessToken,
+      user.googleApiKey
+    );
+
+    if (drivePhotos && drivePhotos.length > 0) {
+      for (const p of drivePhotos) {
+        await prisma.photoCache.create({
+          data: {
+            galleryId: gallery.id,
+            driveFileId: p.id,
+            fileName: p.name,
+            thumbnailUrl: p.thumbnailUrl,
+            webContentLink: p.previewUrl,
+          },
+        });
+      }
+      importedPhotosCount = drivePhotos.length;
+    }
+
+    // 2. If user also supplied direct file links/IDs
+    if (Array.isArray(direct_files) && direct_files.length > 0) {
+      for (const f of direct_files) {
+        const fileId = extractFolderId(f.drive_file_id || f.url || f.file_id) || f.drive_file_id;
+        if (fileId) {
+          await prisma.photoCache.create({
+            data: {
+              galleryId: gallery.id,
+              driveFileId: fileId,
+              fileName: f.file_name || f.filename || `IMG_${fileId.slice(0, 6)}.JPG`,
+              thumbnailUrl: buildGoogleCdnUrl(fileId, 400),
+              webContentLink: buildGoogleCdnUrl(fileId, 1600),
+            },
+          });
+          importedPhotosCount++;
+        }
       }
     }
 
     return NextResponse.json(
       {
         status: "success",
-        message: "Galeri berhasil dibuat",
+        message: importedPhotosCount > 0
+          ? `Galeri berhasil dibuat dengan ${importedPhotosCount} foto riil.`
+          : "Galeri berhasil dibuat. Catatan: Folder Google Drive belum memiliki foto atau membutuhkan Google API Key untuk membaca otomatis.",
         data: {
           id: gallery.id,
           title: gallery.title,
@@ -232,7 +256,7 @@ export async function POST(req: Request) {
           max_selection_quota: gallery.maxSelectionQuota,
           has_password: !!gallery.passwordHash,
           editor_whatsapp: gallery.editorWhatsappNumber,
-          photos_imported: drivePhotos.length,
+          photos_imported: importedPhotosCount,
         },
       },
       { status: 201 }

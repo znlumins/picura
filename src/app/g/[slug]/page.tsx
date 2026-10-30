@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import ClientGallery from "@/components/ClientGallery";
 import PasswordPrompt from "@/components/PasswordPrompt";
-import { Loader2, AlertCircle, Clock } from "lucide-react";
+import { IconSpinner, IconAlert, IconClock, IconArrowRight } from "@/components/Icons";
 import Link from "next/link";
 
 export default function GalleryPage() {
@@ -15,7 +15,23 @@ export default function GalleryPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
-  const [galleryData, setGalleryData] = useState<any>(null);
+  const [galleryData, setGalleryData] = useState<{
+    id: string;
+    title: string;
+    slug: string;
+    max_selection_quota: number;
+    editor_whatsapp: string;
+    photographer?: {
+      name: string;
+      avatar?: string | null;
+    };
+    photos: {
+      id: string;
+      filename: string;
+      thumbnail_url: string;
+      preview_url: string;
+    }[];
+  } | null>(null);
 
   const fetchGallery = useCallback(async (token?: string) => {
     setIsLoading(true);
@@ -40,15 +56,16 @@ export default function GalleryPage() {
         throw new Error(data.message || data.error || "Gagal memuat galeri");
       }
 
-      if (data.status === "locked" || data.is_password_protected && !data.data.photos) {
+      if (data.status === "locked" || (data.is_password_protected && !data.data.photos)) {
         setIsLocked(true);
         setGalleryData(data.data);
       } else {
         setIsLocked(false);
         setGalleryData(data.data);
       }
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan saat memuat galeri");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat memuat galeri";
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -78,50 +95,54 @@ export default function GalleryPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] text-white">
-        <Loader2 className="w-8 h-8 animate-spin text-white mb-3" />
-        <p className="text-xs font-mono text-slate-400">Memuat galeri foto...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f6f8fa] text-[#36394a]">
+        <IconSpinner className="w-8 h-8 text-[#5e4cff] mb-3" />
+        <p className="text-xs font-mono text-[#818898]">Menghubungkan Google Drive & memuat foto...</p>
       </div>
     );
   }
 
   if (isExpired) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#050505] text-center text-white">
-        <div className="w-14 h-14 glass text-slate-400 rounded-2xl flex items-center justify-center mb-4 border border-white/10">
-          <Clock className="w-7 h-7" />
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#f6f8fa] text-center text-[#36394a]">
+        <div className="w-12 h-12 bg-white text-[#818898] rounded-[8px] flex items-center justify-center mb-4 border border-[#cdd2d9] shadow-sm">
+          <IconClock className="w-6 h-6" />
         </div>
-        <h2 className="font-heading font-extrabold text-2xl text-white mb-1">
+        <h2 className="font-heading font-semibold text-xl text-[#272835] mb-1">
           Masa Aktif Berakhir
         </h2>
-        <p className="text-xs text-slate-400 max-w-sm mb-6">
-          Tautan galeri ini telah melewati batas waktu kadaluarsa. Silakan hubungi fotografer atau studio untuk meminta perpanjangan akses.
+        <p className="text-xs text-[#666d80] max-w-sm mb-6">
+          Tautan galeri ini telah melewati batas waktu yang ditentukan. Silakan hubungi fotografer atau studio untuk meminta perpanjangan akses.
         </p>
         <Link
           href="/"
-          className="text-xs font-mono text-white underline underline-offset-4"
+          className="px-5 py-2.5 rounded-[8px] bg-[#272835] text-white text-xs font-medium hover:bg-[#1a1b25] transition inline-flex items-center gap-1.5"
         >
-          Kembali ke Beranda
+          <span>Kembali ke Beranda</span>
+          <IconArrowRight className="w-4 h-4" />
         </Link>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !galleryData) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#050505] text-center text-white">
-        <div className="w-14 h-14 glass text-accent-rose rounded-2xl flex items-center justify-center mb-4 border border-accent-rose/20">
-          <AlertCircle className="w-7 h-7" />
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#f6f8fa] text-center text-[#36394a]">
+        <div className="w-12 h-12 bg-[#fef2f2] text-[#ef4444] rounded-[8px] flex items-center justify-center mb-4 border border-[#fecaca]">
+          <IconAlert className="w-6 h-6" />
         </div>
-        <h2 className="font-heading font-extrabold text-2xl text-white mb-1">
+        <h2 className="font-heading font-semibold text-xl text-[#272835] mb-1">
           Galeri Tidak Ditemukan
         </h2>
-        <p className="text-xs text-slate-400 max-w-sm mb-6">{error}</p>
+        <p className="text-xs text-[#666d80] max-w-sm mb-6">
+          {error || "Tautan galeri foto ini mungkin tidak valid atau sudah dihapus oleh fotografer."}
+        </p>
         <Link
           href="/"
-          className="text-xs font-mono text-white underline underline-offset-4"
+          className="px-5 py-2.5 rounded-[8px] bg-[#272835] text-white text-xs font-medium hover:bg-[#1a1b25] transition inline-flex items-center gap-1.5"
         >
-          Kembali ke Beranda
+          <span>Kembali ke Beranda</span>
+          <IconArrowRight className="w-4 h-4" />
         </Link>
       </div>
     );
@@ -130,8 +151,8 @@ export default function GalleryPage() {
   if (isLocked) {
     return (
       <PasswordPrompt
-        galleryTitle={galleryData?.title || "Sesi Foto"}
-        photographerName={galleryData?.photographer?.name}
+        galleryTitle={galleryData.title}
+        photographerName={galleryData.photographer?.name}
         onVerify={handlePasswordVerify}
       />
     );

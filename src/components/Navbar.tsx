@@ -1,41 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, LayoutDashboard, Crown } from "lucide-react";
+import { PicuraLogo } from "@/components/PicuraLogo";
+import { IconDashboard, IconLogOut, IconLogIn } from "@/components/Icons";
 
 interface NavbarProps {
   user?: {
     name: string;
     email: string;
     avatarUrl?: string | null;
+    studioName?: string | null;
     subscriptionTier: string;
   } | null;
   onUpgradeClick?: () => void;
+  onAuthClick?: () => void;
+  onLogout?: () => void;
 }
 
-export default function Navbar({ user, onUpgradeClick }: NavbarProps) {
+export default function Navbar({
+  user,
+  onUpgradeClick,
+  onAuthClick,
+  onLogout,
+}: NavbarProps) {
   const isPro = user?.subscriptionTier === "PRO_FREELANCE" || user?.subscriptionTier === "STUDIO";
 
   return (
-    <header className="sticky top-0 z-40 glass-soft border-b border-white/10 text-white backdrop-blur-2xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-white border-b border-[#cdd2d9]">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-white text-[#050505] flex items-center justify-center font-heading font-black text-xl shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-transform group-hover:scale-105">
-            P
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-heading font-extrabold text-lg text-white tracking-tight">
-                Picura
-              </span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white/10 text-slate-300 border border-white/10 uppercase tracking-wider">
-                ID
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 hidden sm:block -mt-1 font-medium">
-              Refined Glass Platform
-            </p>
-          </div>
+          <PicuraLogo className="h-7 w-auto text-[#272835] transition-opacity group-hover:opacity-85" />
+          {user?.studioName && (
+            <span className="hidden sm:inline-block text-xs font-mono font-medium text-[#818898] pl-2 border-l border-[#cdd2d9]">
+              {user.studioName}
+            </span>
+          )}
         </Link>
 
         <div className="flex items-center gap-3">
@@ -44,59 +43,72 @@ export default function Navbar({ user, onUpgradeClick }: NavbarProps) {
               {!isPro && (
                 <button
                   onClick={onUpgradeClick}
-                  className="hidden sm:inline-flex items-center gap-1.5 text-xs font-heading font-semibold px-3 py-1.5 rounded-xl bg-white text-[#050505] shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 transition"
+                  className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-[8px] bg-[#f6f8fa] text-[#36394a] border border-[#cdd2d9] hover:border-[#818898] transition"
                 >
-                  <Crown className="w-3.5 h-3.5 text-amber-500" />
                   Upgrade Pro
                 </button>
               )}
 
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-white/15 bg-white/[0.05] hover:bg-white/10 text-white transition"
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-1.5 rounded-[8px] bg-[#272835] text-white hover:bg-[#1a1b25] transition"
               >
-                <LayoutDashboard className="w-3.5 h-3.5 text-slate-400" />
-                Dashboard
+                <IconDashboard className="w-3.5 h-3.5 text-white/80" />
+                <span>Dashboard</span>
               </Link>
 
-              <div className="flex items-center gap-2 pl-2 border-l border-white/10">
+              <div className="flex items-center gap-2 pl-2 border-l border-[#cdd2d9]">
                 {user.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={user.avatarUrl}
                     alt={user.name}
-                    className="w-8 h-8 rounded-full border border-white/20 object-cover"
+                    className="w-8 h-8 rounded-full border border-[#cdd2d9] object-cover"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center font-bold text-xs font-heading">
+                  <div className="w-8 h-8 rounded-full bg-[#f6f8fa] border border-[#cdd2d9] text-[#36394a] flex items-center justify-center font-bold text-xs">
                     {user.name.charAt(0)}
                   </div>
                 )}
                 <div className="hidden md:block text-left">
-                  <div className="text-xs font-bold text-white line-clamp-1 max-w-[140px]">
+                  <div className="text-xs font-medium text-[#36394a] line-clamp-1 max-w-[130px]">
                     {user.name}
                   </div>
                   <span
-                    className={`inline-block text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                    className={`inline-block text-[10px] font-mono font-medium px-1.5 py-0.2 rounded-full ${
                       isPro
-                        ? "bg-accent-emerald/20 text-accent-emerald border border-accent-emerald/30"
-                        : "bg-white/10 text-slate-300 border border-white/10"
+                        ? "bg-[#dfdbff] text-[#5e4cff]"
+                        : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
                     }`}
                   >
                     {user.subscriptionTier}
                   </span>
                 </div>
+
+                <button
+                  onClick={onLogout}
+                  className="p-1.5 rounded-[8px] text-[#818898] hover:text-[#272835] hover:bg-[#f6f8fa] transition ml-1"
+                  title="Keluar Akun"
+                >
+                  <IconLogOut className="w-4 h-4" />
+                </button>
               </div>
             </>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/dashboard"
-                className="text-xs font-heading font-bold px-4 py-2 rounded-xl bg-white text-[#050505] shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 transition inline-flex items-center gap-1.5"
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={onAuthClick}
+                className="text-xs font-medium px-3.5 py-1.5 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] hover:border-[#818898] hover:bg-[#f6f8fa] transition"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                Masuk / Demo
-              </Link>
+                Masuk
+              </button>
+              <button
+                onClick={onAuthClick}
+                className="text-xs font-medium px-3.5 py-1.5 rounded-[8px] bg-[#5e4cff] text-white hover:opacity-90 transition inline-flex items-center gap-1.5"
+              >
+                <IconLogIn className="w-3.5 h-3.5" />
+                <span>Mulai Gratis</span>
+              </button>
             </div>
           )}
         </div>

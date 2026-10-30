@@ -1,363 +1,431 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import AmbientGlow from "@/components/AmbientGlow";
+import { PicuraLogo } from "@/components/PicuraLogo";
+import AuthModal from "@/components/AuthModal";
 import {
-  ArrowRight,
-  CheckCircle2,
-  Sparkles,
-  Smartphone,
-  Check,
-  Lock,
-} from "lucide-react";
+  IconArrowRight,
+  IconCheck,
+  IconLock,
+  IconFolder,
+  IconWhatsApp,
+  IconSparkles,
+  PixelArtMosaic,
+  IconExternalLink,
+} from "@/components/Icons";
 
 export default function Home() {
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    subscriptionTier: string;
+    studioName?: string | null;
+  } | null>(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("picura_token") : null;
+    if (token) {
+      fetch("/api/v1/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === "success" && data.user) {
+            setUser(data.user);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col selection:bg-white selection:text-black relative font-sans">
-      <AmbientGlow />
-      <Navbar />
+    <div className="min-h-screen bg-white text-[#36394a] flex flex-col font-sans selection:bg-[#dfdbff] selection:text-[#5e4cff]">
+      {/* 1. Announcement Bar (Top-of-page promo strip) */}
+      <div className="bg-[#1a1b25] text-white text-xs py-2 px-4 text-center">
+        <span>Picura v2.0 Aktif: Seleksi Foto Google Drive Terhubung Langsung ke WhatsApp Klien. </span>
+        <button
+          onClick={() => setIsAuthOpen(true)}
+          className="text-[#c8ccf3] hover:underline font-medium ml-1 inline-flex items-center gap-1"
+        >
+          <span>Mulai Gratis Sekarang</span>
+          <IconArrowRight className="w-3 h-3" />
+        </button>
+      </div>
 
-      {/* Hero Section */}
-      <section className="relative z-10 pt-16 pb-24 md:pt-28 md:pb-36 border-b border-white/10 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass border border-white/15 text-xs font-mono text-slate-300 shadow-sm animate-fade-up">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>Refined Glass Fintech Aesthetic</span>
+      {/* 2. Primary Navigation */}
+      <header className="sticky top-0 z-40 bg-white border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <PicuraLogo className="h-7 w-auto text-[#272835]" />
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#36394a]">
+            <a href="#features" className="hover:text-[#5e4cff] transition">Fitur</a>
+            <a href="#how-it-works" className="hover:text-[#5e4cff] transition">Cara Kerja</a>
+            <a href="#pricing" className="hover:text-[#5e4cff] transition">Harga</a>
+            <Link href="/dashboard" className="hover:text-[#5e4cff] transition">Demo Dashboard</Link>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 rounded-[8px] bg-[#272835] text-white text-xs font-medium hover:bg-[#1a1b25] transition"
+              >
+                Buka Dashboard
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={() => setIsAuthOpen(true)}
+                  className="px-3.5 py-1.5 rounded-[8px] text-xs font-medium text-[#36394a] hover:bg-[#f6f8fa] border border-[#cdd2d9] transition"
+                >
+                  Masuk
+                </button>
+                <button
+                  onClick={() => setIsAuthOpen(true)}
+                  className="px-4 py-2 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition"
+                >
+                  Mulai Gratis
+                </button>
+              </>
+            )}
           </div>
+        </div>
+      </header>
 
-          <h1 className="font-heading font-black text-4xl sm:text-6xl lg:text-7xl text-white tracking-tight max-w-4xl mx-auto leading-tight sm:leading-none animate-fade-up">
-            Pilih Foto Klien{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
-              Langsung ke WhatsApp
-            </span>{" "}
-            Tanpa Re-upload.
-          </h1>
+      {/* 3. Hero Section (Split-asymmetric with Pixel-Art Mosaic) */}
+      <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[#cdd2d9] overflow-hidden bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left 8 cols: Headline + Sub + CTAs */}
+            <div className="lg:col-span-8 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[6px] bg-[#f6f8fa] border border-[#cdd2d9] text-xs font-mono text-[#666d80]">
+                <IconSparkles className="w-3.5 h-3.5 text-[#5e4cff]" />
+                <span>Zero Re-upload • Direct Google CDN & WhatsApp</span>
+              </div>
 
-          <p className="text-sm sm:text-lg text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed animate-fade-up">
-            Platform seleksi foto interaktif berbasis Google Drive API v3 dan WhatsApp URI protocol dengan estetika modern Refined Glass, responsif kilat, dan bebas typo.
-          </p>
+              <h1 className="font-heading font-semibold text-4xl sm:text-6xl text-[#36394a] tracking-tight leading-[1.05]">
+                Pilih Foto Klien Langsung ke WhatsApp Tanpa Re-upload.
+              </h1>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4 animate-fade-up">
-            <Link
-              href="/dashboard"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-[#050505] font-heading font-bold text-sm shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 transition flex items-center justify-center gap-2"
-            >
-              <span>Buka Dashboard Fotografer</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+              <p className="text-base sm:text-lg text-[#666d80] max-w-2xl font-normal leading-relaxed">
+                Tautkan folder Google Drive Anda dalam hitungan detik. Klien menandai foto favorit di browser, dan daftar kode file terkirim rapi ke WhatsApp editor tanpa salah ketik nama file.
+              </p>
 
-            <Link
-              href="/g/graduation-sarah-ui-2026"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl glass border border-white/15 hover:bg-white/10 text-white font-heading font-semibold text-sm transition flex items-center justify-center gap-2"
-            >
-              <Smartphone className="w-4 h-4 text-slate-300" />
-              <span>Demo Galeri Klien</span>
-            </Link>
-          </div>
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+                {user ? (
+                  <Link
+                    href="/dashboard"
+                    className="px-6 py-3 rounded-[8px] bg-[#5e4cff] text-white font-medium text-sm hover:opacity-90 transition flex items-center gap-2 shadow-sm"
+                  >
+                    <span>Masuk ke Dashboard</span>
+                    <IconArrowRight className="w-4 h-4" />
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => setIsAuthOpen(true)}
+                    className="px-6 py-3 rounded-[8px] bg-[#5e4cff] text-white font-medium text-sm hover:opacity-90 transition flex items-center gap-2 shadow-sm"
+                  >
+                    <span>Mulai Buat Galeri Gratis</span>
+                    <IconArrowRight className="w-4 h-4" />
+                  </button>
+                )}
 
-          {/* Social Proof Pills */}
-          <div className="pt-10 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-slate-400">
-            <span className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-accent-emerald" />
-              100% Google Drive API Read-Only
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-accent-blue" />
-              Borders 1px Translucent White
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-accent-rose" />
-              Backdrop Blurs Fixed at 35px
-            </span>
+                <Link
+                  href="/dashboard"
+                  className="px-5 py-3 rounded-[8px] bg-white text-[#36394a] font-medium text-sm border border-[#cdd2d9] hover:bg-[#f6f8fa] transition flex items-center gap-2"
+                >
+                  <span>Coba Live Dashboard</span>
+                </Link>
+              </div>
+
+              {/* Sub-proof metadata */}
+              <div className="pt-4 flex items-center gap-6 text-xs text-[#818898] font-mono">
+                <span className="flex items-center gap-1.5">
+                  <IconCheck className="w-3.5 h-3.5 text-[#5e4cff]" />
+                  <span>Tanpa Kartu Kredit</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <IconCheck className="w-3.5 h-3.5 text-[#5e4cff]" />
+                  <span>Format WhatsApp Otomatis</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Right 4 cols: Pixel-Art Hero Decoration & Mini Preview */}
+            <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center relative">
+              <PixelArtMosaic className="hidden sm:grid mb-4" />
+              <div className="bg-[#f6f8fa] border border-[#cdd2d9] rounded-[12px] p-4 text-xs space-y-2.5 max-w-xs shadow-sm">
+                <div className="flex items-center justify-between text-[#818898] font-mono text-[11px]">
+                  <span>LIVE STATUS</span>
+                  <span className="w-2 h-2 rounded-full bg-[#10b981]" />
+                </div>
+                <div className="font-heading font-semibold text-[#272835]">
+                  Google Drive API v3
+                </div>
+                <div className="text-[#666d80] text-[11px] leading-relaxed">
+                  Menyajikan thumbnail langsung melalui Google Global CDN tanpa membebani penyimpanan hosting Anda.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3 Step Features in Glass Cards */}
-      <section className="py-20 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-              Alur Kerja Terintegrasi
-            </span>
-            <h2 className="font-heading font-extrabold text-3xl text-white">
-              Sederhana, Cepat, dan Akurat
+      {/* 4. Product Preview Card (Browser Frame) */}
+      <section className="py-16 bg-[#f6f8fa] border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-[12px] border border-[#cdd2d9] overflow-hidden shadow-subtle">
+            {/* Browser Chrome Header */}
+            <div className="px-4 py-3 bg-[#f6f8fa] border-b border-[#cdd2d9] flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-[#cdd2d9]" />
+                <span className="w-3 h-3 rounded-full bg-[#cdd2d9]" />
+                <span className="w-3 h-3 rounded-full bg-[#cdd2d9]" />
+              </div>
+              <div className="text-[11px] font-mono text-[#818898] bg-white px-4 py-0.5 rounded-[4px] border border-[#cdd2d9]">
+                picura.web.id/g/wedding-radit-vanya
+              </div>
+              <div className="w-12" />
+            </div>
+
+            {/* Mocked Interface Fragment */}
+            <div className="p-6 sm:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#eceff3]">
+                <div>
+                  <h3 className="font-heading font-semibold text-xl text-[#272835]">
+                    Wedding Radit & Vanya
+                  </h3>
+                  <p className="text-xs text-[#666d80]">
+                    Pilih 20 foto terbaik untuk album cetak & retouching
+                  </p>
+                </div>
+                <div className="px-3.5 py-1.5 rounded-full bg-[#dfdbff] text-[#5e4cff] font-mono text-xs font-medium">
+                  20 / 20 Foto Dipilih
+                </div>
+              </div>
+
+              {/* Grid of sample thumbnail tiles */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { name: "IMG_0412.JPG", status: "Dipilih" },
+                  { name: "IMG_0415.JPG", status: "Dipilih" },
+                  { name: "IMG_0489.JPG", status: "Dipilih" },
+                  { name: "IMG_0502.JPG", status: "Preview" },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="aspect-square bg-[#f6f8fa] rounded-[8px] border border-[#cdd2d9] p-3 flex flex-col justify-between relative"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-mono text-[#818898]">0{i + 1}</span>
+                      <span
+                        className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+                          item.status === "Dipilih"
+                            ? "bg-[#5e4cff] text-white"
+                            : "border border-[#cdd2d9] bg-white text-transparent"
+                        }`}
+                      >
+                        ✓
+                      </span>
+                    </div>
+                    <span className="text-xs font-mono text-[#272835] truncate">{item.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Features Grid (2 or 3 Columns) */}
+      <section id="features" className="py-20 bg-white border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="max-w-xl">
+            <h2 className="font-heading font-semibold text-3xl text-[#272835] tracking-tight">
+              Dirancang Khusus untuk Alur Kerja Fotografer Modern
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
-              Menghemat waktu fotografer dan mempermudah klien dalam memilih karya foto terbaik.
+            <p className="text-sm text-[#666d80] mt-2">
+              Tanpa repot upload ulang gigabyte foto, tanpa salah ketik nomor file di chat WhatsApp.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass rounded-3xl p-7 border border-white/10 space-y-4 hover:border-white/20 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 text-white flex items-center justify-center font-heading font-black text-lg border border-white/15">
-                01
+            {/* Feature 1 */}
+            <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] space-y-3">
+              <div className="w-9 h-9 rounded-[8px] bg-[#dfdbff] text-[#5e4cff] flex items-center justify-center font-mono text-sm font-semibold">
+                <IconFolder className="w-5 h-5" />
               </div>
-              <h3 className="font-heading font-bold text-lg text-white">
-                Hubungkan Folder Drive
+              <h3 className="font-heading font-semibold text-lg text-[#272835]">
+                Koneksi Google Drive Instan
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Fotografer cukup menyalin tautan folder Google Drive. Sistem memindai nama dan thumbnail secara otomatis tanpa mengunggah ulang file mentah berukuran besar.
+              <p className="text-xs text-[#666d80] leading-relaxed">
+                Cukup tempel URL folder Google Drive Anda. Picura langsung mengekstrak daftar file dan merender preview super cepat tanpa re-upload.
               </p>
             </div>
 
-            <div className="glass rounded-3xl p-7 border border-white/10 space-y-4 hover:border-white/20 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-accent-blue/15 text-accent-blue flex items-center justify-center font-heading font-black text-lg border border-accent-blue/20">
-                02
+            {/* Feature 2 */}
+            <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] space-y-3">
+              <div className="w-9 h-9 rounded-[8px] bg-[#dfdbff] text-[#5e4cff] flex items-center justify-center font-mono text-sm font-semibold">
+                <IconWhatsApp className="w-5 h-5" />
               </div>
-              <h3 className="font-heading font-bold text-lg text-white">
-                Klien Menandai Interaktif
+              <h3 className="font-heading font-semibold text-lg text-[#272835]">
+                Format WhatsApp Sekali Klik
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Klien membuka tautan galeri unik di smartphone, menikmati pratinjau Lightbox layar penuh, zoom foto, dan menandai foto sesuai batas kuota sesi.
+              <p className="text-xs text-[#666d80] leading-relaxed">
+                Setelah klien selesai menandai foto, format pesan teks tersusun rapi dengan nama file dan catatan khusus yang langsung diteruskan ke WhatsApp Anda.
               </p>
             </div>
 
-            <div className="glass rounded-3xl p-7 border border-white/10 space-y-4 hover:border-white/20 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-accent-emerald/15 text-accent-emerald flex items-center justify-center font-heading font-black text-lg border border-accent-emerald/20">
-                03
+            {/* Feature 3 */}
+            <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] space-y-3">
+              <div className="w-9 h-9 rounded-[8px] bg-[#dfdbff] text-[#5e4cff] flex items-center justify-center font-mono text-sm font-semibold">
+                <IconLock className="w-5 h-5" />
               </div>
-              <h3 className="font-heading font-bold text-lg text-white">
-                Kirim Langsung ke WhatsApp
+              <h3 className="font-heading font-semibold text-lg text-[#272835]">
+                Proteksi Kata Sandi Klien
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Daftar presisi nama file foto terpilih dirangkum otomatis dan dialihkan langsung ke WhatsApp editor dalam satu ketukan tanpa risiko salah ketik.
+              <p className="text-xs text-[#666d80] leading-relaxed">
+                Jaga kerahasiaan sesi foto klien dengan PIN/password opsional. Hanya klien pemilik sesi yang dapat membuka galeri dan memilih foto.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Interactive Gallery Demo Cards */}
-      <section className="py-16 relative z-10 border-y border-white/10 glass-soft">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-                Live Preview
-              </span>
-              <h2 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
-                Jelajahi Demo Galeri Klien Picura
-              </h2>
+      {/* 6. Code Terminal Card (Technical proof) */}
+      <section className="py-16 bg-[#f6f8fa] border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-[#1a1b25] rounded-[12px] p-6 sm:p-8 text-white space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs font-mono text-[#818898]">
+              <span>WHATSAPP URL PROTOCOL & DRIVE CDN PIPELINE</span>
+              <span className="text-[#5e4cff]">REST API v3</span>
             </div>
-            <Link
-              href="/dashboard"
-              className="text-xs font-mono font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition"
-            >
-              <span>Buka Dashboard Fotografer</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Demo 1: Protected Gallery */}
-            <div className="glass-strong rounded-3xl p-7 border border-white/15 flex flex-col justify-between space-y-6">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10 flex items-center gap-1.5">
-                    <Lock className="w-3 h-3 text-slate-400" />
-                    PIN PROTECTED
-                  </span>
-                  <span className="text-xs font-mono text-slate-400">PIN: 123456</span>
-                </div>
-                <h3 className="font-heading font-bold text-xl text-white">
-                  The Wedding of Radit & Vanya
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Uji coba alur verifikasi kata sandi galeri, pratinjau thumbnail beresolusi tinggi, dan seleksi hingga 20 foto.
-                </p>
-              </div>
-
-              <div>
-                <Link
-                  href="/g/wedding-radit-vanya"
-                  className="w-full py-3 px-4 rounded-xl bg-white text-[#050505] text-xs font-heading font-bold flex items-center justify-center gap-2 shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 transition"
-                >
-                  <span>Buka Galeri Wedding (PIN: 123456)</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Demo 2: Public Gallery */}
-            <div className="glass-strong rounded-3xl p-7 border border-white/15 flex flex-col justify-between space-y-6">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-accent-emerald/20 text-accent-emerald border border-accent-emerald/30 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-accent-emerald" />
-                    DIRECT ACCESS
-                  </span>
-                  <span className="text-xs font-mono text-slate-400">Kuota 10 Foto</span>
-                </div>
-                <h3 className="font-heading font-bold text-xl text-white">
-                  Graduation Session - Sarah UI 2026
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Uji coba instan tanpa sandi. Tandai foto, uji fitur pencarian nama file, dan lakukan simulasi pengiriman ke WhatsApp.
-                </p>
-              </div>
-
-              <div>
-                <Link
-                  href="/g/graduation-sarah-ui-2026"
-                  className="w-full py-3 px-4 rounded-xl glass border border-white/20 text-white hover:bg-white/10 text-xs font-heading font-bold flex items-center justify-center gap-2 transition"
-                >
-                  <span>Buka Galeri Wisuda Sekarang</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
+            <pre className="text-xs font-mono leading-relaxed overflow-x-auto text-[#a4abb8]">
+              <span className="text-[#818898]">{"// 1. Direct CDN Fetch from Google Drive"}</span>{"\n"}
+              <span className="text-[#5e4cff]">const</span> thumbUrl = <span className="text-[#c8ccf3]">&apos;https://lh3.googleusercontent.com/d/&apos;</span> + fileId + <span className="text-[#c8ccf3]">&apos;=s400&apos;</span>;{"\n\n"}
+              <span className="text-[#818898]">{"// 2. Structured WhatsApp Dispatch Payload"}</span>{"\n"}
+              <span className="text-[#5e4cff]">const</span> message = <span className="text-[#c8ccf3]">&apos;Halo! Berikut foto terpilih: &apos;</span> + selectedFiles.join(<span className="text-[#c8ccf3]">&apos;, &apos;</span>);{"\n"}
+              <span className="text-[#5e4cff]">const</span> waUrl = <span className="text-[#c8ccf3]">&apos;https://wa.me/&apos;</span> + studioWhatsapp + <span className="text-[#c8ccf3]">&apos;?text=&apos;</span> + encodeURIComponent(message);
+            </pre>
           </div>
         </div>
       </section>
 
-      {/* Pricing Section (PRD Section 4.5) */}
-      <section className="py-24 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-              Skema Langganan SaaS
-            </span>
-            <h2 className="font-heading font-extrabold text-3xl text-white">
-              Transparan Tanpa Biaya Tersembunyi
+      {/* 7. Pricing Section */}
+      <section id="pricing" className="py-20 bg-white border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <h2 className="font-heading font-semibold text-3xl text-[#272835] tracking-tight">
+              Harga Sederhana & Transparan
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
-              Mulai gratis dengan 2 galeri aktif, tingkatkan ke Pro kapan saja.
+            <p className="text-sm text-[#666d80]">
+              Mulai gratis sekarang. Upgrade saat bisnis studio fotografi Anda berkembang.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Freemium */}
-            <div className="glass rounded-3xl p-7 border border-white/10 flex flex-col justify-between">
-              <div className="space-y-4">
-                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300">
-                  STARTER
-                </span>
-                <h3 className="font-heading font-bold text-xl text-white">Freemium</h3>
-                <div className="mt-2 mb-4">
-                  <span className="text-3xl font-heading font-black text-white">Rp 0</span>
-                  <span className="text-xs text-slate-400 font-mono"> / selamanya</span>
-                </div>
-                <ul className="space-y-2.5 text-xs text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Maksimal 2 Galeri Aktif</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Integrasi Google Drive v3</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Redirection WhatsApp Otomatis</span>
-                  </li>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {/* Free */}
+            <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] flex flex-col justify-between">
+              <div>
+                <span className="font-heading font-semibold text-lg text-[#272835] block">Freemium</span>
+                <span className="font-heading font-semibold text-2xl text-[#272835] mt-2 block">Gratis</span>
+                <p className="text-xs text-[#818898] mt-1 mb-5">Untuk fotografer yang baru mulai.</p>
+                <ul className="space-y-2.5 text-xs text-[#666d80]">
+                  <li className="flex items-center gap-2">✓ 2 Galeri Aktif</li>
+                  <li className="flex items-center gap-2">✓ Ekstrak Google Drive</li>
+                  <li className="flex items-center gap-2">✓ Kirim ke WhatsApp</li>
                 </ul>
               </div>
-              <div className="pt-8">
-                <Link
-                  href="/dashboard"
-                  className="w-full py-2.5 px-4 rounded-xl border border-white/15 text-white font-heading font-bold text-xs hover:bg-white/10 flex items-center justify-center transition"
-                >
-                  Mulai Gratis
-                </Link>
-              </div>
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="mt-6 w-full py-2 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] text-xs font-medium hover:bg-[#f6f8fa] transition"
+              >
+                Mulai Gratis
+              </button>
             </div>
 
-            {/* Pro Freelance */}
-            <div className="glass-strong rounded-3xl p-7 border-2 border-white/30 relative flex flex-col justify-between shadow-[0_20px_50px_rgba(255,255,255,0.06)]">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-[#050505] text-[10px] font-heading font-extrabold uppercase px-3 py-1 rounded-full shadow-md">
-                Paling Diminati
-              </div>
-              <div className="space-y-4">
-                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-accent-blue/20 text-accent-blue border border-accent-blue/30">
-                  PRO FREELANCE
+            {/* Pro */}
+            <div className="bg-[#f6f8fa] rounded-[12px] p-6 border-2 border-[#5e4cff] flex flex-col justify-between relative shadow-sm">
+              <span className="absolute -top-3 right-4 px-2 py-0.5 rounded-full bg-[#5e4cff] text-white text-[10px] font-mono font-medium">
+                POPULER
+              </span>
+              <div>
+                <span className="font-heading font-semibold text-lg text-[#272835] block">Pro Freelance</span>
+                <span className="font-heading font-semibold text-2xl text-[#272835] mt-2 block">
+                  Rp 49.000 <span className="text-xs text-[#818898] font-normal">/ bln</span>
                 </span>
-                <h3 className="font-heading font-bold text-xl text-white">Pro Freelance</h3>
-                <div className="mt-2 mb-4">
-                  <span className="text-3xl font-heading font-black text-white">Rp 99.000</span>
-                  <span className="text-xs text-slate-400 font-mono"> / bulan</span>
-                </div>
-                <ul className="space-y-2.5 text-xs text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span><strong>Tanpa Batas Galeri Aktif</strong></span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Custom Logo & Watermark Studio</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Catatan Khusus Klien per Foto</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Prioritas Caching Berkecepatan Tinggi</span>
-                  </li>
+                <p className="text-xs text-[#818898] mt-1 mb-5">Fotografer wedding & wisuda aktif.</p>
+                <ul className="space-y-2.5 text-xs text-[#666d80]">
+                  <li className="flex items-center gap-2">✓ Hingga 15 Galeri Aktif</li>
+                  <li className="flex items-center gap-2">✓ Proteksi Password Galeri</li>
+                  <li className="flex items-center gap-2">✓ Custom Kuota Foto per Sesi</li>
                 </ul>
               </div>
-              <div className="pt-8">
-                <Link
-                  href="/dashboard"
-                  className="w-full py-2.5 px-4 rounded-xl bg-white text-[#050505] font-heading font-bold text-xs flex items-center justify-center transition shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200"
-                >
-                  Pilih Paket Pro
-                </Link>
-              </div>
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="mt-6 w-full py-2 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition"
+              >
+                Pilih Pro
+              </button>
             </div>
 
-            {/* Studio Scale */}
-            <div className="glass rounded-3xl p-7 border border-white/10 flex flex-col justify-between">
-              <div className="space-y-4">
-                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-accent-amber/20 text-accent-amber border border-accent-amber/30">
-                  STUDIO SCALE
+            {/* Studio */}
+            <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] flex flex-col justify-between">
+              <div>
+                <span className="font-heading font-semibold text-lg text-[#272835] block">Studio Agency</span>
+                <span className="font-heading font-semibold text-2xl text-[#272835] mt-2 block">
+                  Rp 129.000 <span className="text-xs text-[#818898] font-normal">/ bln</span>
                 </span>
-                <h3 className="font-heading font-bold text-xl text-white">Studio Scale</h3>
-                <div className="mt-2 mb-4">
-                  <span className="text-3xl font-heading font-black text-white">Rp 249.000</span>
-                  <span className="text-xs text-slate-400 font-mono"> / bulan</span>
-                </div>
-                <ul className="space-y-2.5 text-xs text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Semua Fitur Pro Freelance</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Multi-User Akun Tim (Admin & Editor)</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-accent-emerald shrink-0" />
-                    <span>Custom Subdomain Galeri Klien</span>
-                  </li>
+                <p className="text-xs text-[#818898] mt-1 mb-5">Untuk studio foto & agency.</p>
+                <ul className="space-y-2.5 text-xs text-[#666d80]">
+                  <li className="flex items-center gap-2">✓ Galeri Tanpa Batas (Unlimited)</li>
+                  <li className="flex items-center gap-2">✓ Custom Branding Nama Studio</li>
+                  <li className="flex items-center gap-2">✓ Multi-editor WhatsApp Routing</li>
                 </ul>
               </div>
-              <div className="pt-8">
-                <Link
-                  href="/dashboard"
-                  className="w-full py-2.5 px-4 rounded-xl border border-white/15 text-white font-heading font-bold text-xs hover:bg-white/10 flex items-center justify-center transition"
-                >
-                  Pilih Studio
-                </Link>
-              </div>
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="mt-6 w-full py-2 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] text-xs font-medium hover:bg-[#f6f8fa] transition"
+              >
+                Pilih Studio
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="mt-auto py-8 border-t border-white/10 text-center text-xs text-slate-500 relative z-10 glass-soft">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 font-mono">
-            <span className="font-heading font-bold text-white">Picura</span>
-            <span>&copy; 2026. Refined Glass Design System.</span>
+      {/* 8. Footer */}
+      <footer className="py-12 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#818898]">
+          <div className="flex items-center gap-3">
+            <PicuraLogo className="h-5 w-auto text-[#272835]" />
+            <span>&copy; {new Date().getFullYear()} Picura. Platform Seleksi Foto untuk Fotografer.</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-400 font-mono text-[11px]">
-            <Link href="/" className="hover:text-white transition">Beranda</Link>
-            <Link href="/dashboard" className="hover:text-white transition">Dashboard</Link>
-            <Link href="/g/wedding-radit-vanya" className="hover:text-white transition">Demo Galeri</Link>
+
+          <div className="flex items-center gap-4">
+            <a
+              href="https://picura.web.id"
+              className="text-[#5e4cff] hover:underline inline-flex items-center gap-1 font-medium"
+            >
+              <span>picura.web.id</span>
+              <IconExternalLink className="w-3 h-3" />
+            </a>
           </div>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={() => {
+          window.location.href = "/dashboard";
+        }}
+      />
     </div>
   );
 }

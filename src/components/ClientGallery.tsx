@@ -2,16 +2,15 @@
 
 import { useState, useMemo } from "react";
 import {
-  Check,
-  Search,
-  Send,
-  Camera,
-  Maximize2,
-  AlertTriangle,
-} from "lucide-react";
+  IconCheck,
+  IconSearch,
+  IconPhoto,
+  IconAlert,
+  IconArrowRight,
+  IconEye,
+} from "@/components/Icons";
 import Lightbox, { LightboxPhoto } from "./Lightbox";
 import SelectionReviewModal from "./SelectionReviewModal";
-import AmbientGlow from "./AmbientGlow";
 
 interface ClientGalleryProps {
   gallery: {
@@ -111,34 +110,32 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pb-32 relative selection:bg-white selection:text-black font-sans">
-      <AmbientGlow />
-
+    <div className="min-h-screen bg-[#f6f8fa] text-[#36394a] pb-32 relative font-sans">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 glass border border-accent-rose/40 text-white text-xs font-mono font-semibold px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 animate-bounce">
-          <AlertTriangle className="w-4 h-4 text-accent-rose" />
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-[#272835] text-white text-xs font-mono font-medium px-5 py-2.5 rounded-full shadow-xl flex items-center gap-2">
+          <IconAlert className="w-4 h-4 text-[#dfdbff]" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Sticky Header Top Bar in Refined Glass */}
-      <div className="sticky top-0 z-30 glass-soft border-b border-white/10 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      {/* Sticky Header Top Bar */}
+      <div className="sticky top-0 z-30 bg-white border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 py-3 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Gallery Info & Quota Counter */}
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-heading font-extrabold text-base sm:text-lg text-white truncate max-w-[200px] sm:max-w-md">
+                <h1 className="font-heading font-semibold text-base sm:text-lg text-[#272835] truncate max-w-[200px] sm:max-w-md">
                   {gallery.title}
                 </h1>
                 {gallery.photographer?.name && (
-                  <span className="hidden sm:inline-block text-[11px] font-mono text-slate-300 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
-                    by {gallery.photographer.name}
+                  <span className="hidden sm:inline-block text-[11px] font-mono text-[#818898] bg-[#f6f8fa] px-2 py-0.5 rounded-full border border-[#cdd2d9]">
+                    oleh {gallery.photographer.name}
                   </span>
                 )}
               </div>
-              <div className="text-[11px] text-slate-400">
+              <div className="text-[11px] text-[#666d80]">
                 Pilih foto favorit Anda untuk proses retouching & editing
               </div>
             </div>
@@ -146,13 +143,13 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
             {/* Selection Counter Badge */}
             <div className="flex items-center gap-1.5 ml-2">
               <div
-                className={`px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1 rounded-full text-xs font-mono font-medium flex items-center gap-1.5 transition ${
                   selectedIds.size > 0
-                    ? "bg-white text-[#050505] shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-                    : "bg-white/10 text-slate-300 border border-white/10"
+                    ? "bg-[#dfdbff] text-[#5e4cff] border border-[#c8ccf3]"
+                    : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
                 }`}
               >
-                <Check className="w-3.5 h-3.5 stroke-[3]" />
+                <IconCheck className="w-3.5 h-3.5" />
                 <span>
                   {selectedIds.size} / {gallery.max_selection_quota || "∞"} Foto
                 </span>
@@ -162,40 +159,40 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
 
           {/* Filter Tabs & Search */}
           <div className="flex items-center gap-2">
-            <div className="flex bg-white/[0.05] p-1 rounded-xl text-xs font-mono border border-white/10">
+            <div className="flex bg-[#f6f8fa] p-1 rounded-[8px] text-xs font-medium border border-[#cdd2d9]">
               <button
                 onClick={() => setActiveTab("all")}
-                className={`px-3 py-1.5 rounded-lg transition ${
+                className={`px-3 py-1 rounded-[6px] transition ${
                   activeTab === "all"
-                    ? "bg-white text-[#050505] font-bold shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white text-[#272835] shadow-sm font-semibold"
+                    : "text-[#666d80] hover:text-[#272835]"
                 }`}
               >
                 Semua ({gallery.photos.length})
               </button>
               <button
                 onClick={() => setActiveTab("selected")}
-                className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-[6px] transition flex items-center gap-1.5 ${
                   activeTab === "selected"
-                    ? "bg-white text-[#050505] font-bold shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white text-[#272835] shadow-sm font-semibold"
+                    : "text-[#666d80] hover:text-[#272835]"
                 }`}
               >
                 <span>Terpilih</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/20">
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#dfdbff] text-[#5e4cff]">
                   {selectedIds.size}
                 </span>
               </button>
             </div>
 
             <div className="relative flex-1 sm:w-48">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <IconSearch className="w-3.5 h-3.5 text-[#818898] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari file..."
-                className="w-full text-xs pl-8 pr-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-slate-400 focus:outline-none focus:border-white/30 backdrop-blur-md"
+                className="w-full text-xs pl-8 pr-3 py-1.5 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] placeholder-[#a4abb8] focus:outline-none focus:border-[#5e4cff]"
               />
             </div>
           </div>
@@ -203,14 +200,14 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
       </div>
 
       {/* Main Content: Photo Grid */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-6 pt-6 relative z-10">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6">
         {filteredPhotos.length === 0 ? (
-          <div className="text-center py-20 glass rounded-3xl border border-white/10 p-8">
-            <Camera className="w-12 h-12 text-slate-500 mx-auto mb-3" />
-            <h3 className="text-sm font-heading font-bold text-white">Tidak ada foto ditemukan</h3>
-            <p className="text-xs text-slate-400 mt-1">
+          <div className="text-center py-20 bg-white rounded-[12px] border border-[#cdd2d9] p-8">
+            <IconPhoto className="w-10 h-10 text-[#818898] mx-auto mb-3" />
+            <h3 className="text-sm font-heading font-semibold text-[#272835]">Tidak ada foto ditemukan</h3>
+            <p className="text-xs text-[#666d80] mt-1">
               {activeTab === "selected"
-                ? "Anda belum memilih foto. Ketuk ikon centang pada foto untuk memilih."
+                ? "Anda belum memilih foto. Ketuk foto atau tombol pilih pada foto untuk memulai."
                 : "Tidak ada file yang cocok dengan pencarian."}
             </p>
           </div>
@@ -222,10 +219,10 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
               return (
                 <div
                   key={photo.id}
-                  className={`group relative aspect-square rounded-2xl overflow-hidden bg-white/5 border transition-all duration-300 ${
+                  className={`group relative aspect-square rounded-[12px] overflow-hidden bg-white border transition duration-200 ${
                     isSelected
-                      ? "border-white ring-2 ring-white/80 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-                      : "border-white/10 hover:border-white/30"
+                      ? "border-[#5e4cff] ring-2 ring-[#5e4cff]/30 shadow-sm"
+                      : "border-[#cdd2d9] hover:border-[#818898]"
                   }`}
                 >
                   {/* Photo Thumbnail */}
@@ -235,7 +232,7 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
                     alt={photo.filename}
                     loading="lazy"
                     onClick={() => setLightboxIndex(index)}
-                    className="w-full h-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
                   />
 
                   {/* Top Right: Selection Button */}
@@ -244,29 +241,28 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
                       e.stopPropagation();
                       handleToggleSelect(photo);
                     }}
-                    className={`absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full flex items-center justify-center transition shadow-lg ${
+                    className={`absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center transition shadow-md ${
                       isSelected
-                        ? "bg-white text-[#050505] scale-110 shadow-[0_0_15px_rgba(255,255,255,0.6)]"
-                        : "bg-black/50 text-white hover:bg-black/80 backdrop-blur-md border border-white/15"
+                        ? "bg-[#5e4cff] text-white scale-105"
+                        : "bg-white/90 text-[#36394a] hover:bg-white border border-[#cdd2d9]"
                     }`}
-                    title={isSelected ? "Batalkan Pilihan" : "Pilih Foto"}
+                    title={isSelected ? "Hapus dari pilihan" : "Pilih foto"}
                   >
-                    <Check
-                      className={`w-4 h-4 stroke-[3] ${
-                        isSelected ? "text-[#050505]" : "text-white"
-                      }`}
-                    />
+                    <IconCheck className="w-3.5 h-3.5" />
                   </button>
 
-                  {/* Bottom: Filename Badge & Lightbox Trigger */}
-                  <div
-                    onClick={() => setLightboxIndex(index)}
-                    className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 text-white flex items-center justify-between cursor-pointer opacity-90 group-hover:opacity-100 transition"
-                  >
-                    <span className="text-[10px] font-mono truncate max-w-[80%] text-slate-200">
+                  {/* Bottom Overlay Info */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2.5 pt-6 flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[11px] font-mono truncate max-w-[120px]">
                       {photo.filename}
                     </span>
-                    <Maximize2 className="w-3.5 h-3.5 text-slate-300 group-hover:scale-110 transition" />
+                    <button
+                      onClick={() => setLightboxIndex(index)}
+                      className="p-1 rounded-[4px] hover:bg-white/20 text-white/90"
+                      title="Perbesar foto"
+                    >
+                      <IconEye className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               );
@@ -275,26 +271,28 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
         )}
       </main>
 
-      {/* Floating Bottom Action Bar in Glass-Strong */}
+      {/* Floating Bottom Bar for Submission */}
       {selectedIds.size > 0 && (
-        <div className="fixed bottom-5 inset-x-4 max-w-xl mx-auto z-40 animate-fade-up">
-          <div className="glass-strong text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl flex items-center justify-between border border-white/20 backdrop-blur-3xl">
+        <div className="fixed bottom-6 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-40 max-w-lg w-full">
+          <div className="bg-white rounded-[12px] p-3 sm:p-4 border border-[#cdd2d9] shadow-2xl flex items-center justify-between gap-4">
             <div>
-              <div className="text-xs font-heading font-bold flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-accent-emerald animate-pulse" />
-                <span>{selectedIds.size} Foto Terpilih</span>
+              <div className="text-xs font-semibold text-[#272835] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#5e4cff]" />
+                <span>{selectedIds.size} Foto Dipilih</span>
               </div>
-              <div className="text-[11px] font-mono text-slate-400">
-                Maksimal kuota: {gallery.max_selection_quota} foto
+              <div className="text-[11px] text-[#666d80] mt-0.5">
+                {gallery.max_selection_quota > 0
+                  ? `Sisa kuota: ${gallery.max_selection_quota - selectedIds.size} foto`
+                  : "Siap dikirimkan ke fotografer"}
               </div>
             </div>
 
             <button
               onClick={() => setIsReviewModalOpen(true)}
-              className="py-2.5 px-4 rounded-xl bg-white text-[#050505] font-heading font-bold text-xs flex items-center gap-2 shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)] hover:bg-slate-200 transition"
+              className="py-2.5 px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-2 shrink-0 shadow-sm"
             >
-              <span>Kirim ke WhatsApp Editor</span>
-              <Send className="w-3.5 h-3.5" />
+              <span>Kirim Pilihan</span>
+              <IconArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -307,7 +305,7 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
           currentIndex={lightboxIndex}
           isOpen={lightboxIndex !== null}
           onClose={() => setLightboxIndex(null)}
-          onNavigate={(i) => setLightboxIndex(i)}
+          onNavigate={(idx) => setLightboxIndex(idx)}
           selectedIds={selectedIds}
           onToggleSelect={handleToggleSelect}
           isMaxReached={isMaxReached}
@@ -318,8 +316,9 @@ export default function ClientGallery({ gallery }: ClientGalleryProps) {
       <SelectionReviewModal
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
-        galleryTitle={gallery.title}
         selectedPhotos={selectedPhotosList}
+        editorWhatsapp={gallery.editor_whatsapp}
+        galleryTitle={gallery.title}
         onSubmit={handleSubmitSelection}
       />
     </div>

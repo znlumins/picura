@@ -2,12 +2,9 @@
 
 interface SegmentedUsageRingProps {
   size?: number;
-  totalPercent?: number;
 }
 
 export default function SegmentedUsageRing({ size = 128 }: SegmentedUsageRingProps) {
-  // Segment distribution with visual gaps:
-  // Blue: 95, Emerald: 70, Amber: 45, Slate: 40
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <svg
@@ -19,73 +16,43 @@ export default function SegmentedUsageRing({ size = 128 }: SegmentedUsageRingPro
           cx="60"
           cy="60"
           r="46"
-          stroke="rgba(255, 255, 255, 0.05)"
-          strokeWidth="16"
+          stroke="#eceff3"
+          strokeWidth="14"
           fill="none"
         />
 
-        {/* Segment 1: Blue (#3B82F6) - Google Drive Photo Sync */}
+        {/* Segment 1: Volt Violet (#5e4cff) */}
         <circle
           cx="60"
           cy="60"
           r="46"
-          stroke="#3B82F6"
-          strokeWidth="16"
+          stroke="#5e4cff"
+          strokeWidth="14"
           fill="none"
           strokeLinecap="round"
-          strokeDasharray="80 209"
+          strokeDasharray="120 169"
           strokeDashoffset="0"
-          className="transition-all duration-700 hover:opacity-80 cursor-pointer"
         />
 
-        {/* Segment 2: Emerald (#10B981) - Client Selection Completed */}
+        {/* Segment 2: Lavender (#c8ccf3) */}
         <circle
           cx="60"
           cy="60"
           r="46"
-          stroke="#10B981"
-          strokeWidth="16"
+          stroke="#c8ccf3"
+          strokeWidth="14"
           fill="none"
           strokeLinecap="round"
-          strokeDasharray="65 224"
-          strokeDashoffset="-92"
-          className="transition-all duration-700 hover:opacity-80 cursor-pointer"
-        />
-
-        {/* Segment 3: Amber (#F59E0B) - Active Reviews In Progress */}
-        <circle
-          cx="60"
-          cy="60"
-          r="46"
-          stroke="#F59E0B"
-          strokeWidth="16"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray="45 244"
-          strokeDashoffset="-170"
-          className="transition-all duration-700 hover:opacity-80 cursor-pointer"
-        />
-
-        {/* Segment 4: Slate (#64748B) - Available Quota Capacity */}
-        <circle
-          cx="60"
-          cy="60"
-          r="46"
-          stroke="#64748B"
-          strokeWidth="16"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray="35 254"
-          strokeDashoffset="-230"
-          className="transition-all duration-700 hover:opacity-80 cursor-pointer"
+          strokeDasharray="60 229"
+          strokeDashoffset="-135"
         />
       </svg>
 
       {/* Center Label */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="font-heading font-extrabold text-xl text-white">88%</span>
-        <span className="text-[9px] font-mono uppercase tracking-wider text-slate-400">
-          Capacity
+        <span className="font-heading font-semibold text-lg text-[#272835]">88%</span>
+        <span className="text-[9px] font-mono uppercase tracking-wider text-[#818898]">
+          Kapasitas
         </span>
       </div>
     </div>

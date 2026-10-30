@@ -2,14 +2,11 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import {
-  X,
-  ChevronLeft,
-  ChevronRight,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  Check,
-} from "lucide-react";
+  IconClose,
+  IconChevronLeft,
+  IconChevronRight,
+  IconCheck,
+} from "@/components/Icons";
 
 export interface LightboxPhoto {
   id: string;
@@ -94,13 +91,8 @@ export default function Lightbox({
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) return;
     const diff = touchStartX.current - touchEndX.current;
-    if (diff > 50) {
-      // Swiped left -> Next
-      handleNext();
-    } else if (diff < -50) {
-      // Swiped right -> Prev
-      handlePrev();
-    }
+    if (diff > 50) handleNext();
+    if (diff < -50) handlePrev();
     touchStartX.current = null;
     touchEndX.current = null;
   };
@@ -109,112 +101,113 @@ export default function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-[#0F172A]/95 backdrop-blur-md flex flex-col justify-between select-none animate-fadeIn"
+      className="fixed inset-0 z-50 bg-[#1a1b25]/95 backdrop-blur-md flex flex-col select-none font-sans"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-black/40 text-white z-10">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/10 z-10">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/10 text-slate-300">
-            {currentIndex + 1} / {photos.length}
-          </span>
-          <span className="text-sm font-medium text-slate-200 truncate max-w-[220px] sm:max-w-md">
+          <span className="text-white text-xs sm:text-sm font-mono truncate max-w-[200px] sm:max-w-xs">
             {currentPhoto.filename}
+          </span>
+          <span className="text-xs text-[#a4abb8] font-mono">
+            {currentIndex + 1} / {photos.length}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Zoom Controls */}
-          <div className="hidden sm:flex items-center bg-white/10 rounded-lg p-0.5 mr-2">
-            <button
-              onClick={() => setZoom((z) => Math.max(1, z - 0.25))}
-              className="p-1.5 text-slate-300 hover:text-white rounded hover:bg-white/10"
-              title="Perkecil"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
+          <button
+            onClick={() => setZoom((z) => Math.min(z + 0.5, 3))}
+            className="p-2 rounded-[8px] text-[#a4abb8] hover:text-white hover:bg-white/10 transition text-xs font-mono"
+            title="Perbesar"
+          >
+            +
+          </button>
+          <button
+            onClick={() => setZoom((z) => Math.max(z - 0.5, 1))}
+            className="p-2 rounded-[8px] text-[#a4abb8] hover:text-white hover:bg-white/10 transition text-xs font-mono"
+            title="Perkecil"
+          >
+            -
+          </button>
+          {zoom > 1 && (
             <button
               onClick={() => setZoom(1)}
-              className="p-1.5 text-slate-300 hover:text-white rounded hover:bg-white/10"
+              className="p-2 rounded-[8px] text-[#a4abb8] hover:text-white hover:bg-white/10 transition text-xs font-mono"
               title="Reset Zoom"
             >
-              <RotateCcw className="w-4 h-4" />
+              1x
             </button>
-            <button
-              onClick={() => setZoom((z) => Math.min(3, z + 0.25))}
-              className="p-1.5 text-slate-300 hover:text-white rounded hover:bg-white/10"
-              title="Perbesar"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-          </div>
+          )}
 
-          {/* Toggle Selection inside Lightbox */}
-          <button
-            onClick={() => onToggleSelect(currentPhoto)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm ${
-              isSelected
-                ? "bg-brand-violet text-white ring-2 ring-indigo-400"
-                : isMaxReached
-                ? "bg-white/10 text-slate-400 cursor-not-allowed"
-                : "bg-white/20 text-white hover:bg-white/30"
-            }`}
-          >
-            <Check className={`w-4 h-4 ${isSelected ? "text-white" : "text-slate-300"}`} />
-            <span>{isSelected ? "Terpilih" : "Pilih Foto"}</span>
-          </button>
-
-          {/* Close button */}
+          {/* Close */}
           <button
             onClick={onClose}
-            className="p-2 rounded-lg bg-white/10 text-slate-200 hover:text-white hover:bg-white/20 transition ml-1"
+            className="p-2 rounded-[8px] text-[#a4abb8] hover:text-white hover:bg-white/10 transition ml-2"
             title="Tutup (Esc)"
           >
-            <X className="w-5 h-5" />
+            <IconClose className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      {/* Main Image Display */}
-      <div className="relative flex-1 flex items-center justify-center p-2 sm:p-6 overflow-hidden">
-        {/* Previous Button */}
+      {/* Main Image Area */}
+      <div className="flex-1 relative flex items-center justify-center overflow-hidden p-4">
+        {/* Navigation Arrows */}
         <button
           onClick={handlePrev}
-          className="absolute left-2 sm:left-4 z-20 p-2 sm:p-3 rounded-full bg-black/50 text-white/80 hover:text-white hover:bg-black/75 transition backdrop-blur-sm"
-          title="Foto Sebelumnya (Panah Kiri)"
+          className="absolute left-3 sm:left-6 z-10 p-3 rounded-full bg-[#272835]/80 text-white hover:bg-[#272835] border border-white/10 transition shadow-lg"
+          title="Foto Sebelumnya"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <IconChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Image with zoom transformation */}
+        <button
+          onClick={handleNext}
+          className="absolute right-3 sm:right-6 z-10 p-3 rounded-full bg-[#272835]/80 text-white hover:bg-[#272835] border border-white/10 transition shadow-lg"
+          title="Foto Selanjutnya"
+        >
+          <IconChevronRight className="w-5 h-5" />
+        </button>
+
+        {/* The Image */}
         <div
-          className="max-w-full max-h-full flex items-center justify-center transition-transform duration-200 ease-out"
+          className="max-w-full max-h-full flex items-center justify-center transition-transform duration-200"
           style={{ transform: `scale(${zoom})` }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={currentPhoto.preview_url || currentPhoto.thumbnail_url}
+            src={currentPhoto.preview_url}
             alt={currentPhoto.filename}
-            className="max-h-[80vh] max-w-[92vw] object-contain rounded-sm shadow-2xl transition-opacity duration-300 select-none"
+            className="max-h-[80vh] max-w-[90vw] object-contain rounded-[8px] shadow-2xl"
             draggable={false}
           />
         </div>
-
-        {/* Next Button */}
-        <button
-          onClick={handleNext}
-          className="absolute right-2 sm:right-4 z-20 p-2 sm:p-3 rounded-full bg-black/50 text-white/80 hover:text-white hover:bg-black/75 transition backdrop-blur-sm"
-          title="Foto Selanjutnya (Panah Kanan)"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
       </div>
 
-      {/* Bottom info helper */}
-      <div className="py-2.5 px-4 bg-black/40 text-center text-[11px] text-slate-400 hidden sm:block">
-        Gunakan tombol panah keyboard atau geser (swipe) untuk berganti foto. Tekan Spasi untuk memilih foto.
+      {/* Bottom Action Bar */}
+      <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between z-10 bg-[#1a1b25]">
+        <div className="text-xs text-[#a4abb8] font-mono hidden sm:block">
+          Gunakan tombol panah keyboard atau spasi untuk memilih
+        </div>
+
+        <button
+          onClick={() => onToggleSelect(currentPhoto)}
+          disabled={!isSelected && isMaxReached}
+          className={`ml-auto flex items-center gap-2 px-5 py-2.5 rounded-[8px] text-xs font-medium transition ${
+            isSelected
+              ? "bg-[#5e4cff] text-white shadow-md hover:opacity-90"
+              : isMaxReached
+              ? "bg-[#272835] text-[#818898] border border-white/10 cursor-not-allowed"
+              : "bg-white text-[#272835] hover:bg-[#f6f8fa]"
+          }`}
+        >
+          <IconCheck className="w-4 h-4" />
+          <span>{isSelected ? "Foto Dipilih (Hapus)" : isMaxReached ? "Batas Kuota Tercapai" : "Pilih Foto Ini"}</span>
+        </button>
       </div>
     </div>
   );

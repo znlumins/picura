@@ -14,89 +14,72 @@ export default function HeroBalanceChart({
   activeRate = "+28.4%",
 }: HeroBalanceChartProps) {
   return (
-    <div className="glass-strong rounded-3xl p-6 sm:p-8 border border-white/15 relative overflow-hidden animate-fade-up">
+    <div className="bg-white rounded-[12px] p-6 sm:p-7 border border-[#cdd2d9] relative overflow-hidden">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        {/* Left Side: Outfit 48px Balance Display & Stats */}
-        <div className="space-y-6 max-w-md">
+        {/* Left Side */}
+        <div className="space-y-5 max-w-md">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
-                Total Estimasi Nilai Sesi / Saldo Editor
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#818898] font-medium">
+                Estimasi Nilai Sesi / Billing Studio
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-accent-emerald/15 text-accent-emerald border border-accent-emerald/30 font-bold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#dfdbff] text-[#5e4cff] font-medium">
                 {activeRate}
               </span>
             </div>
-            <div className="font-heading font-extrabold text-4xl sm:text-5xl text-white tracking-tight">
+            <div className="font-heading font-semibold text-3xl sm:text-4xl text-[#272835] tracking-tight">
               {balanceAmount}
             </div>
           </div>
 
-          {/* Bottom stats row with 18px semibold figures & 1px top border */}
-          <div className="pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
+          {/* Stats Row */}
+          <div className="pt-4 border-t border-[#eceff3] grid grid-cols-2 gap-4">
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#818898] block mb-0.5">
                 Foto Terkelola
               </span>
-              <span className="font-heading font-semibold text-[18px] text-white">
+              <span className="font-heading font-semibold text-lg text-[#272835]">
                 {totalPhotosCount} Files
               </span>
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">
-                Seleksi Terkonfirmasi
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#818898] block mb-0.5">
+                Seleksi Selesai
               </span>
-              <span className="font-heading font-semibold text-[18px] text-accent-emerald">
-                {totalSelectionsCount} Sesi Selesai
+              <span className="font-heading font-semibold text-lg text-[#5e4cff]">
+                {totalSelectionsCount} Klien
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Large SVG Area (420px x 130px) with smooth white line chart & shimmer animation */}
-        <div className="w-full lg:w-[420px] h-[130px] relative shrink-0">
-          <svg
-            viewBox="0 0 420 130"
-            className="w-full h-full overflow-visible"
-            fill="none"
-          >
+        {/* Right Side: Clean Line Chart */}
+        <div className="w-full lg:w-[400px] h-[120px] relative shrink-0">
+          <svg viewBox="0 0 400 120" className="w-full h-full" fill="none">
             <defs>
-              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
+              <linearGradient id="violetChartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#5e4cff" stopOpacity="0.12" />
+                <stop offset="100%" stopColor="#5e4cff" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
-            {/* Gradient Area Fill */}
             <path
-              d="M 10 110 C 60 95, 100 120, 150 70 C 200 30, 240 85, 290 40 C 340 10, 380 45, 410 20 L 410 130 L 10 130 Z"
-              fill="url(#chartGradient)"
+              d="M 10 100 C 60 85, 100 110, 150 60 C 200 25, 240 75, 290 35 C 340 10, 370 35, 395 15 L 395 120 L 10 120 Z"
+              fill="url(#violetChartGradient)"
             />
 
-            {/* Smooth White Line Chart with shimmerLine stroke-dash animation */}
             <path
-              d="M 10 110 C 60 95, 100 120, 150 70 C 200 30, 240 85, 290 40 C 340 10, 380 45, 410 20"
-              stroke="#FFFFFF"
-              strokeWidth="2.5"
+              d="M 10 100 C 60 85, 100 110, 150 60 C 200 25, 240 75, 290 35 C 340 10, 370 35, 395 15"
+              stroke="#5e4cff"
+              strokeWidth="2"
               strokeLinecap="round"
-              className="animate-shimmer-line"
             />
 
-            {/* Glowing Peak Point */}
-            <circle cx="410" cy="20" r="4.5" fill="#FFFFFF" />
-            <circle
-              cx="410"
-              cy="20"
-              r="10"
-              stroke="#FFFFFF"
-              strokeWidth="1.5"
-              fill="none"
-              opacity="0.4"
-            />
+            <circle cx="395" cy="15" r="4" fill="#5e4cff" />
           </svg>
 
-          <div className="absolute right-0 bottom-0 text-[10px] font-mono text-slate-500">
-            Aktivitas 30 Hari Terakhir
+          <div className="absolute right-0 bottom-0 text-[10px] font-mono text-[#818898]">
+            Trend 30 Hari
           </div>
         </div>
       </div>

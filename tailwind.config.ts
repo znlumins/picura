@@ -9,40 +9,46 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        dark: {
-          base: "#050505",
-          surface: "#0A0A0A",
-          card: "rgba(255, 255, 255, 0.04)",
-          border: "rgba(255, 255, 255, 0.10)",
+        canvas: {
+          white: "#ffffff",
+          mist: "#f6f8fa",
+          frost: "#eceff3",
         },
-        accent: {
-          blue: "#3B82F6",
-          emerald: "#10B981",
-          rose: "#F43F5E",
-          amber: "#F59E0B",
-          slate: "#94A3B8",
+        border: {
+          ash: "#cdd2d9",
+          mist: "#c1c7d0",
         },
-        brand: {
-          primary: "#FFFFFF",
-          dark: "#050505",
-          violet: "#6366F1",
-          violetHover: "#4F46E5",
-          violetLight: "rgba(99, 102, 241, 0.15)",
-          emerald: "#10B981",
-          emeraldHover: "#059669",
-          emeraldLight: "rgba(16, 185, 129, 0.15)",
-          bgLight: "#050505",
-          border: "rgba(255, 255, 255, 0.10)",
-          muted: "#94A3B8",
+        ink: {
+          fog: "#a4abb8",
+          steel: "#818898",
+          slate: "#666d80",
+          graphite: "#36394a",
+          midnight: "#272835",
+          onyx: "#1a1b25",
+        },
+        violet: {
+          volt: "#5e4cff",
+          lavender: "#c8ccf3",
+          lilac: "#dfdbff",
         },
       },
       fontFamily: {
-        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        heading: ["Outfit", "Inter", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        heading: ["'Space Grotesk'", "Inter", "-apple-system", "sans-serif"],
+        mono: ["'IBM Plex Mono'", "JetBrains Mono", "monospace"],
       },
-      transitionTimingFunction: {
-        glass: "cubic-bezier(0.16, 1, 0.3, 1)",
+      borderRadius: {
+        card: "12px",
+        btn: "8px",
+      },
+      boxShadow: {
+        subtle: "rgba(39, 40, 53, 0.08) 0px 12px 12px -6px, rgba(39, 40, 53, 0.1) 0px 0px 0px 1px",
+        preview: "rgba(0, 0, 0, 0.05) 0px 2px 5px 0px, rgba(0, 0, 0, 0.04) 0px 9px 9px 0px, rgba(39, 40, 53, 0.08) 0px 24px 24px -12px",
+        card: "rgba(39, 40, 53, 0.05) 0px 0px 0px 1px",
+      },
+      letterSpacing: {
+        tighter: "-0.025em",
+        tight: "-0.015em",
       },
     },
   },

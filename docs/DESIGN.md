@@ -1,112 +1,67 @@
-# Picura - Refined Glass Design System
+# Lightdash — Style Reference
+> violet pixel-grid on drafting paper
 
-# Summary
+**Theme:** light
 
-A sophisticated glass-themed fintech dashboard with a minimalist black and white primary aesthetic, using high-blur glass surfaces, subtle ambient lighting, and vibrant accent colors for data visualization and micro-interactions.
+Source measurements are normalized; roles and recommendations are interpreted. Font summary lists are independent, not paired by position. HTML examples are reconstructions, not source components.
 
-# Style
+Lightdash operates as a calm, developer-first command center: a near-white canvas populated by slate-gray typography, subtle hairline borders, and one saturated violet (#5e4cff) that powers every interactive moment. The brand voice is confident and quiet — headlines are set in a custom geometric sans (Space Grotesk / Britti Sans) at 48–76px with aggressively tight tracking (-0.025em), making them feel architectural rather than decorative. Body copy uses Inter at 14–18px with slightly negative letter-spacing, keeping dense information readable without feeling heavy. Surfaces layer gently from #ffffff canvas to #f6f8fa sections to 12px-rounded cards, and a pixel-art violet mosaic in the hero is the only ornamental gesture — a deliberate nod to the 'code-native' identity. Components are flat and borderless-by-default; elevation is borrowed from layered rgba shadows tinted with the brand's slate (#272835) rather than neutral gray, which keeps every card visually on-brand.
 
-The style essence is **'Refined Glass'**. It relies on a neutral grayscale base with backdrop blurs fixed at 35px. Borders are thin (1px) and translucent white. Typography is clean and modern, using Outfit for branding/headers and Inter for body text. Animations are smooth and use custom cubic-beziers for a premium, weighty feel. Depth is created through layered glass effects rather than heavy shadows.
+## Tokens — Colors
 
-## Spec
+| Name | Value | Token | Role |
+|------|-------|-------|------|
+| Canvas White | `#ffffff` | `--color-canvas-white` | Primary page background, card surfaces, input fills |
+| Cloud Mist | `#f6f8fa` | `--color-cloud-mist` | Alternate section background, subtle surface tier below white |
+| Frost Tint | `#eceff3` | `--color-frost-tint` | Tertiary surface, muted background blocks |
+| Ash Border | `#cdd2d9` | `--color-ash-border` | Hairline dividers, card borders, table separators |
+| Mist Border | `#c1c7d0` | `--color-mist-border` | Secondary borders, disabled state outlines |
+| Fog Text | `#a4abb8` | `--color-fog-text` | Helper text, link underlines in body copy, placeholder text |
+| Steel Text | `#818898` | `--color-steel-text` | Muted metadata, timestamps, caption text |
+| Slate Body | `#666d80` | `--color-slate-body` | Secondary body text, descriptions, supporting paragraphs |
+| Graphite Heading | `#36394a` | `--color-graphite-heading` | Primary headings, strong body text, high-emphasis content |
+| Midnight Ink | `#272835` | `--color-midnight-ink` | Dark surface fills, announcement bar, code terminal background, primary button background |
+| Onyx | `#1a1b25` | `--color-onyx` | Deepest text, high-contrast dark surfaces |
+| Volt Violet | `#5e4cff` | `--color-volt-violet` | Primary CTA fill, active link, brand accent — vivid violet against slate neutrals is the single chromatic punctuation of the entire system |
+| Lavender Wash | `#c8ccf3` | `--color-lavender-wash` | Muted accent background, hero pixel-art mid-tones, tag chips |
+| Lilac Whisper | `#dfdbff` | `--color-lilac-whisper` | Tertiary accent surface, selected row tint, soft callout |
 
-* **Base Canvas:** Deep black base (`#050505`) with a subtle grain texture overlay (35% opacity).
-* **Glass Panels:** `backdrop-filter: blur(35px) saturate(150%)`.
-* **Glass Backgrounds:** Linear gradients from top-to-bottom: `linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%)`.
-* **Glass Soft:** `backdrop-filter: blur(20px)`, `rgba(255,255,255,0.035)`.
-* **Glass Strong:** `backdrop-filter: blur(35px)`, `linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 100%)`.
-* **Borders & Highlights:** 1px solid border at `rgba(255,255,255,0.10)` with an inner white highlight `box-shadow: inset 0 1px 0 rgba(255,255,255,0.14)`.
-* **Typography:**
-  - Headers / Branding: `Outfit`, Semibold (600), tracking `-0.025em`.
-  - Body Text: `Inter`, 400-500 weight.
-  - Data / Currency / Codes: `JetBrains Mono`, 500-600 weight.
-* **Color Palette:**
-  - Primary Base: `#050505`
-  - Primary White: `#FFFFFF`
-  - Secondary Slate: `#94A3B8`
-  - Slate Muted: `#64748B`
-  - Accent Blue: `#3B82F6` (Usage / Analytics)
-  - Accent Emerald: `#10B981` (Savings / Success / Settled)
-  - Accent Rose: `#F43F5E` (Spending / Quota Limits)
-  - Accent Amber: `#F59E0B` (Pending / Warnings)
-* **Animations:** All transitions must use `cubic-bezier(0.16, 1, 0.3, 1)` with a duration of `0.3s` to `0.6s`.
+## Tokens — Typography
 
----
+### Space Grotesk / Britti Sans — Display headlines and hero copy
+- **Substitute:** Space Grotesk Bold / Semibold
+- **Weights:** 600
+- **Sizes:** 18px, 24px, 32px, 48px, 56px, 76px
+- **Line height:** 0.95 - 1.10
+- **Letter spacing:** -0.025em at 56-76px, -0.02em at 24-48px
+- **Role:** Display headlines and hero copy. Aggressive tracking makes text feel architectural and code-like.
 
-# Layout & Structure
+### Inter — Body copy, UI controls, paragraphs
+- **Weights:** 400, 500, 600
+- **Sizes:** 12px, 13px, 14px, 15px, 16px, 18px
+- **Line height:** 1.33 - 1.63
+- **Letter spacing:** -0.010em to -0.020em
+- **Role:** Body copy, buttons, badges, form labels, nav links.
 
-A classic dashboard structure featuring a fixed-width left sidebar and a flexible main content area. Content is organized into a modular bento-style grid with varying card sizes to establish visual hierarchy.
+### IBM Plex Mono — Code snippets, terminal, photo tags, technical metadata
+- **Weights:** 400, 500
+- **Sizes:** 12px, 13px
+- **Letter spacing:** -0.020em
+- **Role:** Code blocks, technical IDs, photographer metadata.
 
-## Sidebar
-* **Width:** 280px.
-* **Background:** `glass-soft` (blur 20px, 3.5% opacity).
-* **Layout:** Vertical flex (`h-screen sticky top-0`).
-* **Elements:**
-  - Top logo area (44px square white box with black character `P`).
-  - Navigation links with 17px icons and 14px text.
-  - Floating 'wallet card' at the bottom with a `float` animation (`translateY: -6px`, 5s duration).
+## Spacing & Shapes
+- **Base unit:** 4px
+- **Border Radius:**
+  - Cards: `12px`
+  - Buttons & Inputs: `8px`
+  - Badges & Pills: `999px`
+- **Shadows:**
+  - Standard cards: `none` (1px `#cdd2d9` border)
+  - Subtle elevated cards: `rgba(39, 40, 53, 0.08) 0px 12px 12px -6px, rgba(39, 40, 53, 0.1) 0px 0px 0px 1px`
+  - Product preview: `rgba(0, 0, 0, 0.05) 0px 2px 5px 0px, rgba(0, 0, 0, 0.04) 0px 9px 9px 0px, rgba(39, 40, 53, 0.08) 0px 24px 24px -12px`
 
-## Header
-* **Layout:** Horizontal flex.
-* **Left:** 30px display heading in `Outfit` with 14px date/greeting subtext.
-* **Right:** 
-  - 224px wide glass search bar.
-  - White primary button with heavy glow `shadow-[0_10px_28px_-8px_rgba(255,255,255,0.4)]`.
-  - Circular avatar (40px) with slate gradient.
-
-## Hero Balance Section
-* **Style:** Large `glass-strong` card (blur 35px, 14% top opacity).
-* **Layout:** Flex-between.
-* **Left:** `Outfit` 48px balance display with 11px uppercase labels. Bottom stats row with 18px semibold figures and 1px top border.
-* **Right:** Large SVG area (420px x 130px) featuring a smooth white line chart with a `shimmerLine` stroke-dash animation.
-
-## Metrics Grid
-* **Structure:** Three-column grid. Each card is `glass` (35px blur).
-* **Card 1 (Rose Accent):** Spending / Quota Consumption with small SVG area chart (`h-14`) at the bottom.
-* **Card 2 (Blue Accent):** API Usage / Photo Processing with small SVG area chart (`h-14`) at the bottom.
-* **Card 3 (Emerald Accent):** Savings / Completed Selections with small SVG area chart (`h-14`) at the bottom.
-
-## Recent Activity
-* **Style:** Full-width `glass-strong` panel.
-* **Header:** Title with 'View all' action link.
-* **Content:** Vertical list of rows with hover states `background: rgba(255,255,255,0.025)`.
-* **Row Elements:**
-  - 40px rounded-xl glass boxes for icons with themed colors (Blue, Emerald, Amber).
-  - Activity details & timestamp.
-  - Right-aligned monospaced currency/metric values (`JetBrains Mono`).
-
----
-
-# Special Components
-
-## Liquid Glass Card
-A multi-layered glass panel with sophisticated lighting effects:
-* `backdrop-filter: blur(35px) saturate(150%)`.
-* `background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%)`.
-* `box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 20px 40px -15px rgba(0,0,0,0.5)`.
-* 1px border gradient: `linear-gradient(135deg, rgba(255,255,255,0.28), rgba(255,255,255,0.02) 35%, rgba(255,255,255,0) 60%)`.
-
-## Ambient Background Glow
-Subtle, non-distracting background lighting to add depth to the dark base:
-* Top-left: `radial-gradient(circle, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 70%)` with a 55px blur filter.
-* Bottom-right: `radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 70%)`.
-* Dimensions: 640px – 720px each.
-
-## Segmented AI Usage Ring
-A multi-colored SVG donut chart with rounded caps and gap effects:
-* SVG radius 46, stroke-width 16.
-* Segments using `stroke-dasharray` and negative `stroke-dashoffset`:
-  - Blue (`#3B82F6`)
-  - Emerald (`#10B981`)
-  - Amber (`#F59E0B`)
-  - Slate (`#64748B`)
-* `stroke-linecap: round`.
-
----
-
-# Special Notes & Guardrails
-
-* **MUST:** Maintain the 35px blur and 1px border on all glass panels to ensure depth consistency.
-* **MUST NOT:** Use solid black or heavy flat shadows for panel definition; use border highlights and translucent layers instead.
-* **MUST:** Keep interactive elements like 'Quick Action' buttons on a `glass-soft` background to avoid visual clutter.
-* **MUST:** Animate all elements on entrance using a fade-up with staggered delays (`0.05s` increments) using `cubic-bezier(0.16, 1, 0.3, 1)`.
+## Brand Assets & Anti-AI-Slop Rules
+1. **Official Logo:** Uses official Picura SVG vector mark & logotype (`public/logo.svg`).
+2. **No Lucide AI-Slop Icons:** Do not use generic Lucide icons or icons inside colored circles. Use clean, bespoke, minimalist SVG line glyphs or typographic indicators.
+3. **One Violet per Viewport:** Use `#5e4cff` for the primary CTA/action only. Rest of the interface relies on calm, pristine slate and graphite neutrals.
+4. **Pixel-Art Accent Grid:** Subtle 4px-12px decorative mosaic in `#5e4cff`, `#c8ccf3`, `#dfdbff`.
