@@ -65,7 +65,6 @@ export default function Home() {
             <a href="#features" className="hover:text-[#5e4cff] transition">Fitur</a>
             <a href="#how-it-works" className="hover:text-[#5e4cff] transition">Cara Kerja</a>
             <a href="#pricing" className="hover:text-[#5e4cff] transition">Harga</a>
-            <Link href="/dashboard" className="hover:text-[#5e4cff] transition">Demo Dashboard</Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -134,12 +133,12 @@ export default function Home() {
                   </button>
                 )}
 
-                <Link
-                  href="/dashboard"
+                <button
+                  onClick={() => setIsAuthOpen(true)}
                   className="px-5 py-3 rounded-[8px] bg-white text-[#36394a] font-medium text-sm border border-[#cdd2d9] hover:bg-[#f6f8fa] transition flex items-center gap-2"
                 >
-                  <span>Coba Live Dashboard</span>
-                </Link>
+                  <span>Masuk ke Akun</span>
+                </button>
               </div>
 
               {/* Sub-proof metadata */}
@@ -175,71 +174,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Product Preview Card (Browser Frame) */}
-      <section className="py-16 bg-[#f6f8fa] border-b border-[#cdd2d9]">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-[12px] border border-[#cdd2d9] overflow-hidden shadow-subtle">
-            {/* Browser Chrome Header */}
-            <div className="px-4 py-3 bg-[#f6f8fa] border-b border-[#cdd2d9] flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-[#cdd2d9]" />
-                <span className="w-3 h-3 rounded-full bg-[#cdd2d9]" />
-                <span className="w-3 h-3 rounded-full bg-[#cdd2d9]" />
-              </div>
-              <div className="text-[11px] font-mono text-[#818898] bg-white px-4 py-0.5 rounded-[4px] border border-[#cdd2d9]">
-                picura.web.id/g/wedding-radit-vanya
-              </div>
-              <div className="w-12" />
-            </div>
 
-            {/* Mocked Interface Fragment */}
-            <div className="p-6 sm:p-8 space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#eceff3]">
-                <div>
-                  <h3 className="font-heading font-semibold text-xl text-[#272835]">
-                    Wedding Radit & Vanya
-                  </h3>
-                  <p className="text-xs text-[#666d80]">
-                    Pilih 20 foto terbaik untuk album cetak & retouching
-                  </p>
-                </div>
-                <div className="px-3.5 py-1.5 rounded-full bg-[#dfdbff] text-[#5e4cff] font-mono text-xs font-medium">
-                  20 / 20 Foto Dipilih
-                </div>
-              </div>
-
-              {/* Grid of sample thumbnail tiles */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  { name: "IMG_0412.JPG", status: "Dipilih" },
-                  { name: "IMG_0415.JPG", status: "Dipilih" },
-                  { name: "IMG_0489.JPG", status: "Dipilih" },
-                  { name: "IMG_0502.JPG", status: "Preview" },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="aspect-square bg-[#f6f8fa] rounded-[8px] border border-[#cdd2d9] p-3 flex flex-col justify-between relative"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-mono text-[#818898]">0{i + 1}</span>
-                      <span
-                        className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-                          item.status === "Dipilih"
-                            ? "bg-[#5e4cff] text-white"
-                            : "border border-[#cdd2d9] bg-white text-transparent"
-                        }`}
-                      >
-                        ✓
-                      </span>
-                    </div>
-                    <span className="text-xs font-mono text-[#272835] truncate">{item.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 5. Features Grid (2 or 3 Columns) */}
       <section id="features" className="py-20 bg-white border-b border-[#cdd2d9]">
@@ -269,7 +204,7 @@ export default function Home() {
 
             {/* Feature 2 */}
             <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] space-y-3">
-              <div className="w-9 h-9 rounded-[8px] bg-[#dfdbff] text-[#5e4cff] flex items-center justify-center font-mono text-sm font-semibold">
+              <div className="w-9 h-9 rounded-[8px] bg-[#ecfdf5] text-[#10b981] flex items-center justify-center font-mono text-sm font-semibold">
                 <IconWhatsApp className="w-5 h-5" />
               </div>
               <h3 className="font-heading font-semibold text-lg text-[#272835]">
@@ -296,26 +231,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Code Terminal Card (Technical proof) */}
-      <section className="py-16 bg-[#f6f8fa] border-b border-[#cdd2d9]">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[#1a1b25] rounded-[12px] p-6 sm:p-8 text-white space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs font-mono text-[#818898]">
-              <span>WHATSAPP URL PROTOCOL & DRIVE CDN PIPELINE</span>
-              <span className="text-[#5e4cff]">REST API v3</span>
-            </div>
-            <pre className="text-xs font-mono leading-relaxed overflow-x-auto text-[#a4abb8]">
-              <span className="text-[#818898]">{"// 1. Direct CDN Fetch from Google Drive"}</span>{"\n"}
-              <span className="text-[#5e4cff]">const</span> thumbUrl = <span className="text-[#c8ccf3]">&apos;https://lh3.googleusercontent.com/d/&apos;</span> + fileId + <span className="text-[#c8ccf3]">&apos;=s400&apos;</span>;{"\n\n"}
-              <span className="text-[#818898]">{"// 2. Structured WhatsApp Dispatch Payload"}</span>{"\n"}
-              <span className="text-[#5e4cff]">const</span> message = <span className="text-[#c8ccf3]">&apos;Halo! Berikut foto terpilih: &apos;</span> + selectedFiles.join(<span className="text-[#c8ccf3]">&apos;, &apos;</span>);{"\n"}
-              <span className="text-[#5e4cff]">const</span> waUrl = <span className="text-[#c8ccf3]">&apos;https://wa.me/&apos;</span> + studioWhatsapp + <span className="text-[#c8ccf3]">&apos;?text=&apos;</span> + encodeURIComponent(message);
-            </pre>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Pricing Section */}
+      {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-white border-b border-[#cdd2d9]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-xl mx-auto space-y-2">

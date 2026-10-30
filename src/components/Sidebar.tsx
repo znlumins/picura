@@ -85,7 +85,7 @@ export default function Sidebar({
             >
               <div className="flex items-center gap-2.5">
                 <IconPhoto className="w-4 h-4 shrink-0 text-[#818898]" />
-                <span>Beranda & Demo</span>
+                <span>Beranda Utama</span>
               </div>
             </Link>
 
