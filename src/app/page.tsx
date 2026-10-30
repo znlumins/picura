@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PicuraLogo } from "@/components/PicuraLogo";
-import AuthModal from "@/components/AuthModal";
 import {
   IconArrowRight,
   IconCheck,
@@ -22,7 +21,6 @@ export default function Home() {
     subscriptionTier: string;
     studioName?: string | null;
   } | null>(null);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("picura_token") : null;
@@ -47,13 +45,13 @@ export default function Home() {
         <span className="font-medium text-slate-200">
           Stop Salin Manual Kode Foto! Klien Kurasi dari Google Drive & Langsung Terkirim Instan ke WhatsApp.
         </span>
-        <button
-          onClick={() => setIsAuthOpen(true)}
+        <Link
+          href="/register"
           className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#14151f] hover:bg-[#5e4cff] hover:text-white font-semibold text-[11px] transition-all duration-200 shadow-sm active:scale-95"
         >
           <span>⚡ Bikin Galeri Klien Pertama — 100% Gratis!</span>
           <IconArrowRight className="w-3 h-3" />
-        </button>
+        </Link>
       </div>
 
       {/* 2. Primary Navigation */}
@@ -80,18 +78,18 @@ export default function Home() {
               </Link>
             ) : (
               <>
-                <button
-                  onClick={() => setIsAuthOpen(true)}
+                <Link
+                  href="/login"
                   className="px-3.5 py-1.5 rounded-[8px] text-xs font-medium text-[#36394a] hover:bg-[#f6f8fa] border border-[#cdd2d9] transition"
                 >
                   Masuk
-                </button>
-                <button
-                  onClick={() => setIsAuthOpen(true)}
+                </Link>
+                <Link
+                  href="/register"
                   className="px-4 py-2 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition"
                 >
                   Mulai Gratis
-                </button>
+                </Link>
               </>
             )}
           </div>
@@ -127,21 +125,21 @@ export default function Home() {
                     <IconArrowRight className="w-4 h-4" />
                   </Link>
                 ) : (
-                  <button
-                    onClick={() => setIsAuthOpen(true)}
+                  <Link
+                    href="/register"
                     className="px-6 py-3 rounded-[8px] bg-[#5e4cff] text-white font-medium text-sm hover:opacity-90 transition flex items-center gap-2 shadow-sm"
                   >
                     <span>Mulai Buat Galeri Gratis</span>
                     <IconArrowRight className="w-4 h-4" />
-                  </button>
+                  </Link>
                 )}
 
-                <button
-                  onClick={() => setIsAuthOpen(true)}
+                <Link
+                  href="/login"
                   className="px-5 py-3 rounded-[8px] bg-white text-[#36394a] font-medium text-sm border border-[#cdd2d9] hover:bg-[#f6f8fa] transition flex items-center gap-2"
                 >
                   <span>Masuk ke Akun</span>
-                </button>
+                </Link>
               </div>
 
               {/* Sub-proof metadata */}
@@ -346,12 +344,12 @@ export default function Home() {
                   <li className="flex items-center gap-2">✓ Kirim ke WhatsApp</li>
                 </ul>
               </div>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="mt-6 w-full py-2 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] text-xs font-medium hover:bg-[#f6f8fa] transition"
+              <Link
+                href="/register"
+                className="mt-6 w-full py-2 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] text-xs font-medium hover:bg-[#f6f8fa] transition text-center block"
               >
                 Mulai Gratis
-              </button>
+              </Link>
             </div>
 
             {/* Pro */}
@@ -371,12 +369,12 @@ export default function Home() {
                   <li className="flex items-center gap-2">✓ Custom Kuota Foto per Sesi</li>
                 </ul>
               </div>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="mt-6 w-full py-2 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition"
+              <Link
+                href="/register"
+                className="mt-6 w-full py-2 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition text-center block"
               >
                 Pilih Pro
-              </button>
+              </Link>
             </div>
 
             {/* Studio */}
@@ -393,12 +391,12 @@ export default function Home() {
                   <li className="flex items-center gap-2">✓ Multi-editor WhatsApp Routing</li>
                 </ul>
               </div>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="mt-6 w-full py-2 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] text-xs font-medium hover:bg-[#f6f8fa] transition"
+              <Link
+                href="/register"
+                className="mt-6 w-full py-2 rounded-[8px] border border-[#cdd2d9] bg-white text-[#36394a] text-xs font-medium hover:bg-[#f6f8fa] transition text-center block"
               >
                 Pilih Studio
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -429,14 +427,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onSuccess={() => {
-          window.location.href = "/dashboard";
-        }}
-      />
-    </div>
+      </div>
   );
 }
