@@ -43,13 +43,18 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white text-[#36394a] flex flex-col font-sans selection:bg-[#dfdbff] selection:text-[#5e4cff]">
       {/* 1. Announcement Bar (Top-of-page promo strip) */}
-      <div className="bg-[#1a1b25] text-white text-xs py-2 px-4 text-center">
-        <span>Picura v2.0 Aktif: Seleksi Foto Google Drive Terhubung Langsung ke WhatsApp Klien. </span>
+      <div className="bg-[#14151f] text-white text-xs py-2.5 px-4 text-center border-b border-white/10 flex flex-wrap items-center justify-center gap-2">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#5e4cff] text-white text-[10px] font-mono font-bold tracking-wider uppercase shadow-sm">
+          🔥 Picura v2.0
+        </span>
+        <span className="font-medium text-slate-200">
+          Stop Salin Manual Kode Foto! Klien Kurasi dari Google Drive & Langsung Terkirim Instan ke WhatsApp.
+        </span>
         <button
           onClick={() => setIsAuthOpen(true)}
-          className="text-[#c8ccf3] hover:underline font-medium ml-1 inline-flex items-center gap-1"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#14151f] hover:bg-[#5e4cff] hover:text-white font-semibold text-[11px] transition-all duration-200 shadow-sm active:scale-95"
         >
-          <span>Mulai Gratis Sekarang</span>
+          <span>⚡ Bikin Galeri Klien Pertama — 100% Gratis!</span>
           <IconArrowRight className="w-3 h-3" />
         </button>
       </div>
