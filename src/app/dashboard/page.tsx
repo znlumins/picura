@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
-import HeroBalanceChart from "@/components/HeroBalanceChart";
+import StudioHeroBanner from "@/components/StudioHeroBanner";
 import MetricsGrid from "@/components/MetricsGrid";
-import RecentActivity from "@/components/RecentActivity";
+import RecentActivity, { ActivityItem } from "@/components/RecentActivity";
 import CreateGalleryModal from "@/components/CreateGalleryModal";
 import UpgradeModal from "@/components/UpgradeModal";
 import SelectionDetailModal from "@/components/SelectionDetailModal";
@@ -26,6 +26,26 @@ import {
   IconSettings,
 } from "@/components/Icons";
 
+interface GalleryItem {
+  id: string;
+  title: string;
+  slug: string;
+  maxSelectionQuota: number;
+  totalPhotos: number;
+  latestSelectedCount: number;
+  latestSelection?: {
+    clientName: string;
+    clientNotes?: string | null;
+    totalSelected: number;
+    submittedAt?: string | null;
+    selectedFiles: { file_id: string; filename: string }[];
+  } | null;
+  editorWhatsappNumber?: string;
+  hasPassword?: boolean;
+  expiresAt?: string | null;
+  createdAt?: string;
+}
+
 export default function DashboardPage() {
   const [user, setUser] = useState<{
     id: string;
@@ -34,6 +54,7 @@ export default function DashboardPage() {
     avatarUrl?: string | null;
     studioName?: string | null;
     studioWhatsapp?: string | null;
+    hasGoogleApiKey?: boolean;
     subscriptionTier: string;
   } | null>(null);
 
@@ -41,22 +62,11 @@ export default function DashboardPage() {
     activeGalleries: number;
     quotaLimit: number;
     totalSelections: number;
+    totalPhotos?: number;
   } | null>(null);
 
-  interface GalleryItem {
-    id: string;
-    title: string;
-    slug: string;
-    maxSelectionQuota: number;
-    totalPhotos: number;
-    latestSelectedCount: number;
-    editorWhatsappNumber?: string;
-    hasPassword?: boolean;
-    expiresAt?: string | null;
-    createdAt?: string;
-  }
-
   const [galleries, setGalleries] = useState<GalleryItem[]>([]);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -68,6 +78,7 @@ export default function DashboardPage() {
     editor_phone?: string;
     data: {
       client_name: string;
+      client_notes?: string;
       total_selected: number;
       selected_files: { file_id: string; filename: string }[];
     };
@@ -93,16 +104,21 @@ export default function DashboardPage() {
         setUser(userData.user);
         setStats(userData.stats);
 
-        // 2. Fetch galleries for this real user
+        // 2. Fetch galleries & real client activities
         const galRes = await fetch("/api/v1/galleries", { headers });
         const galData = await galRes.json();
         if (galData.status === "success") {
           setGalleries(galData.data || []);
+          setActivities(galData.activities || []);
+          if (galData.meta?.totalPhotosCached) {
+            setStats((prev) => prev ? { ...prev, totalPhotos: galData.meta.totalPhotosCached } : null);
+          }
         }
       } else {
         setUser(null);
         setStats(null);
         setGalleries([]);
+        setActivities([]);
       }
     } catch {
       console.error("Failed to fetch dashboard data");
@@ -119,6 +135,7 @@ export default function DashboardPage() {
     localStorage.removeItem("picura_token");
     setUser(null);
     setGalleries([]);
+    setActivities([]);
     setStats(null);
   };
 
@@ -151,32 +168,31 @@ export default function DashboardPage() {
     }
   };
 
-  const handleViewResults = async (gallery: GalleryItem) => {
-    try {
-      const res = await fetch(`/api/v1/galleries/${gallery.slug}`);
-      const data = await res.json();
-      if (data.status === "success") {
-        const selectedFiles =
-          gallery.latestSelectedCount > 0
-            ? data.data.photos.slice(0, gallery.latestSelectedCount)
-            : [];
-
-        setSelectedGalleryResult({
-          title: gallery.title,
-          editor_phone: gallery.editorWhatsappNumber,
-          data: {
-            client_name: "Klien Picura",
-            total_selected: gallery.latestSelectedCount,
-            selected_files: selectedFiles.map((p: { id: string; filename: string }) => ({
-              file_id: p.id,
-              filename: p.filename,
-            })),
-          },
-        });
-      }
-    } catch {
-      console.error("Failed to load results");
+  const handleViewResults = (gallery: GalleryItem) => {
+    if (gallery.latestSelection) {
+      setSelectedGalleryResult({
+        title: gallery.title,
+        editor_phone: gallery.editorWhatsappNumber,
+        data: {
+          client_name: gallery.latestSelection.clientName || "Klien",
+          client_notes: gallery.latestSelection.clientNotes || undefined,
+          total_selected: gallery.latestSelection.totalSelected,
+          selected_files: gallery.latestSelection.selectedFiles || [],
+        },
+      });
     }
+  };
+
+  const handleViewActivitySelection = (act: ActivityItem) => {
+    setSelectedGalleryResult({
+      title: act.galleryTitle,
+      data: {
+        client_name: act.clientName,
+        client_notes: act.clientNotes || undefined,
+        total_selected: act.totalSelected,
+        selected_files: act.selectedFiles || [],
+      },
+    });
   };
 
   const isPro = user?.subscriptionTier === "PRO_FREELANCE" || user?.subscriptionTier === "STUDIO";
@@ -185,7 +201,7 @@ export default function DashboardPage() {
     g.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalPhotosCount = galleries.reduce((acc, g) => acc + (g.totalPhotos || 0), 0);
+  const totalPhotosCount = stats?.totalPhotos || galleries.reduce((acc, g) => acc + (g.totalPhotos || 0), 0);
 
   return (
     <div className="min-h-screen bg-[#f6f8fa] text-[#36394a] flex font-sans selection:bg-[#dfdbff] selection:text-[#5e4cff]">
@@ -281,23 +297,30 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* 1. Hero Balance Section */}
-          <HeroBalanceChart
-            balanceAmount="Rp 1.450.000"
-            totalPhotosCount={totalPhotosCount}
-            totalSelectionsCount={galleries.reduce((acc, g) => acc + (g.latestSelectedCount > 0 ? 1 : 0), 0)}
-            activeRate="+28.4%"
+          {/* 1. Real Studio Hero Banner */}
+          <StudioHeroBanner
+            user={user}
+            stats={stats}
+            onCreateClick={() => {
+              if (!isPro && (stats?.activeGalleries || 0) >= 2) {
+                setIsUpgradeOpen(true);
+              } else {
+                setIsCreateOpen(true);
+              }
+            }}
+            onSettingsClick={() => setIsSettingsOpen(true)}
           />
 
-          {/* 2. Metrics Grid */}
+          {/* 2. Real Metrics Grid */}
           <MetricsGrid
-            quotaUsed={stats?.activeGalleries || galleries.length}
-            quotaLimit={isPro ? 9999 : stats?.quotaLimit || 2}
-            driveRequests={totalPhotosCount * 8}
-            selectionsSaved={stats?.totalSelections || 0}
+            activeGalleries={stats?.activeGalleries || galleries.length}
+            quotaLimit={isPro ? 999 : stats?.quotaLimit || 2}
+            totalPhotos={totalPhotosCount}
+            totalSelections={stats?.totalSelections || 0}
+            tier={user?.subscriptionTier || "FREEMIUM"}
           />
 
-          {/* 3. Galleries Management Table / Cards */}
+          {/* 3. Real Galleries Management */}
           <div className="bg-white rounded-[12px] p-6 border border-[#cdd2d9] space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#eceff3]">
               <div>
@@ -435,8 +458,11 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* 4. Recent Activity */}
-          <RecentActivity />
+          {/* 4. Real Recent Activity */}
+          <RecentActivity
+            activities={activities}
+            onViewSelection={handleViewActivitySelection}
+          />
         </main>
       </div>
 

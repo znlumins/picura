@@ -37,6 +37,10 @@ export async function GET(
             studioName: true,
           },
         },
+        selections: {
+          orderBy: { submittedAt: "desc" },
+          take: 1,
+        },
       },
     });
 
@@ -67,7 +71,7 @@ export async function GET(
       const token = authHeader?.replace("Bearer ", "");
       if (token) {
         const decoded = verifyToken(token);
-        if (decoded && (decoded as any).galleryId === gallery.id) {
+        if (decoded && (decoded as { galleryId?: string }).galleryId === gallery.id) {
           hasAccess = true;
         }
       }
@@ -101,6 +105,16 @@ export async function GET(
       preview_url: p.webContentLink || p.thumbnailUrl,
     }));
 
+    const latest = gallery.selections[0] || null;
+    let latestSelectedFiles: { file_id: string; filename: string }[] = [];
+    if (latest?.selectedPhotoIds) {
+      try {
+        latestSelectedFiles = JSON.parse(latest.selectedPhotoIds);
+      } catch {
+        latestSelectedFiles = [];
+      }
+    }
+
     return NextResponse.json({
       status: "success",
       is_password_protected: isPasswordProtected,
@@ -117,12 +131,23 @@ export async function GET(
         status: gallery.status,
         expires_at: gallery.expiresAt,
         photos: formattedPhotos,
+        latest_selection: latest
+          ? {
+              id: latest.id,
+              client_name: latest.clientName || "Klien",
+              client_notes: latest.clientNotes || "",
+              total_selected: latest.totalSelected,
+              submitted_at: latest.submittedAt.toISOString(),
+              selected_files: latestSelectedFiles,
+            }
+          : null,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
     console.error("Get gallery detail error:", error);
     return NextResponse.json(
-      { error: "Gagal memuat galeri", details: error.message },
+      { error: "Gagal memuat galeri", details: msg },
       { status: 500 }
     );
   }
@@ -138,10 +163,18 @@ export async function DELETE(
     const authHeader = req.headers.get("authorization");
     let userId: string | null = null;
     if (authHeader?.startsWith("Bearer ")) {
-      const decoded = verifyToken(authHeader.substring(7));
+      const token = authHeader.substring(7);
+      const decoded = verifyToken(token);
       if (decoded?.userId) {
         userId = decoded.userId;
       }
+    }
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Akses ditolak. Silakan login." },
+        { status: 401 }
+      );
     }
 
     const gallery = await prisma.gallery.findUnique({
@@ -155,9 +188,11 @@ export async function DELETE(
       );
     }
 
-    // Only owner can delete (unless demo / tests)
-    if (userId && gallery.userId !== userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    if (gallery.userId !== userId) {
+      return NextResponse.json(
+        { error: "Anda tidak berhak menghapus galeri ini." },
+        { status: 403 }
+      );
     }
 
     await prisma.gallery.delete({
@@ -166,11 +201,13 @@ export async function DELETE(
 
     return NextResponse.json({
       status: "success",
-      message: "Galeri berhasil dihapus",
+      message: "Galeri berhasil dihapus permanen.",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
+    console.error("Delete gallery error:", error);
     return NextResponse.json(
-      { error: "Gagal menghapus galeri", details: error.message },
+      { error: "Gagal menghapus galeri", details: msg },
       { status: 500 }
     );
   }

@@ -61,8 +61,21 @@ export async function GET(req: Request) {
     const formatted = galleries.map((g) => {
       const latestSelection = g.selections[0] || null;
       let latestSelectedCount = 0;
+      let latestSelectedFiles: { file_id: string; filename: string }[] = [];
+      let clientName = "";
+      let clientNotes = "";
+      let submittedAt: string | null = null;
+
       if (latestSelection) {
         latestSelectedCount = latestSelection.totalSelected;
+        clientName = latestSelection.clientName || "Klien";
+        clientNotes = latestSelection.clientNotes || "";
+        submittedAt = latestSelection.submittedAt.toISOString();
+        try {
+          latestSelectedFiles = JSON.parse(latestSelection.selectedPhotoIds || "[]");
+        } catch {
+          latestSelectedFiles = [];
+        }
       }
 
       return {
@@ -78,9 +91,61 @@ export async function GET(req: Request) {
         createdAt: g.createdAt,
         totalPhotos: g._count.photos,
         totalSelectionsSubmitted: g._count.selections,
-        latestSelectedCount: latestSelectedCount,
+        latestSelectedCount,
+        latestSelection: latestSelection ? {
+          clientName,
+          clientNotes,
+          totalSelected: latestSelectedCount,
+          submittedAt,
+          selectedFiles: latestSelectedFiles,
+        } : null,
         progressPercent: g.maxSelectionQuota > 0 ? Math.min(100, Math.round((latestSelectedCount / g.maxSelectionQuota) * 100)) : 0,
       };
+    });
+
+    // Fetch real recent selections across all galleries of this user
+    const recentSelections = await prisma.selection.findMany({
+      where: {
+        gallery: { userId: user.id },
+      },
+      include: {
+        gallery: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            editorWhatsappNumber: true,
+          },
+        },
+      },
+      orderBy: { submittedAt: "desc" },
+      take: 6,
+    });
+
+    const activities = recentSelections.map((s) => {
+      let files: { file_id: string; filename: string }[] = [];
+      try {
+        files = JSON.parse(s.selectedPhotoIds || "[]");
+      } catch {
+        files = [];
+      }
+
+      return {
+        id: s.id,
+        galleryId: s.gallery.id,
+        galleryTitle: s.gallery.title,
+        gallerySlug: s.gallery.slug,
+        editorWhatsapp: s.gallery.editorWhatsappNumber,
+        clientName: s.clientName || "Klien",
+        clientNotes: s.clientNotes,
+        totalSelected: s.totalSelected,
+        submittedAt: s.submittedAt.toISOString(),
+        selectedFiles: files,
+      };
+    });
+
+    const totalPhotosCached = await prisma.photoCache.count({
+      where: { gallery: { userId: user.id } },
     });
 
     return NextResponse.json({
@@ -88,15 +153,18 @@ export async function GET(req: Request) {
       meta: {
         activeCount,
         quotaLimit,
+        totalPhotosCached,
         canCreateMore: activeCount < quotaLimit,
         userTier: user.subscriptionTier,
       },
       data: formatted,
+      activities,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
     console.error("Fetch galleries error:", error);
     return NextResponse.json(
-      { error: "Gagal memuat galeri", details: error.message },
+      { error: "Gagal memuat galeri", details: msg },
       { status: 500 }
     );
   }
@@ -137,134 +205,115 @@ export async function POST(req: Request) {
       password,
       editor_whatsapp,
       expires_at,
-      direct_files, // Optional array of { drive_file_id, file_name }
+      direct_files,
     } = body;
 
-    if (!title || !title.trim()) {
+    if (!title?.trim()) {
       return NextResponse.json(
         { error: "Judul galeri wajib diisi" },
         { status: 400 }
       );
     }
 
-    if (!drive_folder_url || !drive_folder_url.trim()) {
-      return NextResponse.json(
-        { error: "URL / ID Google Drive wajib diisi" },
-        { status: 400 }
-      );
-    }
-
     const folderId = extractFolderId(drive_folder_url);
-    if (!folderId) {
+    if (!folderId && (!Array.isArray(direct_files) || direct_files.length === 0)) {
       return NextResponse.json(
-        { error: "URL atau ID Google Drive tidak valid" },
+        {
+          error:
+            "Link Google Drive tidak valid. Masukkan URL folder Google Drive atau daftar link file.",
+        },
         { status: 400 }
       );
     }
 
-    if (!editor_whatsapp || !editor_whatsapp.trim()) {
-      return NextResponse.json(
-        { error: "Nomor WhatsApp editor wajib diisi" },
-        { status: 400 }
-      );
-    }
-
-    const cleanPhone = normalizePhoneNumber(editor_whatsapp);
-    if (!cleanPhone || cleanPhone.length < 8) {
-      return NextResponse.json(
-        { error: "Format nomor WhatsApp tidak valid (contoh: 081234567890)" },
-        { status: 400 }
-      );
-    }
-
-    let passwordHash: string | null = null;
-    if (password && password.trim()) {
-      passwordHash = await hashPassword(password.trim());
-    }
-
-    const slug = generateSlug(title);
-
-    // Create gallery record in database
-    const gallery = await prisma.gallery.create({
-      data: {
-        userId: user.id,
-        title: title.trim(),
-        slug: slug,
-        googleDriveFolderId: folderId,
-        maxSelectionQuota: Number(max_selection_quota) || 20,
-        passwordHash: passwordHash,
-        editorWhatsappNumber: cleanPhone,
-        expiresAt: expires_at ? new Date(expires_at) : null,
-        status: "ACTIVE",
-      },
-    });
-
-    let importedPhotosCount = 0;
-
-    // 1. Fetch real photos from Google Drive API v3
-    const drivePhotos = await fetchDrivePhotos(
-      folderId,
-      user.googleAccessToken,
-      user.googleApiKey
+    const whatsappNumber = normalizePhoneNumber(
+      editor_whatsapp || user.studioWhatsapp || "081234567890"
     );
 
-    if (drivePhotos && drivePhotos.length > 0) {
-      for (const p of drivePhotos) {
-        await prisma.photoCache.create({
-          data: {
-            galleryId: gallery.id,
-            driveFileId: p.id,
-            fileName: p.name,
-            thumbnailUrl: p.thumbnailUrl,
-            webContentLink: p.previewUrl,
-          },
-        });
+    const slug = generateSlug(title);
+    const passwordHash = password ? await hashPassword(password) : null;
+
+    let expiresDate: Date | null = null;
+    if (expires_at) {
+      expiresDate = new Date(expires_at);
+      if (isNaN(expiresDate.getTime())) {
+        expiresDate = null;
       }
-      importedPhotosCount = drivePhotos.length;
     }
 
-    // 2. If user also supplied direct file links/IDs
+    // Fetch real Google Drive photos using API Key if provided
+    let photos: { id: string; name: string }[] = [];
+
+    // If direct files were given in manual input, use them directly
     if (Array.isArray(direct_files) && direct_files.length > 0) {
-      for (const f of direct_files) {
-        const fileId = extractFolderId(f.drive_file_id || f.url || f.file_id) || f.drive_file_id;
-        if (fileId) {
-          await prisma.photoCache.create({
-            data: {
-              galleryId: gallery.id,
-              driveFileId: fileId,
-              fileName: f.file_name || f.filename || `IMG_${fileId.slice(0, 6)}.JPG`,
-              thumbnailUrl: buildGoogleCdnUrl(fileId, 400),
-              webContentLink: buildGoogleCdnUrl(fileId, 1600),
-            },
-          });
-          importedPhotosCount++;
-        }
-      }
+      photos = direct_files.map((df: { file_id: string; filename?: string }, idx: number) => ({
+        id: df.file_id,
+        name: df.filename || `FOTO_${String(idx + 1).padStart(3, "0")}.JPG`,
+      }));
+    } else if (folderId) {
+      photos = await fetchDrivePhotos(folderId, user.googleApiKey || undefined);
     }
+
+    if (photos.length === 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Tidak dapat menemukan foto di Google Drive tersebut. Pastikan folder berstatus 'Anyone with the link can view' (Public).",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Create Gallery and PhotoCache records in transaction
+    const gallery = await prisma.$transaction(async (tx) => {
+      const createdGallery = await tx.gallery.create({
+        data: {
+          userId: user.id,
+          title: title.trim(),
+          slug,
+          googleDriveFolderId: folderId || "manual_files",
+          maxSelectionQuota: Number(max_selection_quota) || 20,
+          passwordHash,
+          editorWhatsappNumber: whatsappNumber,
+          expiresAt: expiresDate,
+          status: "ACTIVE",
+        },
+      });
+
+      // Insert photos into PhotoCache
+      await tx.photoCache.createMany({
+        data: photos.map((p) => ({
+          galleryId: createdGallery.id,
+          driveFileId: p.id,
+          fileName: p.name,
+          thumbnailUrl: buildGoogleCdnUrl(p.id, 400),
+          webContentLink: buildGoogleCdnUrl(p.id, 1600),
+        })),
+      });
+
+      return createdGallery;
+    });
 
     return NextResponse.json(
       {
         status: "success",
-        message: importedPhotosCount > 0
-          ? `Galeri berhasil dibuat dengan ${importedPhotosCount} foto riil.`
-          : "Galeri berhasil dibuat. Catatan: Folder Google Drive belum memiliki foto atau membutuhkan Google API Key untuk membaca otomatis.",
+        message: "Galeri berhasil dibuat dengan koneksi Google Drive nyata",
         data: {
           id: gallery.id,
           title: gallery.title,
           slug: gallery.slug,
+          total_photos: photos.length,
           public_url: `/g/${gallery.slug}`,
-          max_selection_quota: gallery.maxSelectionQuota,
-          has_password: !!gallery.passwordHash,
           editor_whatsapp: gallery.editorWhatsappNumber,
-          photos_imported: importedPhotosCount,
         },
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
     console.error("Create gallery error:", error);
     return NextResponse.json(
-      { error: "Gagal membuat galeri", details: error.message },
+      { error: "Gagal membuat galeri", details: msg },
       { status: 500 }
     );
   }

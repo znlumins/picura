@@ -43,6 +43,10 @@ export async function GET(req: Request) {
       where: { gallery: { userId: user.id } },
     });
 
+    const totalPhotosCached = await prisma.photoCache.count({
+      where: { gallery: { userId: user.id } },
+    });
+
     const quotaLimit = user.subscriptionTier === "FREEMIUM" ? 2 : 999;
 
     return NextResponse.json({
@@ -63,6 +67,7 @@ export async function GET(req: Request) {
         quotaLimit: quotaLimit,
         canCreateMore: activeGalleriesCount < quotaLimit,
         totalSelections: totalSelectionsCount,
+        totalPhotos: totalPhotosCached,
       },
       token: generateAccessToken({
         userId: user.id,
@@ -70,10 +75,11 @@ export async function GET(req: Request) {
         tier: user.subscriptionTier,
       }),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
     console.error("Auth me error:", error);
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      { error: "Internal server error", details: msg },
       { status: 500 }
     );
   }
