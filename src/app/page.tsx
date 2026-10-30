@@ -154,21 +154,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right 4 cols: Pixel-Art Hero Decoration & Mini Preview */}
-            <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center relative">
-              <PixelArtMosaic className="hidden sm:grid mb-4" />
-              <div className="bg-[#f6f8fa] border border-[#cdd2d9] rounded-[12px] p-4 text-xs space-y-2.5 max-w-xs shadow-sm">
-                <div className="flex items-center justify-between text-[#818898] font-mono text-[11px]">
-                  <span>LIVE STATUS</span>
-                  <span className="w-2 h-2 rounded-full bg-[#10b981]" />
-                </div>
-                <div className="font-heading font-semibold text-[#272835]">
-                  Google Drive API v3
-                </div>
-                <div className="text-[#666d80] text-[11px] leading-relaxed">
-                  Menyajikan thumbnail langsung melalui Google Global CDN tanpa membebani penyimpanan hosting Anda.
-                </div>
-              </div>
+            {/* Right 4 cols: Pixel-Art Hero Decoration */}
+            <div className="lg:col-span-4 flex items-center justify-center lg:justify-end">
+              <PixelArtMosaic className="hidden sm:grid" />
             </div>
           </div>
         </div>
