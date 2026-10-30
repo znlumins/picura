@@ -22,6 +22,10 @@ type PaymentCreationResult struct {
 	Token      string  `json:"token"`
 }
 
+func (s *SociaBuzzService) GetUsername() string {
+	return s.username
+}
+
 func NewSociaBuzzService(username string) *SociaBuzzService {
 	return &SociaBuzzService{
 		client:   sociabuzz.New("https://sociabuzz.com"),

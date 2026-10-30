@@ -41,7 +41,7 @@ func Load() *Config {
 
 	sociaBuzzUsername := os.Getenv("SOCIABUZZ_USERNAME")
 	if sociaBuzzUsername == "" {
-		sociaBuzzUsername = "picura" // default placeholder
+		sociaBuzzUsername = "mindyourkills"
 	}
 
 	sociaBuzzAPIKey := os.Getenv("SOCIABUZZ_API_KEY")

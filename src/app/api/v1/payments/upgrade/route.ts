@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         tierPlan: tier,
         amount: plan.amount,
         paymentStatus: auto_settle ? "SETTLED" : "PENDING",
-        paymentGateway: "MIDTRANS",
+        paymentGateway: "SOCIABUZZ",
       },
     });
 
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
         tier: tier,
         amount: plan.amount,
         payment_status: subscription.paymentStatus,
-        payment_url: `https://app.midtrans.com/snap/v2/vtweb/${orderId}`,
+        payment_url: `https://sociabuzz.com/mindyourkills/tribe?amount=${plan.amount}&note=${orderId}`,
         auto_settled: auto_settle,
       },
     });
@@ -83,3 +83,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

@@ -209,7 +209,7 @@ export default function UpgradeModal({
             <IconShield className="w-5 h-5 text-[#5e4cff] shrink-0" />
             <div className="text-xs text-[#666d80]">
               <span className="font-semibold text-[#272835] block">
-                Pembayaran Aman & Instan via QRIS / Virtual Account
+                Pembayaran Aman via SociaBuzz (@mindyourkills) — QRIS & E-Wallet
               </span>
               Aktivasi instan dan dapat dibatalkan sewaktu-waktu tanpa komitmen kontrak.
             </div>

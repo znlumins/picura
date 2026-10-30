@@ -125,7 +125,7 @@ func (h *PaymentHandler) Upgrade(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("⚠️ SociaBuzz API Gagal: %v. Mengaktifkan fallback link", err)
 		// Fallback URL jika SociaBuzz sandbox/offline
-		fallbackURL := fmt.Sprintf("https://sociabuzz.com/%s/tribe?amount=%d&note=%s", "picura", int(plan.Amount), orderID)
+		fallbackURL := fmt.Sprintf("https://sociabuzz.com/%s/tribe?amount=%d&note=%s", h.sbService.GetUsername(), int(plan.Amount), orderID)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"status":  "success",
 			"message": "Order transaksi dibuat via SociaBuzz",
