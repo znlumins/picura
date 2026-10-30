@@ -21,6 +21,17 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    if (process.env.GO_BACKEND_URL) {
+      return [
+        {
+          source: "/api/v1/:path*",
+          destination: `${process.env.GO_BACKEND_URL}/api/v1/:path*`,
+        },
+      ];
+    }
+    return [];
+  },
 };
 
 export default nextConfig;

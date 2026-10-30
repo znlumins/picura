@@ -48,14 +48,13 @@
 
 | Layer | Teknologi |
 | :--- | :--- |
-| **Framework** | [Next.js 14](https://nextjs.org/) (App Router, Server Actions & Route Handlers) |
-| **Language** | [TypeScript](https://www.typescriptlang.org/) |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
-| **Database** | [PostgreSQL Cloud](https://www.postgresql.org/) |
-| **ORM** | [Prisma 7](https://www.prisma.io/) (dengan `@prisma/adapter-pg`) |
+| **Frontend UI** | [Next.js 14](https://nextjs.org/) (App Router, Tailwind CSS, Space Grotesk & Inter) |
+| **High-Perf Backend** | [Golang (Go)](https://go.dev/) (Chi v5 Router, GORM ORM) di folder /backend |
+| **Payment Gateway** | **[SociaBuzz](https://sociabuzz.com/)** via [github.com/hirotomasato/scbz](https://github.com/hirotomasato/scbz) (QRIS, E-Wallet & VA) |
+| **Database** | [PostgreSQL Cloud](https://www.postgresql.org/) (Shared dengan Prisma ORM) |
 | **Authentication** | JWT (JSON Web Token) & Bcrypt Password Hashing |
 | **Cloud Storage** | Google Drive API v3 & Google UserContent CDN |
-| **Deployment** | [Vercel](https://vercel.com/) (Edge Network & Serverless Functions) |
+| **Deployment** | [Vercel](https://vercel.com/) (Frontend) & Golang Binary Service (Backend) |
 
 ---
 

@@ -4,8 +4,8 @@ import { ensureSeedData } from "@/lib/seed";
 import { verifyToken } from "@/lib/auth";
 
 const PRICING_PLANS: Record<string, { name: string; amount: number }> = {
-  PRO_FREELANCE: { name: "Pro Freelance", amount: 99000 },
-  STUDIO: { name: "Studio Agency", amount: 249000 },
+  PRO_FREELANCE: { name: "Pro Freelance", amount: 49000 },
+  STUDIO: { name: "Studio Agency", amount: 129000 },
 };
 
 export async function POST(req: Request) {
