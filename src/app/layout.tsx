@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://picura.web.id"),
   title: "Picura - Platform Seleksi Foto Interaktif Google Drive & WhatsApp",
   description:
     "SaaS seleksi foto untuk fotografer freelance dan studio. Klien memilih foto mentah dari Google Drive secara interaktif di browser seluler dan daftar nama file otomatis terkirim ke WhatsApp editor tanpa re-upload.",
@@ -16,11 +17,34 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+  openGraph: {
+    title: "Picura - Platform Seleksi Foto Google Drive & WhatsApp",
+    description:
+      "Pilih foto klien langsung ke WhatsApp tanpa re-upload. Tautkan Google Drive, kurasi di browser HP, dan daftar nama file otomatis terkirim rapi ke WhatsApp editor.",
+    url: "https://picura.web.id",
+    siteName: "Picura",
+    images: [
+      {
+        url: "/og-poster.png",
+        width: 1200,
+        height: 630,
+        alt: "Picura - Seleksi Foto Klien Langsung ke WhatsApp",
+      },
+    ],
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Picura - Platform Seleksi Foto Google Drive & WhatsApp",
+    description:
+      "Pilih foto klien langsung ke WhatsApp tanpa re-upload. Tautkan Google Drive, kurasi di browser HP.",
+    images: ["/og-poster.png"],
   },
 };
 
