@@ -1,0 +1,101 @@
+// Prisma schema for Picura Platform
+// Compatible with both SQLite (local development & testing) and PostgreSQL (production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id                    String         @id @default(uuid())
+  email                 String         @unique
+  name                  String
+  googleId              String?        @unique
+  googleAccessToken     String?
+  googleRefreshToken    String?
+  avatarUrl             String?
+  subscriptionTier      String         @default("FREEMIUM") // FREEMIUM, PRO_FREELANCE, STUDIO
+  subscriptionExpiresAt DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  galleries             Gallery[]
+  subscriptions         Subscription[]
+
+  @@map("users")
+}
+
+model Gallery {
+  id                   String        @id @default(uuid())
+  userId               String
+  title                String
+  slug                 String        @unique
+  googleDriveFolderId  String
+  maxSelectionQuota    Int           @default(20)
+  passwordHash         String?
+  editorWhatsappNumber String
+  status               String        @default("ACTIVE") // ACTIVE, COMPLETED, EXPIRED
+  expiresAt            DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos               PhotoCache[]
+  selections           Selection[]
+
+  @@index([slug])
+  @@index([userId])
+  @@map("galleries")
+}
+
+model PhotoCache {
+  id             String   @id @default(uuid())
+  galleryId      String
+  driveFileId    String
+  fileName       String
+  thumbnailUrl   String
+  webContentLink String?
+  createdAt      DateTime @default(now())
+
+  gallery        Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+
+  @@index([galleryId])
+  @@map("photos_cache")
+}
+
+model Selection {
+  id               String   @id @default(uuid())
+  galleryId        String
+  clientName       String?
+  clientNotes      String?
+  selectedPhotoIds String   // JSON string of [{ drive_id, file_name, ... }]
+  totalSelected    Int
+  submittedAt      DateTime @default(now())
+
+  gallery          Gallery  @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+
+  @@index([galleryId])
+  @@map("selections")
+}
+
+model Subscription {
+  id             String   @id @default(uuid())
+  userId         String
+  orderId        String   @unique
+  tierPlan       String   // PRO_FREELANCE, STUDIO
+  amount         Float
+  paymentStatus  String   @default("PENDING") // PENDING, SETTLED, FAILED, EXPIRED
+  paymentGateway String   @default("MIDTRANS")
+  rawPayload     String?  // JSON string
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orderId])
+  @@map("subscriptions")
+}
