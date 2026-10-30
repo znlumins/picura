@@ -231,10 +231,10 @@ export default function Home() {
                 Tentang Picura
               </span>
               <h2 className="font-heading font-semibold text-3xl sm:text-4xl text-[#272835] tracking-tight leading-snug">
-                Dibuat untuk Menyelesaikan Keresahan Klasik Fotografer Indonesia.
+                Menyelesaikan Hambatan Kurasi Visual & Seleksi Klien.
               </h2>
               <p className="text-sm text-[#666d80] leading-relaxed">
-                Picura lahir dari pengalaman nyata: fotografer yang lelah menunggu klien mengetik manual puluhan kode nama file foto seperti <code className="bg-white border border-[#cdd2d9] px-1.5 py-0.5 rounded text-xs font-mono text-[#272835]">IMG_0412.JPG</code> di chat WhatsApp—yang sering kali salah ketik dan membingungkan tim editor saat retouching.
+                Picura lahir dari pengalaman nyata: fotografer, studio foto, agensi visual, dan tim kreatif yang lelah menunggu klien mengetik manual puluhan kode nama file foto seperti <code className="bg-white border border-[#cdd2d9] px-1.5 py-0.5 rounded text-xs font-mono text-[#272835]">IMG_0412.JPG</code> di chat WhatsApp—yang sering kali salah ketik dan membingungkan tim saat proses editing.
               </p>
               <p className="text-sm text-[#666d80] leading-relaxed">
                 Kami tidak meminta Anda mengunggah ulang bergiga-giga foto ke server baru. Picura langsung menjembatani folder Google Drive yang sudah Anda miliki dengan alur kerja kurasi klien berbasis browser ponsel yang cepat, ringan, dan langsung terhubung ke WhatsApp.
@@ -407,9 +407,14 @@ export default function Home() {
       {/* 8. Footer */}
       <footer className="py-12 bg-white">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#818898]">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <PicuraLogo className="h-5 w-auto text-[#272835]" />
-            <span>&copy; {new Date().getFullYear()} Picura. Platform Seleksi Foto untuk Fotografer.</span>
+            <span>
+              &copy; {new Date().getFullYear()} Picura. Dikembangkan oleh{" "}
+              <a href="https://github.com/znlumins" target="_blank" rel="noreferrer" className="text-[#36394a] hover:text-[#5e4cff] font-medium transition">znlumins</a>,{" "}
+              <a href="https://github.com/Derajat-png" target="_blank" rel="noreferrer" className="text-[#36394a] hover:text-[#5e4cff] font-medium transition">Derajat-png</a>, &{" "}
+              <a href="https://github.com/dzidniann" target="_blank" rel="noreferrer" className="text-[#36394a] hover:text-[#5e4cff] font-medium transition">dzidniann</a>.
+            </span>
           </div>
 
           <div className="flex items-center gap-4">

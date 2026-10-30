@@ -18,7 +18,7 @@
 
 ## 💡 Tentang Picura (About)
 
-**Picura** adalah platform SaaS *client proofing* foto yang dirancang khusus untuk fotografer *freelance* dan studio foto di Indonesia. 
+**Picura** adalah platform SaaS *client proofing* dan kurasi media yang dirancang untuk fotografer *freelance*, studio foto, agensi visual, dan tim kreatif. 
 
 ### 🛑 Masalah Utama Fotografer:
 1. **Re-upload yang Menghabiskan Waktu & Kuota:** Fotografer harus mengunggah ulang ratusan foto resolusi tinggi ke platform gallery berbayar.
@@ -142,7 +142,11 @@ picura/
 
 ---
 
-## 📄 Lisensi & Kontribusi
+## 📄 Lisensi & Tim Pengembang
 
-Dibuat dengan ❤️ untuk komunitas fotografer Indonesia oleh **[znlumins](https://github.com/znlumins)**.  
+Dikembangkan oleh:
+- **[znlumins](https://github.com/znlumins)**
+- **[Derajat-png](https://github.com/Derajat-png)**
+- **[dzidniann](https://github.com/dzidniann)**
+
 Hak Cipta &copy; 2026 Picura. All rights reserved.
