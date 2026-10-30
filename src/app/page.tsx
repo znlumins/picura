@@ -44,9 +44,6 @@ export default function Home() {
     <div className="min-h-screen bg-white text-[#36394a] flex flex-col font-sans selection:bg-[#dfdbff] selection:text-[#5e4cff]">
       {/* 1. Announcement Bar (Top-of-page promo strip) */}
       <div className="bg-[#14151f] text-white text-xs py-2.5 px-4 text-center border-b border-white/10 flex flex-wrap items-center justify-center gap-2">
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#5e4cff] text-white text-[10px] font-mono font-bold tracking-wider uppercase shadow-sm">
-          🔥 Picura v2.0
-        </span>
         <span className="font-medium text-slate-200">
           Stop Salin Manual Kode Foto! Klien Kurasi dari Google Drive & Langsung Terkirim Instan ke WhatsApp.
         </span>
