@@ -64,6 +64,7 @@ export default function Home() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#36394a]">
+            <a href="#about" className="hover:text-[#5e4cff] transition">Tentang</a>
             <a href="#features" className="hover:text-[#5e4cff] transition">Fitur</a>
             <a href="#how-it-works" className="hover:text-[#5e4cff] transition">Cara Kerja</a>
             <a href="#pricing" className="hover:text-[#5e4cff] transition">Harga</a>
@@ -215,6 +216,105 @@ export default function Home() {
               </h3>
               <p className="text-xs text-[#666d80] leading-relaxed">
                 Jaga kerahasiaan sesi foto klien dengan PIN/password opsional. Hanya klien pemilik sesi yang dapat membuka galeri dan memilih foto.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 bg-[#f6f8fa] border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-6 space-y-4">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5e4cff] bg-[#dfdbff] px-2.5 py-1 rounded-[4px]">
+                Tentang Picura
+              </span>
+              <h2 className="font-heading font-semibold text-3xl sm:text-4xl text-[#272835] tracking-tight leading-snug">
+                Dibuat untuk Menyelesaikan Keresahan Klasik Fotografer Indonesia.
+              </h2>
+              <p className="text-sm text-[#666d80] leading-relaxed">
+                Picura lahir dari pengalaman nyata: fotografer yang lelah menunggu klien mengetik manual puluhan kode nama file foto seperti <code className="bg-white border border-[#cdd2d9] px-1.5 py-0.5 rounded text-xs font-mono text-[#272835]">IMG_0412.JPG</code> di chat WhatsApp—yang sering kali salah ketik dan membingungkan tim editor saat retouching.
+              </p>
+              <p className="text-sm text-[#666d80] leading-relaxed">
+                Kami tidak meminta Anda mengunggah ulang bergiga-giga foto ke server baru. Picura langsung menjembatani folder Google Drive yang sudah Anda miliki dengan alur kerja kurasi klien berbasis browser ponsel yang cepat, ringan, dan langsung terhubung ke WhatsApp.
+              </p>
+            </div>
+
+            <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white p-5 rounded-[12px] border border-[#cdd2d9] space-y-2">
+                <span className="text-2xl">⚡</span>
+                <h4 className="font-heading font-semibold text-base text-[#272835]">Nol Waktu Upload</h4>
+                <p className="text-xs text-[#666d80] leading-relaxed">
+                  Tidak ada proses upload ulang. Galeri langsung tayang begitu tautan Google Drive ditempel.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-[12px] border border-[#cdd2d9] space-y-2">
+                <span className="text-2xl">🎯</span>
+                <h4 className="font-heading font-semibold text-base text-[#272835]">Bebas Typo File</h4>
+                <p className="text-xs text-[#666d80] leading-relaxed">
+                  Nama file asli langsung ditarik dari Google Drive dan dikirim presisi tanpa ada salah ketik.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-[12px] border border-[#cdd2d9] space-y-2">
+                <span className="text-2xl">💰</span>
+                <h4 className="font-heading font-semibold text-base text-[#272835]">Tanpa Biaya Hosting</h4>
+                <p className="text-xs text-[#666d80] leading-relaxed">
+                  Memanfaatkan kuota penyimpanan Google Drive Anda sendiri tanpa perlu bayar storage mahal.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-[12px] border border-[#cdd2d9] space-y-2">
+                <span className="text-2xl">📲</span>
+                <h4 className="font-heading font-semibold text-base text-[#272835]">Langsung ke Editor</h4>
+                <p className="text-xs text-[#666d80] leading-relaxed">
+                  Catatan revisi dan daftar foto langsung masuk ke WhatsApp nomor yang Anda tentukan.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works Section */}
+      <section id="how-it-works" className="py-20 bg-white border-b border-[#cdd2d9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5e4cff] bg-[#dfdbff] px-2.5 py-1 rounded-[4px]">
+              Alur Kerja
+            </span>
+            <h2 className="font-heading font-semibold text-3xl text-[#272835] tracking-tight">
+              3 Langkah Mudah Seleksi Foto
+            </h2>
+            <p className="text-sm text-[#666d80]">
+              Mulai dari folder mentah sampai daftar final foto siap edit dalam hitungan menit.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-[#f6f8fa] border border-[#cdd2d9] rounded-[12px] p-6 space-y-3 relative">
+              <span className="text-xs font-mono font-bold text-[#5e4cff] bg-white border border-[#cdd2d9] px-2 py-0.5 rounded">01</span>
+              <h3 className="font-heading font-semibold text-lg text-[#272835]">Tautkan Google Drive</h3>
+              <p className="text-xs text-[#666d80] leading-relaxed">
+                Buat sesi galeri baru di Picura dan masukkan tautan folder Google Drive Anda yang berstatus publik.
+              </p>
+            </div>
+
+            <div className="bg-[#f6f8fa] border border-[#cdd2d9] rounded-[12px] p-6 space-y-3 relative">
+              <span className="text-xs font-mono font-bold text-[#5e4cff] bg-white border border-[#cdd2d9] px-2 py-0.5 rounded">02</span>
+              <h3 className="font-heading font-semibold text-lg text-[#272835]">Klien Kurasi di HP</h3>
+              <p className="text-xs text-[#666d80] leading-relaxed">
+                Bagikan link unik galeri ke klien. Klien membuka di browser smartphone dan menandai foto terbaik sesuai kuota.
+              </p>
+            </div>
+
+            <div className="bg-[#f6f8fa] border border-[#cdd2d9] rounded-[12px] p-6 space-y-3 relative">
+              <span className="text-xs font-mono font-bold text-[#5e4cff] bg-white border border-[#cdd2d9] px-2 py-0.5 rounded">03</span>
+              <h3 className="font-heading font-semibold text-lg text-[#272835]">Otomatis Masuk WhatsApp</h3>
+              <p className="text-xs text-[#666d80] leading-relaxed">
+                Klien klik tombol kirim, dan daftar kode nama file foto terpilih langsung meluncur rapi ke WhatsApp editor Anda.
               </p>
             </div>
           </div>
