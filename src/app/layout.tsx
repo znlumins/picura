@@ -30,9 +30,11 @@ export const metadata: Metadata = {
     siteName: "Picura",
     images: [
       {
-        url: "/og-poster.png",
+        url: "/og-poster-v2.png",
+        secureUrl: "https://picura.web.id/og-poster-v2.png",
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: "Picura - Seleksi Foto Klien Langsung ke WhatsApp",
       },
     ],
@@ -44,7 +46,7 @@ export const metadata: Metadata = {
     title: "Picura - Platform Seleksi Foto Google Drive & WhatsApp",
     description:
       "Pilih foto klien langsung ke WhatsApp tanpa re-upload. Tautkan Google Drive, kurasi di browser HP.",
-    images: ["/og-poster.png"],
+    images: ["/og-poster-v2.png"],
   },
 };
 
@@ -61,6 +63,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
+      <head>
+        <meta property="og:image:secure_url" content="https://picura.web.id/og-poster-v2.png" />
+        <meta property="og:image:type" content="image/png" />
+        <link rel="image_src" href="https://picura.web.id/og-poster-v2.png" />
+      </head>
       <body className="antialiased bg-[#050505] text-white min-h-screen">
         {children}
       </body>
