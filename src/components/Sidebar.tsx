@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { PicuraLogo } from "@/components/PicuraLogo";
 import {
   IconDashboard,
-  IconPhoto,
   IconSettings,
   IconLogOut,
   IconLogIn,
@@ -45,9 +44,13 @@ export default function Sidebar({
     <aside className="w-[260px] shrink-0 h-screen sticky top-0 hidden lg:flex flex-col justify-between p-5 border-r border-[#cdd2d9] bg-[#f6f8fa] z-20 select-none">
       <div className="space-y-6">
         {/* Top Logo Area */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-2.5 group" title="Kembali ke Beranda Picura">
           <PicuraLogo className="h-7 w-auto text-[#272835] transition-opacity group-hover:opacity-85" />
-          <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-[4px] bg-[#dfdbff] text-[#5e4cff]">
+          <span
+            className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-[4px] ${
+              isPro ? "bg-[#dfdbff] text-[#5e4cff]" : "bg-[#eceff3] text-[#818898]"
+            }`}
+          >
             {isPro ? "PRO" : "FREE"}
           </span>
         </Link>
@@ -62,7 +65,7 @@ export default function Sidebar({
               href="/dashboard"
               className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-[13px] font-medium transition ${
                 pathname === "/dashboard"
-                  ? "text-[#272835] bg-white border border-[#cdd2d9] shadow-sm font-semibold"
+                  ? "text-[#272835] bg-white border border-[#cdd2d9] shadow-xs font-semibold"
                   : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]"
               }`}
             >
@@ -73,20 +76,6 @@ export default function Sidebar({
               {pathname === "/dashboard" && (
                 <div className="w-1.5 h-1.5 rounded-full bg-[#5e4cff]" />
               )}
-            </Link>
-
-            <Link
-              href="/"
-              className={`flex items-center justify-between px-3 py-2 rounded-[8px] text-[13px] font-medium transition ${
-                pathname === "/"
-                  ? "text-[#272835] bg-white border border-[#cdd2d9] font-semibold"
-                  : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]"
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <IconPhoto className="w-4 h-4 shrink-0 text-[#818898]" />
-                <span>Beranda Utama</span>
-              </div>
             </Link>
 
             {user && (
@@ -108,23 +97,23 @@ export default function Sidebar({
       <div className="space-y-2">
         {user ? (
           <div className="bg-white p-3.5 rounded-[12px] border border-[#cdd2d9] space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-semibold text-[#272835] truncate max-w-[140px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold text-[#272835] truncate">
                   {user.name}
                 </div>
-                <div className="text-[11px] text-[#818898] truncate max-w-[140px]">
+                <div className="text-[11px] text-[#818898] truncate">
                   {user.studioName || user.email}
                 </div>
               </div>
               <span
-                className={`text-[10px] font-mono font-medium px-2 py-0.5 rounded-full ${
+                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] shrink-0 ${
                   isPro
-                    ? "bg-[#dfdbff] text-[#5e4cff]"
+                    ? "bg-[#dfdbff] text-[#5e4cff] border border-[#beb5ff]"
                     : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
                 }`}
               >
-                {user.subscriptionTier || "FREEMIUM"}
+                {isPro ? "PRO" : "FREE"}
               </span>
             </div>
 
@@ -150,7 +139,7 @@ export default function Sidebar({
             {!isPro ? (
               <button
                 onClick={onUpgradeClick}
-                className="w-full py-1.5 px-3 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center justify-center gap-1.5"
+                className="w-full py-1.5 px-3 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center justify-center gap-1.5 shadow-xs"
               >
                 <span>Upgrade Pro</span>
                 <IconChevronRight className="w-3 h-3 ml-auto text-white/80" />

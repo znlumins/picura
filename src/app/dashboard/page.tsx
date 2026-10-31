@@ -376,10 +376,10 @@ export default function DashboardPage() {
                 </p>
               </div>
 
-              {user && (
+              {user && filteredGalleries.length > 0 && (
                 <button
                   onClick={() => setIsCreateOpen(true)}
-                  className="py-1.5 px-3 rounded-[8px] border border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-xs font-medium text-[#36394a] transition self-start sm:self-auto flex items-center gap-1.5"
+                  className="py-1.5 px-3 rounded-[8px] border border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-xs font-medium text-[#36394a] transition self-start sm:self-auto flex items-center gap-1.5 shadow-xs"
                 >
                   <IconPlus className="w-3.5 h-3.5" />
                   <span>Tambah Sesi</span>
@@ -393,12 +393,27 @@ export default function DashboardPage() {
                 <span>Memuat data galeri...</span>
               </div>
             ) : filteredGalleries.length === 0 ? (
-              <div className="py-12 text-center text-[#818898] space-y-2">
-                <IconFolder className="w-8 h-8 mx-auto text-[#c1c7d0]" />
-                <p className="text-xs font-medium text-[#666d80]">Belum ada galeri sesi foto</p>
-                <p className="text-[11px] text-[#818898]">
-                  Klik tombol &ldquo;Buat Galeri&rdquo; untuk menautkan folder Google Drive pertama Anda.
-                </p>
+              <div className="py-14 text-center space-y-3 max-w-sm mx-auto">
+                <div className="w-12 h-12 rounded-[10px] bg-[#f6f8fa] border border-[#cdd2d9] flex items-center justify-center mx-auto text-[#818898]">
+                  <IconFolder className="w-6 h-6 text-[#818898]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#272835]">Belum ada galeri sesi foto</p>
+                  <p className="text-xs text-[#818898] mt-1 leading-relaxed">
+                    Tautkan folder Google Drive pertama Anda untuk mulai mengirim tautan seleksi foto ke klien.
+                  </p>
+                </div>
+                {user && (
+                  <div className="pt-1">
+                    <button
+                      onClick={() => setIsCreateOpen(true)}
+                      className="py-2 px-4 rounded-[8px] bg-[#5e4cff] hover:opacity-90 text-white text-xs font-medium transition inline-flex items-center gap-1.5 shadow-sm active:scale-95"
+                    >
+                      <IconPlus className="w-3.5 h-3.5" />
+                      <span>Buat Galeri Pertama</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="divide-y divide-[#eceff3]">
