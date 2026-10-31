@@ -17,7 +17,7 @@ export function StatusDot({ status, label, className = "" }: StatusDotProps) {
     ? "bg-[#10b981]"
     : isWaiting
     ? "bg-[#f59e0b]"
-    : "bg-[#818898]";
+    : "bg-[#64748b]";
 
   const defaultLabel = isCompleted
     ? "Selesai dipilih"
@@ -27,7 +27,7 @@ export function StatusDot({ status, label, className = "" }: StatusDotProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-xs text-[#666d80] dark:text-[#94a3b8] select-none ${className}`}
+      className={`inline-flex items-center gap-1.5 text-xs text-[#525866] dark:text-slate-300 select-none ${className}`}
     >
       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
       <span className="font-normal">{label || defaultLabel}</span>

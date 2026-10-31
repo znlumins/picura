@@ -89,14 +89,14 @@ export default function Sidebar({
                 activeTab === "dashboard"
                   ? isDarkMode
                     ? "text-white bg-[#1a1d2d]"
-                    : "text-[#272835] bg-[#eceff3]"
+                    : "text-[#1a1b25] bg-[#eceff3]"
                   : isDarkMode
-                  ? "text-slate-400 hover:text-white hover:bg-[#1a1d2d]/60"
-                  : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]/60"
+                  ? "text-slate-300 hover:text-white hover:bg-[#1a1d2d]/60"
+                  : "text-[#525866] hover:text-[#1a1b25] hover:bg-[#eceff3]/60"
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <IconDashboard className="w-4 h-4 shrink-0 text-[#818898]" />
+                <IconDashboard className="w-4 h-4 shrink-0 text-[#64748b] dark:text-slate-400" />
                 <span>Dashboard</span>
               </div>
             </button>
@@ -109,14 +109,14 @@ export default function Sidebar({
                   activeTab === "settings"
                     ? isDarkMode
                       ? "text-white bg-[#1a1d2d]"
-                    : "text-[#272835] bg-[#eceff3]"
+                    : "text-[#1a1b25] bg-[#eceff3]"
                     : isDarkMode
-                    ? "text-slate-400 hover:text-white hover:bg-[#1a1d2d]/60"
-                    : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]/60"
+                    ? "text-slate-300 hover:text-white hover:bg-[#1a1d2d]/60"
+                    : "text-[#525866] hover:text-[#1a1b25] hover:bg-[#eceff3]/60"
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <IconSettings className="w-4 h-4 shrink-0 text-[#818898]" />
+                  <IconSettings className="w-4 h-4 shrink-0 text-[#64748b] dark:text-slate-400" />
                   <span>Pengaturan</span>
                 </div>
               </button>
@@ -142,19 +142,19 @@ export default function Sidebar({
                   <div className="flex items-center gap-1.5">
                     <span
                       className={`text-xs font-semibold truncate ${
-                        isDarkMode ? "text-white" : "text-[#272835]"
+                        isDarkMode ? "text-white" : "text-[#1a1b25]"
                       }`}
                       title={user.studioName || user.name}
                     >
                       {user.studioName || user.name}
                     </span>
                     {isPro && (
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-[4px] bg-[#dfdbff] text-[#5e4cff] dark:bg-[#5e4cff]/25 dark:text-[#dfdbff] shrink-0">
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-[4px] bg-[#dfdbff] text-[#3b28cc] dark:bg-[#5e4cff]/25 dark:text-[#dfdbff] shrink-0">
                         PRO
                       </span>
                     )}
                   </div>
-                  <span className="text-[11px] text-[#818898] truncate block">
+                  <span className="text-[11px] text-[#525866] dark:text-slate-400 truncate block">
                     {user.name}
                   </span>
                 </div>
@@ -163,9 +163,9 @@ export default function Sidebar({
               {/* Kuota Galeri: Hanya tampil jika terbatas (!isPro) */}
               {!isPro && (
                 <div className="space-y-1 pt-1.5 border-t border-[#eceff3] dark:border-slate-800">
-                  <div className="text-[11px] text-[#666d80] dark:text-slate-400 flex justify-between tabular-nums">
+                  <div className="text-[11px] text-[#525866] dark:text-slate-300 flex justify-between tabular-nums">
                     <span>Kuota:</span>
-                    <span className="font-medium text-[#272835] dark:text-slate-200">
+                    <span className="font-medium text-[#1a1b25] dark:text-slate-200">
                       {stats?.activeGalleries || 0}/{stats?.quotaLimit || 2} galeri
                     </span>
                   </div>
@@ -184,11 +184,11 @@ export default function Sidebar({
               )}
 
               {/* Menu Aksi Akun: Pengaturan & Keluar */}
-              <div className="pt-2 border-t border-[#eceff3] dark:border-slate-800 flex items-center justify-between text-xs text-[#818898]">
+              <div className="pt-2 border-t border-[#eceff3] dark:border-slate-800 flex items-center justify-between text-xs text-[#525866] dark:text-slate-300">
                 <button
                   type="button"
                   onClick={handleSettingsClick}
-                  className="hover:text-[#272835] dark:hover:text-white transition flex items-center gap-1"
+                  className="hover:text-[#1a1b25] dark:hover:text-white transition flex items-center gap-1 font-medium"
                 >
                   <IconSettings className="w-3.5 h-3.5" />
                   <span>Pengaturan</span>
@@ -197,7 +197,7 @@ export default function Sidebar({
                 <button
                   type="button"
                   onClick={() => setShowLogoutModal(true)}
-                  className="hover:text-[#ef4444] transition flex items-center gap-1"
+                  className="hover:text-[#dc2626] dark:hover:text-red-400 transition flex items-center gap-1 font-medium"
                 >
                   <IconLogOut className="w-3.5 h-3.5" />
                   <span>Keluar</span>

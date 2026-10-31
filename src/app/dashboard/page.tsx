@@ -28,6 +28,7 @@ import {
   IconCrown,
   IconSun,
   IconMoon,
+  IconMoreHorizontal,
 } from "@/components/Icons";
 
 interface GalleryItem {
@@ -50,6 +51,79 @@ interface GalleryItem {
   createdAt?: string;
 }
 
+const DEMO_USER = {
+  id: "demo-user-1",
+  name: "Demo Fotografer",
+  email: "demo@picura.id",
+  avatarUrl: null,
+  studioName: "Lumina Studio Jakarta",
+  studioWhatsapp: "081234567890",
+  hasGoogleApiKey: true,
+  subscriptionTier: "PRO_FREELANCE",
+};
+
+const DEMO_STATS = {
+  activeGalleries: 2,
+  quotaLimit: 999,
+  totalSelections: 1,
+  totalPhotos: 75,
+};
+
+const DEMO_GALLERIES: GalleryItem[] = [
+  {
+    id: "demo-gallery-1",
+    title: "Sesi Foto Wedding Rian & Dina",
+    slug: "sesi-foto-wedding-rian-dina-sample",
+    maxSelectionQuota: 25,
+    totalPhotos: 50,
+    latestSelectedCount: 0,
+    latestSelection: null,
+    editorWhatsappNumber: "081234567890",
+    hasPassword: true,
+    expiresAt: null,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "demo-gallery-2",
+    title: "Prewedding Budi & Sarah",
+    slug: "prewedding-budi-sarah-sample",
+    maxSelectionQuota: 20,
+    totalPhotos: 25,
+    latestSelectedCount: 20,
+    latestSelection: {
+      clientName: "Budi & Sarah",
+      clientNotes: "Selesai dipilih mas, terima kasih!",
+      totalSelected: 20,
+      submittedAt: new Date().toISOString(),
+      selectedFiles: [
+        { file_id: "img_01", filename: "IMG_001.JPG" },
+        { file_id: "img_02", filename: "IMG_002.JPG" },
+      ],
+    },
+    editorWhatsappNumber: "081234567890",
+    hasPassword: false,
+    expiresAt: null,
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+  },
+];
+
+const DEMO_ACTIVITIES: ActivityItem[] = [
+  {
+    id: "demo-activity-1",
+    galleryId: "demo-gallery-2",
+    galleryTitle: "Prewedding Budi & Sarah",
+    gallerySlug: "prewedding-budi-sarah-sample",
+    clientName: "Budi & Sarah",
+    clientNotes: "Selesai dipilih mas, terima kasih!",
+    totalSelected: 20,
+    submittedAt: new Date().toISOString(),
+    selectedFiles: [
+      { file_id: "img_01", filename: "IMG_001.JPG" },
+      { file_id: "img_02", filename: "IMG_002.JPG" },
+    ],
+  },
+];
+
 export default function DashboardPage() {
   const [user, setUser] = useState<{
     id: string;
@@ -60,18 +134,18 @@ export default function DashboardPage() {
     studioWhatsapp?: string | null;
     hasGoogleApiKey?: boolean;
     subscriptionTier: string;
-  } | null>(null);
+  } | null>(DEMO_USER);
 
   const [stats, setStats] = useState<{
     activeGalleries: number;
     quotaLimit: number;
     totalSelections: number;
     totalPhotos?: number;
-  } | null>(null);
+  } | null>(DEMO_STATS);
 
-  const [galleries, setGalleries] = useState<GalleryItem[]>([]);
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [galleries, setGalleries] = useState<GalleryItem[]>(DEMO_GALLERIES);
+  const [activities, setActivities] = useState<ActivityItem[]>(DEMO_ACTIVITIES);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Tab & Theme states
   const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
@@ -94,8 +168,24 @@ export default function DashboardPage() {
   } | null>(null);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterTab, setFilterTab] = useState<"all" | "waiting" | "completed">("all");
+  const [openMenuSlug, setOpenMenuSlug] = useState<string | null>(null);
   const [galleryToDelete, setGalleryToDelete] = useState<{ slug: string; title: string } | null>(null);
   const [isDeletingGallery, setIsDeletingGallery] = useState(false);
+
+  // Close gallery dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".gallery-menu-wrapper")) {
+        setOpenMenuSlug(null);
+      }
+    };
+    if (openMenuSlug) {
+      window.addEventListener("click", handleOutsideClick);
+      return () => window.removeEventListener("click", handleOutsideClick);
+    }
+  }, [openMenuSlug]);
 
   // Initialize theme from URL parameter or localStorage
   useEffect(() => {
@@ -106,7 +196,7 @@ export default function DashboardPage() {
       if (savedTheme === "dark") {
         setIsDarkMode(true);
         document.documentElement.classList.add("dark");
-      } else if (paramTheme === "light") {
+      } else {
         setIsDarkMode(false);
         document.documentElement.classList.remove("dark");
       }
@@ -129,7 +219,7 @@ export default function DashboardPage() {
   };
 
   const fetchDashboardData = useCallback(async () => {
-    setIsLoading(true);
+    // Stale-while-revalidate: don't flash spinner if data is already available
     const token = typeof window !== "undefined" ? localStorage.getItem("picura_token") : null;
 
     try {
@@ -254,9 +344,13 @@ export default function DashboardPage() {
   const waitingCount = galleries.filter((g) => (g.latestSelectedCount || 0) === 0).length;
   const completedCount = galleries.filter((g) => (g.latestSelectedCount || 0) > 0).length;
 
-  const filteredGalleries = galleries.filter((g) =>
-    g.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredGalleries = galleries.filter((g) => {
+    const matchesSearch = g.title.toLowerCase().includes(searchQuery.toLowerCase());
+    if (!matchesSearch) return false;
+    if (filterTab === "waiting") return (g.latestSelectedCount || 0) === 0;
+    if (filterTab === "completed") return (g.latestSelectedCount || 0) > 0;
+    return true;
+  });
 
   const totalPhotosCount =
     stats?.totalPhotos || galleries.reduce((acc, g) => acc + (g.totalPhotos || 0), 0);
@@ -413,23 +507,23 @@ export default function DashboardPage() {
 
               {/* Single concise summary line (no cards, no borders, tabular-nums) */}
               {user && (
-                <div className="text-xs text-[#666d80] dark:text-[#94a3b8] flex flex-wrap items-center gap-2 select-none py-1">
+                <div className="text-xs text-[#525866] dark:text-slate-300 flex flex-wrap items-center gap-2 select-none py-1">
                   <span>
-                    <strong className="font-semibold text-[#272835] dark:text-white tabular-nums">
+                    <strong className="font-semibold text-[#1a1b25] dark:text-white tabular-nums">
                       {activeCount}
                     </strong>{" "}
                     aktif
                   </span>
                   <span>·</span>
                   <span>
-                    <strong className="font-semibold text-[#272835] dark:text-white tabular-nums">
+                    <strong className="font-semibold text-[#1a1b25] dark:text-white tabular-nums">
                       {waitingCount}
                     </strong>{" "}
                     menunggu klien
                   </span>
                   <span>·</span>
                   <span>
-                    <strong className="font-semibold text-[#272835] dark:text-white tabular-nums">
+                    <strong className="font-semibold text-[#1a1b25] dark:text-white tabular-nums">
                       {completedCount}
                     </strong>{" "}
                     selesai dipilih
@@ -444,26 +538,69 @@ export default function DashboardPage() {
                 }`}
               >
                 <div
-                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b ${
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b ${
                     isDarkMode ? "border-slate-800" : "border-[#eceff3]"
                   }`}
                 >
                   <div>
                     <h3
-                      className={`font-heading font-semibold text-lg ${
-                        isDarkMode ? "text-white" : "text-[#272835]"
+                      className={`font-heading font-semibold text-base ${
+                        isDarkMode ? "text-white" : "text-[#1a1b25]"
                       }`}
                     >
-                      Daftar Galeri Aktif ({filteredGalleries.length})
+                      Daftar Galeri
                     </h3>
-                    <p className="text-xs text-[#818898]">
+                    <p className="text-xs text-[#525866] dark:text-slate-400 mt-0.5">
                       Kelola tautan bukti foto, pantau status pilihan klien, dan salin link
                     </p>
+                  </div>
+
+                  {/* Filter Tabs */}
+                  <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[#f6f8fa] dark:bg-[#1a1d2e] border border-[#e2e8f0] dark:border-[#2e334a] self-start sm:self-auto max-w-full overflow-x-auto shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setFilterTab("all")}
+                      className={`px-2.5 py-1 text-xs rounded-[6px] transition font-medium ${
+                        filterTab === "all"
+                          ? isDarkMode
+                            ? "bg-[#25283a] text-white shadow-2xs"
+                            : "bg-white text-[#1a1b25] shadow-2xs"
+                          : "text-[#525866] dark:text-slate-400 hover:text-[#1a1b25] dark:hover:text-white"
+                      }`}
+                    >
+                      Semua <span className="tabular-nums">({galleries.length})</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterTab("waiting")}
+                      className={`px-2.5 py-1 text-xs rounded-[6px] transition font-medium ${
+                        filterTab === "waiting"
+                          ? isDarkMode
+                            ? "bg-[#25283a] text-white shadow-2xs"
+                            : "bg-white text-[#1a1b25] shadow-2xs"
+                          : "text-[#525866] dark:text-slate-400 hover:text-[#1a1b25] dark:hover:text-white"
+                      }`}
+                    >
+                      Menunggu klien <span className="tabular-nums">({waitingCount})</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterTab("completed")}
+                      className={`px-2.5 py-1 text-xs rounded-[6px] transition font-medium ${
+                        filterTab === "completed"
+                          ? isDarkMode
+                            ? "bg-[#25283a] text-white shadow-2xs"
+                            : "bg-white text-[#1a1b25] shadow-2xs"
+                          : "text-[#525866] dark:text-slate-400 hover:text-[#1a1b25] dark:hover:text-white"
+                      }`}
+                    >
+                      Selesai dipilih <span className="tabular-nums">({completedCount})</span>
+                    </button>
                   </div>
                 </div>
 
                 {isLoading ? (
-                  <div className="py-16 text-center text-[#818898] flex items-center justify-center gap-2 text-xs">
+                  <div className="py-16 text-center text-[#525866] dark:text-slate-400 flex items-center justify-center gap-2 text-xs">
                     <IconSpinner className="w-5 h-5 text-[#5e4cff]" />
                     <span>Memuat data galeri...</span>
                   </div>
@@ -472,8 +609,8 @@ export default function DashboardPage() {
                     <div
                       className={`w-12 h-12 rounded-[10px] border flex items-center justify-center mx-auto ${
                         isDarkMode
-                          ? "bg-slate-800/60 border-slate-700 text-slate-400"
-                          : "bg-[#f6f8fa] border-[#cdd2d9] text-[#818898]"
+                          ? "bg-slate-800/60 border-slate-700 text-slate-300"
+                          : "bg-[#f6f8fa] border-[#cdd2d9] text-[#525866]"
                       }`}
                     >
                       <IconFolder className="w-6 h-6" />
@@ -481,12 +618,12 @@ export default function DashboardPage() {
                     <div>
                       <p
                         className={`text-sm font-semibold ${
-                          isDarkMode ? "text-white" : "text-[#272835]"
+                          isDarkMode ? "text-white" : "text-[#1a1b25]"
                         }`}
                       >
                         Belum ada galeri sesi foto
                       </p>
-                      <p className="text-xs text-[#818898] mt-1 leading-relaxed">
+                      <p className="text-xs text-[#525866] dark:text-slate-400 mt-1 leading-relaxed">
                         Tautkan folder Google Drive pertama Anda untuk mulai mengirim tautan seleksi
                         foto ke klien.
                       </p>
@@ -520,24 +657,30 @@ export default function DashboardPage() {
                           })
                         : "Baru saja";
 
+                      const isCompleted = (gallery.latestSelectedCount || 0) > 0;
+                      const quota = gallery.maxSelectionQuota || 1;
+                      const selected = gallery.latestSelectedCount || 0;
+                      const progressPercent = Math.min(100, Math.round((selected / quota) * 100));
+
                       return (
                         <div
                           key={gallery.id}
-                          className={`py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 px-3 rounded-[8px] transition ${
+                          className={`py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-3 rounded-[8px] transition ${
                             isDarkMode ? "hover:bg-[#1a1d2e]" : "hover:bg-[#f6f8fa]"
                           }`}
                         >
-                          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
-                            {/* Visual Thumbnail Box */}
+                          {/* Left: Cover 64px + Title + Meta */}
+                          <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+                            {/* Neutral 64px Cover Container */}
                             <div
-                              className={`w-11 h-11 shrink-0 rounded-[8px] border flex items-center justify-center transition-colors shadow-2xs ${
+                              className={`w-16 h-16 shrink-0 rounded-[8px] border overflow-hidden flex items-center justify-center transition-colors ${
                                 isDarkMode
-                                  ? "bg-[#1a1d2d] border-[#2e334a] text-[#818cf8]"
-                                  : "bg-[#f4f2ff] border-[#dfdbff] text-[#5e4cff]"
+                                  ? "bg-[#1a1d2e] border-[#2e334a] text-slate-400"
+                                  : "bg-[#f1f5f9] border-[#e2e8f0] text-[#64748b]"
                               }`}
                             >
                               <svg
-                                className="w-5 h-5 opacity-90"
+                                className="w-6 h-6 opacity-75"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -545,25 +688,26 @@ export default function DashboardPage() {
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
-                                  strokeWidth={1.75}
+                                  strokeWidth={1.5}
                                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                               </svg>
                             </div>
 
-                            <div className="space-y-1 min-w-0">
+                            {/* Title, Status, Meta */}
+                            <div className="space-y-1.5 min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span
-                                  className={`font-semibold text-sm truncate ${
-                                    isDarkMode ? "text-white" : "text-[#272835]"
+                                  className={`font-semibold text-sm truncate max-w-xs sm:max-w-md ${
+                                    isDarkMode ? "text-white" : "text-[#1a1b25]"
                                   }`}
+                                  title={gallery.title}
                                 >
                                   {gallery.title}
                                 </span>
 
-                                {/* Status Dot: 6px dot + neutral text, no colored pill */}
                                 <StatusDot
-                                  status={gallery.latestSelectedCount > 0 ? "selesai" : "menunggu"}
+                                  status={isCompleted ? "selesai" : "menunggu"}
                                 />
 
                                 {gallery.hasPassword && (
@@ -571,7 +715,7 @@ export default function DashboardPage() {
                                     className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-[4px] border ${
                                       isDarkMode
                                         ? "bg-slate-800 border-slate-700 text-slate-300"
-                                        : "bg-[#f6f8fa] text-[#818898] border-[#cdd2d9]"
+                                        : "bg-[#f6f8fa] text-[#525866] border-[#cdd2d9]"
                                     }`}
                                   >
                                     <IconLock className="w-3 h-3" />
@@ -580,81 +724,168 @@ export default function DashboardPage() {
                                 )}
                               </div>
 
-                              <div className="flex flex-wrap items-center gap-2 text-xs text-[#818898]">
+                              <div className="flex flex-wrap items-center gap-2 text-xs text-[#525866] dark:text-slate-300">
                                 <span className="tabular-nums">{gallery.totalPhotos || 0} foto</span>
-                                <span>·</span>
-                                <span className="tabular-nums">
-                                  {gallery.latestSelectedCount || 0}/{gallery.maxSelectionQuota} dipilih
-                                </span>
                                 <span>·</span>
                                 <span className="tabular-nums">Dibuat {formattedDate}</span>
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2 flex-wrap shrink-0">
-                            {gallery.latestSelection && (
+                          {/* Middle: Progress Bar & Progress Text */}
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 shrink-0 sm:min-w-[140px]">
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between text-xs text-[#525866] dark:text-slate-300 gap-2">
+                                <span className="tabular-nums font-medium">
+                                  {selected}/{quota} dipilih
+                                </span>
+                              </div>
+                              <div
+                                className={`w-32 h-1.5 rounded-full overflow-hidden ${
+                                  isDarkMode ? "bg-slate-800" : "bg-slate-100"
+                                }`}
+                              >
+                                <div
+                                  className={`h-full rounded-full transition-all duration-300 ${
+                                    isCompleted ? "bg-[#10b981]" : "bg-[#5e4cff]"
+                                  }`}
+                                  style={{ width: `${progressPercent}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right: Actions (Exactly 1 primary button + 1 menu ⋯) */}
+                          <div className="flex items-center gap-2 shrink-0">
+                            {isCompleted ? (
                               <Button
                                 size="sm"
                                 variant="secondary"
-                                onClick={() => handleViewResults(gallery)}
-                                leftIcon={<IconEye className="w-3.5 h-3.5" />}
+                                onClick={() => handleShareToClientWA(gallery)}
+                                title="Kirim hasil pilihan via WhatsApp"
+                                leftIcon={<IconWhatsApp className="w-3.5 h-3.5" />}
                               >
-                                Hasil ({gallery.latestSelectedCount})
+                                Kirim hasil ke WA
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => handleCopyLink(gallery.slug)}
+                                title="Salin tautan galeri klien"
+                                leftIcon={
+                                  isCopied ? (
+                                    <IconCheck className="w-3.5 h-3.5 text-[#10b981]" />
+                                  ) : (
+                                    <IconCopy className="w-3.5 h-3.5" />
+                                  )
+                                }
+                              >
+                                {isCopied ? "Tersalin!" : "Salin link"}
                               </Button>
                             )}
 
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleCopyLink(gallery.slug)}
-                              title="Salin tautan galeri klien"
-                              leftIcon={
-                                isCopied ? (
-                                  <IconCheck className="w-3.5 h-3.5 text-[#10b981]" />
-                                ) : (
-                                  <IconCopy className="w-3.5 h-3.5 text-[#818898]" />
-                                )
-                              }
-                            >
-                              {isCopied ? "Tersalin!" : "Salin link"}
-                            </Button>
+                            {/* Dropdown Menu "⋯" */}
+                            <div className="relative gallery-menu-wrapper">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenMenuSlug(openMenuSlug === gallery.slug ? null : gallery.slug);
+                                }}
+                                className={`w-8 h-8 rounded-[8px] border flex items-center justify-center transition focus:outline-none ${
+                                  openMenuSlug === gallery.slug
+                                    ? isDarkMode
+                                      ? "bg-[#25283a] border-slate-600 text-white"
+                                      : "bg-[#eef2f6] border-[#bbc2cc] text-[#1a1b25]"
+                                    : isDarkMode
+                                    ? "border-[#2e334a] bg-[#141624] text-slate-300 hover:text-white hover:bg-[#1a1d2e]"
+                                    : "border-[#cdd2d9] bg-white text-[#525866] hover:text-[#1a1b25] hover:bg-[#f6f8fa]"
+                                }`}
+                                title="Opsi galeri"
+                                aria-label="Opsi galeri"
+                              >
+                                <IconMoreHorizontal className="w-4 h-4" />
+                              </button>
 
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleShareToClientWA(gallery)}
-                              title="Kirim pesan seleksi via WhatsApp"
-                              leftIcon={<IconWhatsApp className="w-3.5 h-3.5" />}
-                            >
-                              Kirim WA
-                            </Button>
+                              {openMenuSlug === gallery.slug && (
+                                <div
+                                  className={`absolute right-0 top-full mt-1.5 w-48 rounded-[8px] border shadow-lg py-1 z-30 animate-in fade-in zoom-in-95 duration-100 ${
+                                    isDarkMode
+                                      ? "bg-[#141624] border-[#25283a] text-slate-200"
+                                      : "bg-white border-[#cdd2d9] text-[#272835]"
+                                  }`}
+                                >
+                                  {gallery.latestSelection && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setOpenMenuSlug(null);
+                                        handleViewResults(gallery);
+                                      }}
+                                      className={`w-full px-3 py-2 text-left text-xs flex items-center gap-2 transition ${
+                                        isDarkMode ? "hover:bg-[#1e2235]" : "hover:bg-[#f6f8fa]"
+                                      }`}
+                                    >
+                                      <IconEye className="w-3.5 h-3.5 text-[#5e4cff]" />
+                                      <span>Lihat hasil ({gallery.latestSelectedCount})</span>
+                                    </button>
+                                  )}
 
-                            <a
-                              href={`/g/${gallery.slug}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className={`p-2 rounded-[8px] border transition ${
-                                isDarkMode
-                                  ? "border-[#2e334a] text-slate-400 hover:text-white hover:bg-[#1a1d2d]"
-                                  : "border-[#cdd2d9] text-[#818898] hover:text-[#272835] hover:bg-[#f6f8fa]"
-                              }`}
-                              title="Pratinjau Galeri Klien"
-                            >
-                              <IconExternalLink className="w-4 h-4" />
-                            </a>
+                                  <a
+                                    href={`/g/${gallery.slug}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={() => setOpenMenuSlug(null)}
+                                    className={`w-full px-3 py-2 text-left text-xs flex items-center gap-2 transition ${
+                                      isDarkMode ? "hover:bg-[#1e2235]" : "hover:bg-[#f6f8fa]"
+                                    }`}
+                                  >
+                                    <IconExternalLink className="w-3.5 h-3.5 text-[#525866] dark:text-slate-400" />
+                                    <span>Buka galeri</span>
+                                  </a>
 
-                            <Button
-                              size="sm"
-                              variant="danger-ghost"
-                              onClick={() =>
-                                setGalleryToDelete({ slug: gallery.slug, title: gallery.title })
-                              }
-                              className="px-2"
-                              title="Hapus Galeri"
-                            >
-                              <IconTrash className="w-4 h-4" />
-                            </Button>
+                                  {isCompleted && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setOpenMenuSlug(null);
+                                        handleCopyLink(gallery.slug);
+                                      }}
+                                      className={`w-full px-3 py-2 text-left text-xs flex items-center gap-2 transition ${
+                                        isDarkMode ? "hover:bg-[#1e2235]" : "hover:bg-[#f6f8fa]"
+                                      }`}
+                                    >
+                                      <IconCopy className="w-3.5 h-3.5 text-[#525866] dark:text-slate-400" />
+                                      <span>Salin link</span>
+                                    </button>
+                                  )}
+
+                                  <div
+                                    className={`my-1 border-t ${
+                                      isDarkMode ? "border-slate-800" : "border-[#eceff3]"
+                                    }`}
+                                  />
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setOpenMenuSlug(null);
+                                      setGalleryToDelete({
+                                        slug: gallery.slug,
+                                        title: gallery.title,
+                                      });
+                                    }}
+                                    className={`w-full px-3 py-2 text-left text-xs flex items-center gap-2 text-red-600 dark:text-red-400 transition ${
+                                      isDarkMode ? "hover:bg-red-950/30" : "hover:bg-red-50"
+                                    }`}
+                                  >
+                                    <IconTrash className="w-3.5 h-3.5" />
+                                    <span>Hapus galeri</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -725,7 +956,7 @@ export default function DashboardPage() {
 
             <div>
               <h3 className="font-heading font-semibold text-base">Hapus Galeri Klien?</h3>
-              <p className="text-xs text-[#818898] mt-1.5 leading-relaxed">
+              <p className="text-xs text-[#525866] dark:text-slate-400 mt-1.5 leading-relaxed">
                 Apakah Anda yakin ingin menghapus sesi{" "}
                 <strong className={isDarkMode ? "text-slate-200" : "text-[#272835]"}>
                   &quot;{galleryToDelete.title}&quot;

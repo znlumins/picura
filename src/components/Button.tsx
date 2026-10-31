@@ -36,13 +36,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary:
-        "bg-[#5e4cff] hover:bg-[#523ff0] active:scale-[0.98] text-white shadow-xs",
+        "bg-[#5e4cff] hover:bg-[#523ff0] active:scale-[0.98] text-white shadow-xs font-medium",
       secondary:
-        "bg-white dark:bg-[#1a1d2d] border border-[#cdd2d9] dark:border-[#2e334a] text-[#36394a] dark:text-slate-200 hover:bg-[#f6f8fa] dark:hover:bg-[#25283a] shadow-2xs",
+        "bg-white dark:bg-[#1a1d2d] border border-[#cdd2d9] dark:border-[#2e334a] text-[#1a1b25] dark:text-slate-100 hover:bg-[#f6f8fa] dark:hover:bg-[#25283a] shadow-2xs font-medium",
       ghost:
-        "bg-transparent text-[#666d80] dark:text-slate-400 hover:text-[#272835] dark:hover:text-white hover:bg-[#eceff3]/60 dark:hover:bg-slate-800/60",
+        "bg-transparent text-[#525866] dark:text-slate-300 hover:text-[#1a1b25] dark:hover:text-white hover:bg-[#eceff3]/60 dark:hover:bg-slate-800/60 font-medium",
       "danger-ghost":
-        "bg-transparent text-[#ef4444] dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40",
+        "bg-transparent text-[#dc2626] dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 font-medium",
     }[variant];
 
     return (
