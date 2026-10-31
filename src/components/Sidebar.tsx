@@ -78,137 +78,98 @@ export default function Sidebar({
                 isDarkMode ? "text-white" : "text-[#272835]"
               }`}
             />
-            <span
-              className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-[4px] ${
-                isPro
-                  ? "bg-[#dfdbff] text-[#5e4cff]"
-                  : isDarkMode
-                  ? "bg-slate-800 text-slate-400"
-                  : "bg-[#eceff3] text-[#818898]"
-              }`}
-            >
-              {isPro ? "PRO" : "FREE"}
-            </span>
           </Link>
 
-          {/* Navigation Section */}
+          {/* Navigation Section (Clean background, no redundant 'MENU' label, no border, no dot) */}
           <nav className="space-y-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#818898] px-3 font-medium">
-              Menu
-            </span>
-            <div className="pt-1.5 space-y-1">
+            <button
+              type="button"
+              onClick={handleDashboardClick}
+              className={`w-full flex items-center px-3 py-2 rounded-[8px] text-[13px] font-medium transition ${
+                activeTab === "dashboard"
+                  ? isDarkMode
+                    ? "text-white bg-[#1a1d2d]"
+                    : "text-[#272835] bg-[#eceff3]"
+                  : isDarkMode
+                  ? "text-slate-400 hover:text-white hover:bg-[#1a1d2d]/60"
+                  : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]/60"
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <IconDashboard className="w-4 h-4 shrink-0 text-[#818898]" />
+                <span>Dashboard</span>
+              </div>
+            </button>
+
+            {user && (
               <button
                 type="button"
-                onClick={handleDashboardClick}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-[13px] font-medium transition ${
-                  activeTab === "dashboard"
+                onClick={handleSettingsClick}
+                className={`w-full flex items-center px-3 py-2 rounded-[8px] text-[13px] font-medium transition ${
+                  activeTab === "settings"
                     ? isDarkMode
-                      ? "text-white bg-[#1a1d2d] border border-[#2e334a] shadow-xs font-semibold"
-                      : "text-[#272835] bg-white border border-[#cdd2d9] shadow-xs font-semibold"
+                      ? "text-white bg-[#1a1d2d]"
+                    : "text-[#272835] bg-[#eceff3]"
                     : isDarkMode
-                    ? "text-slate-400 hover:text-white hover:bg-[#1a1d2d]"
-                    : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]"
+                    ? "text-slate-400 hover:text-white hover:bg-[#1a1d2d]/60"
+                    : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]/60"
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <IconDashboard className="w-4 h-4 shrink-0 text-[#818898]" />
-                  <span>Dashboard</span>
+                  <IconSettings className="w-4 h-4 shrink-0 text-[#818898]" />
+                  <span>Pengaturan</span>
                 </div>
-                {activeTab === "dashboard" && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#5e4cff]" />
-                )}
               </button>
-
-              {user && (
-                <button
-                  type="button"
-                  onClick={handleSettingsClick}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-[13px] font-medium transition ${
-                    activeTab === "settings"
-                      ? isDarkMode
-                        ? "text-white bg-[#1a1d2d] border border-[#2e334a] shadow-xs font-semibold"
-                        : "text-[#272835] bg-white border border-[#cdd2d9] shadow-xs font-semibold"
-                      : isDarkMode
-                      ? "text-slate-400 hover:text-white hover:bg-[#1a1d2d]"
-                      : "text-[#666d80] hover:text-[#272835] hover:bg-[#eceff3]"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <IconSettings className="w-4 h-4 shrink-0 text-[#818898]" />
-                    <span>Pengaturan Studio &amp; API</span>
-                  </div>
-                  {activeTab === "settings" && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#5e4cff]" />
-                  )}
-                </button>
-              )}
-            </div>
+            )}
           </nav>
         </div>
 
-        {/* Bottom Account Card: Pushed cleanly to bottom edge */}
-        <div className="mt-auto pt-4 space-y-2">
+        {/* Bottom Account Card: Avatar + Studio Name + Badge PRO (tepat 1x) + Menu Pengaturan/Keluar */}
+        <div className="mt-auto pt-4">
           {user ? (
             <div
-              className={`p-3.5 rounded-[12px] border space-y-3 shadow-xs ${
+              className={`p-3 rounded-[12px] border space-y-2.5 shadow-2xs ${
                 isDarkMode ? "bg-[#141624] border-[#25283a]" : "bg-white border-[#cdd2d9]"
               }`}
             >
-              <div className="flex items-center justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <div
-                    className={`text-xs font-semibold truncate ${
-                      isDarkMode ? "text-white" : "text-[#272835]"
-                    }`}
-                  >
-                    {user.name}
-                  </div>
-                  <div className="text-[11px] text-[#818898] truncate">
-                    {user.studioName || user.email}
-                  </div>
+              {/* Avatar + Studio Name + Badge PRO */}
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#5e4cff]/10 dark:bg-[#5e4cff]/20 text-[#5e4cff] font-semibold text-xs flex items-center justify-center shrink-0 select-none">
+                  {(user.studioName || user.name || "P").charAt(0).toUpperCase()}
                 </div>
-                <span
-                  className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] shrink-0 ${
-                    isPro
-                      ? "bg-[#dfdbff] text-[#5e4cff] border border-[#beb5ff]"
-                      : isDarkMode
-                      ? "bg-slate-800 text-slate-400 border border-slate-700"
-                      : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
-                  }`}
-                >
-                  {isPro ? "PRO" : "FREE"}
-                </span>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`text-xs font-semibold truncate ${
+                        isDarkMode ? "text-white" : "text-[#272835]"
+                      }`}
+                      title={user.studioName || user.name}
+                    >
+                      {user.studioName || user.name}
+                    </span>
+                    {isPro && (
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-[4px] bg-[#dfdbff] text-[#5e4cff] dark:bg-[#5e4cff]/25 dark:text-[#dfdbff] shrink-0">
+                        PRO
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-[#818898] truncate block">
+                    {user.name}
+                  </span>
+                </div>
               </div>
 
-              {/* Quota Display: No misleading 100% full bar for Unlimited users */}
-              {isPro ? (
-                <div
-                  className={`py-1 px-2.5 rounded-[6px] border text-[11px] font-medium flex items-center justify-between ${
-                    isDarkMode
-                      ? "bg-[#5e4cff]/20 border-[#5e4cff]/40 text-[#dfdbff]"
-                      : "bg-[#dfdbff]/40 border-[#beb5ff] text-[#5e4cff]"
-                  }`}
-                >
-                  <span>Kuota Galeri:</span>
-                  <span className="font-semibold">Tanpa Batas (∞)</span>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <div className="text-[11px] text-[#666d80] flex justify-between">
-                    <span>Galeri Aktif:</span>
-                    <span
-                      className={`font-mono font-semibold ${
-                        isDarkMode ? "text-slate-200" : "text-[#272835]"
-                      }`}
-                    >
-                      {stats?.activeGalleries || 0} / {stats?.quotaLimit || 2}
+              {/* Kuota Galeri: Hanya tampil jika terbatas (!isPro) */}
+              {!isPro && (
+                <div className="space-y-1 pt-1.5 border-t border-[#eceff3] dark:border-slate-800">
+                  <div className="text-[11px] text-[#666d80] dark:text-slate-400 flex justify-between tabular-nums">
+                    <span>Kuota:</span>
+                    <span className="font-medium text-[#272835] dark:text-slate-200">
+                      {stats?.activeGalleries || 0}/{stats?.quotaLimit || 2} galeri
                     </span>
                   </div>
-                  <div
-                    className={`w-full h-1.5 rounded-full overflow-hidden ${
-                      isDarkMode ? "bg-slate-800" : "bg-[#eceff3]"
-                    }`}
-                  >
+                  <div className="w-full h-1 rounded-full overflow-hidden bg-[#eceff3] dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-[#5e4cff] transition-all"
                       style={{
@@ -222,25 +183,26 @@ export default function Sidebar({
                 </div>
               )}
 
-              {!isPro ? (
+              {/* Menu Aksi Akun: Pengaturan & Keluar */}
+              <div className="pt-2 border-t border-[#eceff3] dark:border-slate-800 flex items-center justify-between text-xs text-[#818898]">
                 <button
                   type="button"
-                  onClick={onUpgradeClick}
-                  className="w-full py-1.5 px-3 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center justify-center gap-1.5 shadow-xs"
+                  onClick={handleSettingsClick}
+                  className="hover:text-[#272835] dark:hover:text-white transition flex items-center gap-1"
                 >
-                  <span>Upgrade Pro</span>
-                  <IconChevronRight className="w-3 h-3 ml-auto text-white/80" />
+                  <IconSettings className="w-3.5 h-3.5" />
+                  <span>Pengaturan</span>
                 </button>
-              ) : null}
 
-              <button
-                type="button"
-                onClick={() => setShowLogoutModal(true)}
-                className="w-full pt-2 border-t border-[#eceff3] dark:border-slate-800 text-[#818898] hover:text-[#ef4444] text-xs font-medium transition flex items-center justify-center gap-1.5"
-              >
-                <IconLogOut className="w-3.5 h-3.5" />
-                <span>Keluar Akun</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutModal(true)}
+                  className="hover:text-[#ef4444] transition flex items-center gap-1"
+                >
+                  <IconLogOut className="w-3.5 h-3.5" />
+                  <span>Keluar</span>
+                </button>
+              </div>
             </div>
           ) : (
             <div
@@ -255,7 +217,7 @@ export default function Sidebar({
                 className="w-full py-2 px-3 bg-[#272835] text-white text-xs font-medium rounded-[8px] hover:bg-[#1a1b25] transition flex items-center justify-center gap-1.5"
               >
                 <IconLogIn className="w-3.5 h-3.5" />
-                <span>Masuk / Daftar</span>
+                <span>Masuk Akun</span>
               </button>
             </div>
           )}

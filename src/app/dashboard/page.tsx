@@ -280,51 +280,42 @@ export default function DashboardPage() {
 
       {/* Main Content Area: Independent Vertical Scroll, Sidebar Stays 100% Pinned */}
       <div className="flex-1 h-screen overflow-y-auto flex flex-col min-w-0">
-        {/* Header */}
+        {/* Header: Fixed 64px height (h-16), ample vertical padding, title never touching edge */}
         <header
-          className={`h-16 px-6 sm:px-8 border-b flex items-center justify-between sticky top-0 z-20 transition-colors ${
+          className={`h-16 px-6 sm:px-8 border-b flex items-center justify-between sticky top-0 z-20 transition-colors shrink-0 ${
             isDarkMode ? "bg-[#0f111a] border-[#222533]" : "bg-white border-[#cdd2d9]"
           }`}
         >
-          <div>
+          <div className="flex items-center gap-3">
             <h1
               className={`font-heading font-semibold text-xl tracking-tight leading-none ${
                 isDarkMode ? "text-white" : "text-[#272835]"
               }`}
             >
-              {activeTab === "settings" ? "Pengaturan Studio" : "Overview Studio"}
+              {activeTab === "settings" ? "Pengaturan" : "Galeri"}
             </h1>
-            <p className="text-xs text-[#818898] mt-1 hidden sm:block">
-              {user ? `Halo, ${user.name}` : "Silakan masuk ke akun fotografer"}
-            </p>
           </div>
 
           <div className="flex items-center gap-3">
             {user ? (
               <>
-                {/* Search Bar: Disabled when 0 galleries */}
-                <div className="relative hidden md:block w-52">
-                  <IconSearch className="w-4 h-4 text-[#818898] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    disabled={galleries.length === 0}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                      galleries.length === 0 ? "Belum ada galeri..." : "Cari galeri..."
-                    }
-                    className={`w-full text-xs pl-9 pr-3 py-1.5 rounded-[8px] border transition focus:outline-none focus:border-[#5e4cff] disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isDarkMode
-                        ? "bg-[#1a1d2d] border-[#2e334a] text-white placeholder-slate-500"
-                        : "bg-[#f6f8fa] border-[#cdd2d9] text-[#36394a] placeholder-[#a4abb8]"
-                    }`}
-                    title={
-                      galleries.length === 0
-                        ? "Buat galeri pertama untuk mengaktifkan pencarian"
-                        : "Cari galeri"
-                    }
-                  />
-                </div>
+                {/* Search Bar: Only show when galleries >= 5 */}
+                {galleries.length >= 5 && (
+                  <div className="relative hidden md:block w-52">
+                    <IconSearch className="w-4 h-4 text-[#818898] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Cari galeri..."
+                      className={`w-full text-xs pl-9 pr-3 py-1.5 rounded-[8px] border transition focus:outline-none focus:border-[#5e4cff] ${
+                        isDarkMode
+                          ? "bg-[#1a1d2d] border-[#2e334a] text-white placeholder-slate-500"
+                          : "bg-[#f6f8fa] border-[#cdd2d9] text-[#36394a] placeholder-[#a4abb8]"
+                      }`}
+                    />
+                  </div>
+                )}
 
                 {/* Dark / Light Mode Toggle Button */}
                 <button
@@ -343,17 +334,6 @@ export default function DashboardPage() {
                 >
                   {isDarkMode ? <IconSun className="w-4 h-4" /> : <IconMoon className="w-4 h-4" />}
                 </button>
-
-                {!isPro && (
-                  <button
-                    onClick={() => setIsUpgradeOpen(true)}
-                    className="py-1.5 px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs"
-                    title="Tingkatkan ke Pro untuk galeri tanpa batas"
-                  >
-                    <IconCrown className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Upgrade Pro</span>
-                  </button>
-                )}
 
                 {/* Only show + Buat Galeri if galleries.length > 0 to prevent duplication on empty state */}
                 {galleries.length > 0 && (
@@ -374,13 +354,14 @@ export default function DashboardPage() {
                 )}
               </>
             ) : (
-              <button
+              <Button
+                size="md"
+                variant="primary"
                 onClick={() => setIsAuthOpen(true)}
-                className="py-2 px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm"
+                leftIcon={<IconLogIn className="w-4 h-4" />}
               >
-                <IconLogIn className="w-4 h-4" />
-                <span>Masuk / Daftar</span>
-              </button>
+                Masuk / Daftar
+              </Button>
             )}
           </div>
         </header>
@@ -424,54 +405,6 @@ export default function DashboardPage() {
                   >
                     <IconLogIn className="w-4 h-4" />
                     <span>Daftar Akun Gratis</span>
-                  </button>
-                </div>
-              )}
-
-              {/* Free Tier Notice & Upgrade CTA Banner */}
-              {user && !isPro && (
-                <div
-                  className={`border rounded-[12px] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs ${
-                    isDarkMode
-                      ? "bg-gradient-to-r from-[#5e4cff]/20 via-[#141624] to-[#141624] border-[#5e4cff]/40"
-                      : "bg-gradient-to-r from-[#dfdbff]/40 via-white to-white border-[#beb5ff]"
-                  }`}
-                >
-                  <div className="flex items-start sm:items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-[10px] bg-[#5e4cff] text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <IconCrown className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span
-                          className={`font-heading font-semibold text-sm ${
-                            isDarkMode ? "text-white" : "text-[#272835]"
-                          }`}
-                        >
-                          Anda Sedang Menggunakan Paket Free
-                        </span>
-                        <span
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded-[4px] border ${
-                            isDarkMode
-                              ? "bg-slate-800 border-slate-700 text-slate-300"
-                              : "bg-[#f6f8fa] border-[#cdd2d9] text-[#666d80]"
-                          }`}
-                        >
-                          {stats?.activeGalleries || 0} / {stats?.quotaLimit || 2} Galeri Aktif
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#818898] mt-0.5">
-                        Tingkatkan ke Pro untuk galeri tanpa batas, kuota hingga 2.000 foto/sesi,
-                        dan hapus watermark Picura pada tampilan klien.
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setIsUpgradeOpen(true)}
-                    className="px-4 py-2 rounded-[8px] bg-[#5e4cff] hover:opacity-90 text-white text-xs font-semibold transition flex items-center gap-1.5 shrink-0 shadow-sm active:scale-95 whitespace-nowrap"
-                  >
-                    <span>⚡ Tingkatkan ke Pro (Rp 49rb)</span>
                   </button>
                 </div>
               )}

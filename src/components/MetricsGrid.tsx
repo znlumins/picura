@@ -42,7 +42,7 @@ export default function MetricsGrid({
         </div>
 
         <div className="mt-4 pt-3 border-t border-[#eceff3] flex items-center justify-between text-xs">
-          <span className="text-[#666d80]">Batas Paket {tierName}</span>
+          <span className="text-[#666d80]">Batas Kuota</span>
           <span
             className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-medium ${
               isFull
@@ -53,7 +53,7 @@ export default function MetricsGrid({
             <span
               className={`w-1.5 h-1.5 rounded-full ${isFull ? "bg-[#f43f5e]" : "bg-[#10b981]"}`}
             />
-            <span>{isFull ? "Kuota Penuh" : isUnlimited ? "Unlimited" : "Tersedia"}</span>
+            <span>{isFull ? "Penuh" : isUnlimited ? "Tanpa Batas" : "Tersedia"}</span>
           </span>
         </div>
       </div>
