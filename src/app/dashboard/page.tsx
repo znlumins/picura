@@ -94,6 +94,8 @@ export default function DashboardPage() {
   } | null>(null);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [galleryToDelete, setGalleryToDelete] = useState<{ slug: string; title: string } | null>(null);
+  const [isDeletingGallery, setIsDeletingGallery] = useState(false);
 
   // Initialize theme from storage
   useEffect(() => {
@@ -192,17 +194,25 @@ export default function DashboardPage() {
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
-  const handleDeleteGallery = async (slug: string) => {
-    if (!confirm("Hapus sesi galeri ini beserta hasil seleksinya?")) return;
+  const confirmDeleteGallery = async () => {
+    if (!galleryToDelete) return;
+    setIsDeletingGallery(true);
     try {
       const token = localStorage.getItem("picura_token");
-      const res = await fetch(`/api/v1/galleries/${slug}`, {
+      const res = await fetch(`/api/v1/galleries/${galleryToDelete.slug}`, {
         method: "DELETE",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      if (res.ok) fetchDashboardData();
+      if (res.ok) {
+        setGalleryToDelete(null);
+        await fetchDashboardData();
+      } else {
+        alert("Gagal menghapus galeri");
+      }
     } catch {
       alert("Gagal menghapus galeri");
+    } finally {
+      setIsDeletingGallery(false);
     }
   };
 
@@ -244,7 +254,7 @@ export default function DashboardPage() {
 
   return (
     <div
-      className={`min-h-screen flex font-sans transition-colors ${
+      className={`h-screen overflow-hidden flex font-sans transition-colors ${
         isDarkMode ? "bg-[#0b0c14] text-slate-200" : "bg-[#f6f8fa] text-[#36394a]"
       }`}
     >
@@ -261,8 +271,8 @@ export default function DashboardPage() {
         isDarkMode={isDarkMode}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main Content Area: Independent Vertical Scroll, Sidebar Stays 100% Pinned */}
+      <div className="flex-1 h-screen overflow-y-auto flex flex-col min-w-0">
         {/* Header */}
         <header
           className={`h-16 px-6 sm:px-8 border-b flex items-center justify-between sticky top-0 z-20 transition-colors ${
@@ -498,20 +508,6 @@ export default function DashboardPage() {
                       Kelola tautan bukti foto, pantau status pilihan klien, dan salin link
                     </p>
                   </div>
-
-                  {user && filteredGalleries.length > 0 && (
-                    <button
-                      onClick={() => setIsCreateOpen(true)}
-                      className={`py-1.5 px-3 rounded-[8px] border text-xs font-medium transition self-start sm:self-auto flex items-center gap-1.5 shadow-xs ${
-                        isDarkMode
-                          ? "border-[#2e334a] bg-[#1a1d2d] text-slate-200 hover:bg-[#25283a]"
-                          : "border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-[#36394a]"
-                      }`}
-                    >
-                      <IconPlus className="w-3.5 h-3.5" />
-                      <span>Tambah Sesi</span>
-                    </button>
-                  )}
                 </div>
 
                 {isLoading ? (
@@ -563,6 +559,13 @@ export default function DashboardPage() {
                   >
                     {filteredGalleries.map((gallery) => {
                       const isCopied = copiedSlug === gallery.slug;
+                      const formattedDate = gallery.createdAt
+                        ? new Date(gallery.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : "Baru saja";
 
                       return (
                         <div
@@ -571,45 +574,98 @@ export default function DashboardPage() {
                             isDarkMode ? "hover:bg-[#1a1d2e]" : "hover:bg-[#f6f8fa]"
                           }`}
                         >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`font-semibold text-sm ${
-                                  isDarkMode ? "text-white" : "text-[#272835]"
-                                }`}
+                          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+                            {/* Visual Thumbnail Box */}
+                            <div
+                              className={`w-11 h-11 shrink-0 rounded-[8px] border flex items-center justify-center transition-colors shadow-2xs ${
+                                isDarkMode
+                                  ? "bg-[#1a1d2d] border-[#2e334a] text-[#818cf8]"
+                                  : "bg-[#f4f2ff] border-[#dfdbff] text-[#5e4cff]"
+                              }`}
+                            >
+                              <svg
+                                className="w-5 h-5 opacity-90"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
                               >
-                                {gallery.title}
-                              </span>
-                              {gallery.hasPassword && (
-                                <span
-                                  className={`inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-[4px] border ${
-                                    isDarkMode
-                                      ? "bg-slate-800 border-slate-700 text-slate-300"
-                                      : "bg-[#f6f8fa] text-[#818898] border-[#cdd2d9]"
-                                  }`}
-                                >
-                                  <IconLock className="w-3 h-3" />
-                                  <span>PIN</span>
-                                </span>
-                              )}
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.75}
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-3 text-xs text-[#818898]">
-                              <span>{gallery.totalPhotos || 0} Foto</span>
-                              <span>•</span>
-                              <span>Maks {gallery.maxSelectionQuota} Pilihan</span>
-                              {gallery.latestSelectedCount > 0 && (
-                                <>
-                                  <span>•</span>
-                                  <span className="text-[#10b981] font-medium">
-                                    {gallery.latestSelectedCount} Foto Terpilih
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span
+                                  className={`font-semibold text-sm truncate ${
+                                    isDarkMode ? "text-white" : "text-[#272835]"
+                                  }`}
+                                >
+                                  {gallery.title}
+                                </span>
+
+                                {/* Status Pill Badge */}
+                                {gallery.latestSelectedCount > 0 ? (
+                                  <span
+                                    className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                                      isDarkMode
+                                        ? "bg-emerald-950/40 text-emerald-300 border-emerald-800/60"
+                                        : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                    }`}
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>Selesai Dipilih</span>
                                   </span>
-                                </>
-                              )}
+                                ) : (
+                                  <span
+                                    className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                                      isDarkMode
+                                        ? "bg-amber-950/40 text-amber-300 border-amber-800/60"
+                                        : "bg-amber-50 text-amber-700 border-amber-200"
+                                    }`}
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                    <span>Menunggu Klien</span>
+                                  </span>
+                                )}
+
+                                {gallery.hasPassword && (
+                                  <span
+                                    className={`inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-[4px] border ${
+                                      isDarkMode
+                                        ? "bg-slate-800 border-slate-700 text-slate-300"
+                                        : "bg-[#f6f8fa] text-[#818898] border-[#cdd2d9]"
+                                    }`}
+                                  >
+                                    <IconLock className="w-3 h-3" />
+                                    <span>PIN</span>
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex flex-wrap items-center gap-2 text-xs text-[#818898]">
+                                <span>{gallery.totalPhotos || 0} Foto</span>
+                                <span>•</span>
+                                <span
+                                  className={
+                                    gallery.latestSelectedCount > 0
+                                      ? "text-[#10b981] font-medium"
+                                      : ""
+                                  }
+                                >
+                                  {gallery.latestSelectedCount || 0}/{gallery.maxSelectionQuota} Terpilih
+                                </span>
+                                <span>•</span>
+                                <span>Dibuat {formattedDate}</span>
+                              </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap shrink-0">
                             {gallery.latestSelection && (
                               <button
                                 onClick={() => handleViewResults(gallery)}
@@ -626,6 +682,7 @@ export default function DashboardPage() {
 
                             <button
                               onClick={() => handleCopyLink(gallery.slug)}
+                              title="Salin tautan galeri klien"
                               className={`py-1.5 px-3 rounded-[6px] text-xs font-medium border transition flex items-center gap-1.5 ${
                                 isDarkMode
                                   ? "bg-[#1a1d2d] border-[#2e334a] text-slate-300 hover:bg-[#25283a]"
@@ -647,6 +704,7 @@ export default function DashboardPage() {
 
                             <button
                               onClick={() => handleShareToClientWA(gallery)}
+                              title="Kirim pesan seleksi via WhatsApp"
                               className="py-1.5 px-3 rounded-[6px] text-xs font-medium bg-[#25D366] text-white hover:bg-[#20ba59] transition flex items-center gap-1.5 shadow-xs"
                             >
                               <IconWhatsApp className="w-3.5 h-3.5" />
@@ -662,13 +720,15 @@ export default function DashboardPage() {
                                   ? "border-[#2e334a] text-slate-400 hover:text-white hover:bg-[#1a1d2d]"
                                   : "border-[#cdd2d9] text-[#818898] hover:text-[#272835] hover:bg-[#f6f8fa]"
                               }`}
-                              title="Buka Halaman Kurasi Klien"
+                              title="Pratinjau Galeri Klien"
                             >
                               <IconExternalLink className="w-4 h-4" />
                             </a>
 
                             <button
-                              onClick={() => handleDeleteGallery(gallery.slug)}
+                              onClick={() =>
+                                setGalleryToDelete({ slug: gallery.slug, title: gallery.title })
+                              }
                               className={`p-1.5 rounded-[6px] border transition ${
                                 isDarkMode
                                   ? "border-red-900/40 text-red-400 hover:bg-red-950/40"
@@ -731,6 +791,64 @@ export default function DashboardPage() {
         user={user}
         onSuccess={fetchDashboardData}
       />
+
+      {/* Delete Gallery Confirmation Dialog */}
+      {galleryToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div
+            className={`w-full max-w-sm rounded-[12px] p-6 border shadow-2xl space-y-4 ${
+              isDarkMode
+                ? "bg-[#141624] border-[#25283a] text-white"
+                : "bg-white border-[#cdd2d9] text-[#272835]"
+            }`}
+          >
+            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center">
+              <IconTrash className="w-5 h-5" />
+            </div>
+
+            <div>
+              <h3 className="font-heading font-semibold text-base">Hapus Galeri Klien?</h3>
+              <p className="text-xs text-[#818898] mt-1.5 leading-relaxed">
+                Apakah Anda yakin ingin menghapus sesi{" "}
+                <strong className={isDarkMode ? "text-slate-200" : "text-[#272835]"}>
+                  &quot;{galleryToDelete.title}&quot;
+                </strong>
+                ? Tautan galeri dan seluruh hasil seleksi foto klien akan dihapus secara permanen.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={isDeletingGallery}
+                onClick={() => setGalleryToDelete(null)}
+                className={`py-2 px-3.5 rounded-[8px] border text-xs font-medium transition ${
+                  isDarkMode
+                    ? "border-[#2e334a] bg-[#1a1d2d] text-slate-300 hover:bg-[#25283a]"
+                    : "border-[#cdd2d9] bg-white text-[#36394a] hover:bg-[#f6f8fa]"
+                }`}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={isDeletingGallery}
+                onClick={confirmDeleteGallery}
+                className="py-2 px-4 rounded-[8px] bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition flex items-center gap-1.5 shadow-xs"
+              >
+                {isDeletingGallery ? (
+                  <>
+                    <IconSpinner className="w-3.5 h-3.5" />
+                    <span>Menghapus...</span>
+                  </>
+                ) : (
+                  <span>Ya, Hapus Galeri</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
