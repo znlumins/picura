@@ -315,14 +315,14 @@ export default function DashboardPage() {
       />
 
       {/* Main Content Area: Independent Vertical Scroll, Sidebar Stays 100% Pinned */}
-      <div className="flex-1 h-screen overflow-y-auto overflow-x-hidden flex flex-col min-w-0">
-        {/* Header: Spacious, balanced padding & full mobile responsive */}
+      <div className="flex-1 h-screen flex flex-col min-w-0 overflow-hidden">
+        {/* Header: Fixed height, shrink-0 so it NEVER squishes, spacious vertical & horizontal padding */}
         <header
-          className={`min-h-[64px] sm:h-20 py-3 sm:py-3.5 px-3.5 sm:px-6 lg:px-8 border-b flex items-center justify-between sticky top-0 z-20 transition-colors w-full ${
+          className={`h-16 sm:h-20 shrink-0 px-4 sm:px-8 border-b flex items-center justify-between transition-colors z-20 w-full ${
             isDarkMode ? "bg-[#0f111a] border-[#222533]" : "bg-white border-[#cdd2d9]"
           }`}
         >
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
             {/* Mobile Hamburger Drawer Toggle */}
             <button
               type="button"
@@ -338,25 +338,25 @@ export default function DashboardPage() {
               <IconMenu className="w-4 h-4" />
             </button>
 
-            <div className="min-w-0">
+            <div className="min-w-0 space-y-1">
               <h1
-                className={`font-heading font-semibold text-base sm:text-xl tracking-tight leading-tight truncate ${
+                className={`font-heading font-semibold text-lg sm:text-2xl tracking-tight leading-none ${
                   isDarkMode ? "text-white" : "text-[#272835]"
                 }`}
               >
                 {activeTab === "settings" ? "Pengaturan Studio" : "Overview Studio"}
               </h1>
-              <p className="text-xs text-[#818898] mt-0.5 truncate hidden sm:block">
+              <p className="text-xs text-[#818898] leading-none hidden sm:block">
                 {user ? `Halo, ${user.name}` : "Silakan masuk ke akun fotografer"}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
             {user ? (
               <>
                 {/* Search Bar: Disabled when 0 galleries */}
-                <div className="relative hidden md:block w-48 lg:w-56">
+                <div className="relative hidden md:block w-52 lg:w-64">
                   <IconSearch className="w-4 h-4 text-[#818898] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
@@ -383,7 +383,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={toggleTheme}
-                  className={`p-1.5 sm:p-2 rounded-[8px] border transition shrink-0 ${
+                  className={`p-2 rounded-[8px] border transition shrink-0 ${
                     isDarkMode
                       ? "border-[#2e334a] bg-[#1a1d2d] text-amber-400 hover:bg-[#25283a]"
                       : "border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-[#666d80]"
@@ -400,7 +400,7 @@ export default function DashboardPage() {
                 {!isPro && (
                   <button
                     onClick={() => setIsUpgradeOpen(true)}
-                    className="py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0"
+                    className="py-2 px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0"
                     title="Tingkatkan ke Pro untuk galeri tanpa batas"
                   >
                     <IconCrown className="w-3.5 h-3.5" />
@@ -418,9 +418,9 @@ export default function DashboardPage() {
                         setIsCreateOpen(true);
                       }
                     }}
-                    className="py-1.5 sm:py-2 px-2.5 sm:px-3.5 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0"
+                    className="py-2 px-3 sm:px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0"
                   >
-                    <IconPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <IconPlus className="w-4 h-4 shrink-0" />
                     <span className="hidden sm:inline">Buat Galeri</span>
                     <span className="sm:hidden font-medium">Galeri</span>
                   </button>
@@ -429,17 +429,17 @@ export default function DashboardPage() {
             ) : (
               <button
                 onClick={() => setIsAuthOpen(true)}
-                className="py-1.5 sm:py-2 px-3 sm:px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm shrink-0"
+                className="py-2 px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm shrink-0"
               >
-                <IconLogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <IconLogIn className="w-4 h-4 shrink-0" />
                 <span>Masuk / Daftar</span>
               </button>
             )}
           </div>
         </header>
 
-        {/* Dashboard Body Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1280px] w-full">
+        {/* Dashboard Body Content: Scrollable independent of header */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 max-w-[1280px] w-full">
           {/* TAB 1: STUDIO SETTINGS VIEW */}
           {activeTab === "settings" && (
             <StudioSettingsView
