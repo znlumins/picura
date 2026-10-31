@@ -11,6 +11,8 @@ import UpgradeModal from "@/components/UpgradeModal";
 import SelectionDetailModal from "@/components/SelectionDetailModal";
 import AuthModal from "@/components/AuthModal";
 import SettingsModal from "@/components/SettingsModal";
+import StatusDot from "@/components/StatusDot";
+import Button from "@/components/Button";
 import {
   IconPlus,
   IconSearch,
@@ -97,13 +99,18 @@ export default function DashboardPage() {
   const [galleryToDelete, setGalleryToDelete] = useState<{ slug: string; title: string } | null>(null);
   const [isDeletingGallery, setIsDeletingGallery] = useState(false);
 
-  // Initialize theme from storage
+  // Initialize theme from URL parameter or localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("picura_theme");
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramTheme = urlParams.get("theme");
+      const savedTheme = paramTheme || localStorage.getItem("picura_theme");
       if (savedTheme === "dark") {
         setIsDarkMode(true);
         document.documentElement.classList.add("dark");
+      } else if (paramTheme === "light") {
+        setIsDarkMode(false);
+        document.documentElement.classList.remove("dark");
       }
     }
   }, []);
@@ -350,7 +357,9 @@ export default function DashboardPage() {
 
                 {/* Only show + Buat Galeri if galleries.length > 0 to prevent duplication on empty state */}
                 {galleries.length > 0 && (
-                  <button
+                  <Button
+                    size="md"
+                    variant="primary"
                     onClick={() => {
                       if (!isPro && (stats?.activeGalleries || 0) >= 2) {
                         setIsUpgradeOpen(true);
@@ -358,11 +367,10 @@ export default function DashboardPage() {
                         setIsCreateOpen(true);
                       }
                     }}
-                    className="py-2 px-3.5 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm active:scale-95"
+                    leftIcon={<IconPlus className="w-4 h-4" />}
                   >
-                    <IconPlus className="w-4 h-4" />
-                    <span>Buat Galeri</span>
-                  </button>
+                    Buat Galeri
+                  </Button>
                 )}
               </>
             ) : (
@@ -541,13 +549,14 @@ export default function DashboardPage() {
                     </div>
                     {user && (
                       <div className="pt-1">
-                        <button
+                        <Button
+                          size="md"
+                          variant="primary"
                           onClick={() => setIsCreateOpen(true)}
-                          className="py-2 px-4 rounded-[8px] bg-[#5e4cff] hover:opacity-90 text-white text-xs font-medium transition inline-flex items-center gap-1.5 shadow-sm active:scale-95"
+                          leftIcon={<IconPlus className="w-3.5 h-3.5" />}
                         >
-                          <IconPlus className="w-3.5 h-3.5" />
-                          <span>Buat Galeri Pertama</span>
-                        </button>
+                          Buat Galeri Pertama
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -608,34 +617,14 @@ export default function DashboardPage() {
                                   {gallery.title}
                                 </span>
 
-                                {/* Status Pill Badge */}
-                                {gallery.latestSelectedCount > 0 ? (
-                                  <span
-                                    className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full border ${
-                                      isDarkMode
-                                        ? "bg-emerald-950/40 text-emerald-300 border-emerald-800/60"
-                                        : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}
-                                  >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>Selesai Dipilih</span>
-                                  </span>
-                                ) : (
-                                  <span
-                                    className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full border ${
-                                      isDarkMode
-                                        ? "bg-amber-950/40 text-amber-300 border-amber-800/60"
-                                        : "bg-amber-50 text-amber-700 border-amber-200"
-                                    }`}
-                                  >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                    <span>Menunggu Klien</span>
-                                  </span>
-                                )}
+                                {/* Status Dot: 6px dot + neutral text, no colored pill */}
+                                <StatusDot
+                                  status={gallery.latestSelectedCount > 0 ? "selesai" : "menunggu"}
+                                />
 
                                 {gallery.hasPassword && (
                                   <span
-                                    className={`inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-[4px] border ${
+                                    className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-[4px] border ${
                                       isDarkMode
                                         ? "bg-slate-800 border-slate-700 text-slate-300"
                                         : "bg-[#f6f8fa] text-[#818898] border-[#cdd2d9]"
@@ -648,74 +637,60 @@ export default function DashboardPage() {
                               </div>
 
                               <div className="flex flex-wrap items-center gap-2 text-xs text-[#818898]">
-                                <span>{gallery.totalPhotos || 0} Foto</span>
-                                <span>•</span>
-                                <span
-                                  className={
-                                    gallery.latestSelectedCount > 0
-                                      ? "text-[#10b981] font-medium"
-                                      : ""
-                                  }
-                                >
-                                  {gallery.latestSelectedCount || 0}/{gallery.maxSelectionQuota} Terpilih
+                                <span className="tabular-nums">{gallery.totalPhotos || 0} foto</span>
+                                <span>·</span>
+                                <span className="tabular-nums">
+                                  {gallery.latestSelectedCount || 0}/{gallery.maxSelectionQuota} dipilih
                                 </span>
-                                <span>•</span>
-                                <span>Dibuat {formattedDate}</span>
+                                <span>·</span>
+                                <span className="tabular-nums">Dibuat {formattedDate}</span>
                               </div>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 flex-wrap shrink-0">
                             {gallery.latestSelection && (
-                              <button
+                              <Button
+                                size="sm"
+                                variant="secondary"
                                 onClick={() => handleViewResults(gallery)}
-                                className={`py-1.5 px-3 rounded-[6px] text-xs font-medium border transition flex items-center gap-1.5 ${
-                                  isDarkMode
-                                    ? "bg-[#10b981]/20 border-[#10b981]/40 text-[#34d399] hover:bg-[#10b981]/30"
-                                    : "bg-[#ecfdf5] border-[#a7f3d0] text-[#065f46] hover:bg-[#d1fae5]"
-                                }`}
+                                leftIcon={<IconEye className="w-3.5 h-3.5" />}
                               >
-                                <IconEye className="w-3.5 h-3.5" />
-                                <span>Hasil ({gallery.latestSelectedCount})</span>
-                              </button>
+                                Hasil ({gallery.latestSelectedCount})
+                              </Button>
                             )}
 
-                            <button
+                            <Button
+                              size="sm"
+                              variant="secondary"
                               onClick={() => handleCopyLink(gallery.slug)}
                               title="Salin tautan galeri klien"
-                              className={`py-1.5 px-3 rounded-[6px] text-xs font-medium border transition flex items-center gap-1.5 ${
-                                isDarkMode
-                                  ? "bg-[#1a1d2d] border-[#2e334a] text-slate-300 hover:bg-[#25283a]"
-                                  : "bg-white border-[#cdd2d9] text-[#36394a] hover:bg-[#f6f8fa]"
-                              }`}
-                            >
-                              {isCopied ? (
-                                <>
+                              leftIcon={
+                                isCopied ? (
                                   <IconCheck className="w-3.5 h-3.5 text-[#10b981]" />
-                                  <span className="text-[#10b981]">Tersalin!</span>
-                                </>
-                              ) : (
-                                <>
+                                ) : (
                                   <IconCopy className="w-3.5 h-3.5 text-[#818898]" />
-                                  <span>Salin Link</span>
-                                </>
-                              )}
-                            </button>
+                                )
+                              }
+                            >
+                              {isCopied ? "Tersalin!" : "Salin link"}
+                            </Button>
 
-                            <button
+                            <Button
+                              size="sm"
+                              variant="secondary"
                               onClick={() => handleShareToClientWA(gallery)}
                               title="Kirim pesan seleksi via WhatsApp"
-                              className="py-1.5 px-3 rounded-[6px] text-xs font-medium bg-[#25D366] text-white hover:bg-[#20ba59] transition flex items-center gap-1.5 shadow-xs"
+                              leftIcon={<IconWhatsApp className="w-3.5 h-3.5" />}
                             >
-                              <IconWhatsApp className="w-3.5 h-3.5" />
-                              <span>Kirim WA</span>
-                            </button>
+                              Kirim WA
+                            </Button>
 
                             <a
                               href={`/g/${gallery.slug}`}
                               target="_blank"
                               rel="noreferrer"
-                              className={`p-1.5 rounded-[6px] border transition ${
+                              className={`p-2 rounded-[8px] border transition ${
                                 isDarkMode
                                   ? "border-[#2e334a] text-slate-400 hover:text-white hover:bg-[#1a1d2d]"
                                   : "border-[#cdd2d9] text-[#818898] hover:text-[#272835] hover:bg-[#f6f8fa]"
@@ -725,19 +700,17 @@ export default function DashboardPage() {
                               <IconExternalLink className="w-4 h-4" />
                             </a>
 
-                            <button
+                            <Button
+                              size="sm"
+                              variant="danger-ghost"
                               onClick={() =>
                                 setGalleryToDelete({ slug: gallery.slug, title: gallery.title })
                               }
-                              className={`p-1.5 rounded-[6px] border transition ${
-                                isDarkMode
-                                  ? "border-red-900/40 text-red-400 hover:bg-red-950/40"
-                                  : "border-[#fecaca] text-[#ef4444] hover:bg-[#fef2f2]"
-                              }`}
+                              className="px-2"
                               title="Hapus Galeri"
                             >
                               <IconTrash className="w-4 h-4" />
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       );
@@ -818,33 +791,24 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex items-center justify-end gap-2.5 pt-2">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="sm"
                 disabled={isDeletingGallery}
                 onClick={() => setGalleryToDelete(null)}
-                className={`py-2 px-3.5 rounded-[8px] border text-xs font-medium transition ${
-                  isDarkMode
-                    ? "border-[#2e334a] bg-[#1a1d2d] text-slate-300 hover:bg-[#25283a]"
-                    : "border-[#cdd2d9] bg-white text-[#36394a] hover:bg-[#f6f8fa]"
-                }`}
               >
                 Batal
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="danger-ghost"
+                size="sm"
                 disabled={isDeletingGallery}
+                isLoading={isDeletingGallery}
                 onClick={confirmDeleteGallery}
-                className="py-2 px-4 rounded-[8px] bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition flex items-center gap-1.5 shadow-xs"
+                className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50"
               >
-                {isDeletingGallery ? (
-                  <>
-                    <IconSpinner className="w-3.5 h-3.5" />
-                    <span>Menghapus...</span>
-                  </>
-                ) : (
-                  <span>Ya, Hapus Galeri</span>
-                )}
-              </button>
+                Ya, Hapus Galeri
+              </Button>
             </div>
           </div>
         </div>

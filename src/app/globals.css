@@ -118,3 +118,9 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 ::-webkit-scrollbar-thumb:hover {
   background: #a4abb8;
 }
+
+
+/* Tabular Figures for numerical consistency across dashboard */
+.tabular-nums, .font-numeric {
+  font-variant-numeric: tabular-nums;
+}
