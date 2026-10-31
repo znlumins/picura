@@ -1,6 +1,6 @@
 "use client";
 
-import { IconPlus, IconSettings, IconFolder, IconWhatsApp, IconKey } from "@/components/Icons";
+import { IconPlus, IconSettings, IconFolder, IconWhatsApp, IconKey, IconCrown } from "@/components/Icons";
 
 interface StudioHeroBannerProps {
   user: {
@@ -18,6 +18,7 @@ interface StudioHeroBannerProps {
   } | null;
   onCreateClick: () => void;
   onSettingsClick: () => void;
+  onUpgradeClick?: () => void;
 }
 
 export default function StudioHeroBanner({
@@ -25,6 +26,7 @@ export default function StudioHeroBanner({
   stats,
   onCreateClick,
   onSettingsClick,
+  onUpgradeClick,
 }: StudioHeroBannerProps) {
   const isPro = user?.subscriptionTier === "PRO_FREELANCE" || user?.subscriptionTier === "STUDIO";
   const quota = stats?.quotaLimit === 999 ? "Unlimited" : `${stats?.quotaLimit || 2} Galeri`;
@@ -42,6 +44,17 @@ export default function StudioHeroBanner({
             >
               {user?.subscriptionTier || "FREEMIUM"}
             </span>
+
+            {!isPro && onUpgradeClick && (
+              <button
+                onClick={onUpgradeClick}
+                className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-[4px] bg-[#dfdbff] text-[#5e4cff] hover:bg-[#c8ccf3] transition flex items-center gap-1 border border-[#beb5ff]"
+              >
+                <IconCrown className="w-3 h-3" />
+                <span>Upgrade ke Pro (Rp 49rb)</span>
+              </button>
+            )}
+
             {user?.hasGoogleApiKey ? (
               <span className="text-[10px] font-mono text-[#10b981] bg-[#ecfdf5] border border-[#a7f3d0] px-2 py-0.5 rounded-[4px] flex items-center gap-1">
                 <IconKey className="w-3 h-3" />
@@ -87,6 +100,16 @@ export default function StudioHeroBanner({
             <IconPlus className="w-4 h-4" />
             <span>Buat Galeri Klien Baru</span>
           </button>
+
+          {!isPro && onUpgradeClick && (
+            <button
+              onClick={onUpgradeClick}
+              className="px-5 py-2.5 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/40 text-[#5e4cff] text-xs font-semibold hover:bg-[#dfdbff] transition flex items-center justify-center gap-2"
+            >
+              <IconCrown className="w-4 h-4" />
+              <span>Tingkatkan ke Pro (Unlimited)</span>
+            </button>
+          )}
 
           <button
             onClick={onSettingsClick}

@@ -24,6 +24,7 @@ import {
   IconFolder,
   IconLogIn,
   IconSettings,
+  IconCrown,
 } from "@/components/Icons";
 
 interface GalleryItem {
@@ -242,6 +243,17 @@ export default function DashboardPage() {
                   />
                 </div>
 
+                {!isPro && (
+                  <button
+                    onClick={() => setIsUpgradeOpen(true)}
+                    className="py-1.5 px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5"
+                    title="Tingkatkan ke Pro untuk galeri tanpa batas"
+                  >
+                    <IconCrown className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Upgrade Pro</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => setIsSettingsOpen(true)}
                   className="p-2 rounded-[8px] border border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-[#666d80] transition"
@@ -297,6 +309,37 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Free Tier Notice & Upgrade CTA Banner */}
+          {user && !isPro && (
+            <div className="bg-gradient-to-r from-[#dfdbff]/40 via-white to-white border border-[#beb5ff] rounded-[12px] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="w-10 h-10 rounded-[10px] bg-[#5e4cff] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <IconCrown className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-heading font-semibold text-sm text-[#272835]">
+                      Anda Sedang Menggunakan Paket Free
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-[#f6f8fa] border border-[#cdd2d9] text-[#666d80]">
+                      {stats?.activeGalleries || 0} / {stats?.quotaLimit || 2} Galeri Aktif
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#666d80] mt-0.5">
+                    Tingkatkan ke Pro untuk galeri tanpa batas, kuota hingga 2.000 foto/sesi, dan hapus watermark Picura pada tampilan klien.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsUpgradeOpen(true)}
+                className="px-4 py-2 rounded-[8px] bg-[#5e4cff] hover:opacity-90 text-white text-xs font-semibold transition flex items-center gap-1.5 shrink-0 shadow-sm active:scale-95 whitespace-nowrap"
+              >
+                <span>⚡ Tingkatkan ke Pro (Rp 49rb)</span>
+              </button>
+            </div>
+          )}
+
           {/* 1. Real Studio Hero Banner */}
           <StudioHeroBanner
             user={user}
@@ -309,6 +352,7 @@ export default function DashboardPage() {
               }
             }}
             onSettingsClick={() => setIsSettingsOpen(true)}
+            onUpgradeClick={() => setIsUpgradeOpen(true)}
           />
 
           {/* 2. Real Metrics Grid */}

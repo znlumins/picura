@@ -52,7 +52,7 @@ export default function RegisterPage() {
         localStorage.setItem("picura_token", data.token);
       }
 
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat pendaftaran";
       setErrorMessage(msg);
