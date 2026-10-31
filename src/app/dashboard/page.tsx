@@ -401,14 +401,20 @@ export default function DashboardPage() {
                   {isDarkMode ? <IconSun className="w-4 h-4" /> : <IconMoon className="w-4 h-4" />}
                 </button>
 
-                {!isPro && (
+                {user.subscriptionTier !== "STUDIO" && (
                   <button
                     onClick={() => setIsUpgradeOpen(true)}
                     className="py-2 px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0"
-                    title="Tingkatkan ke Pro untuk galeri tanpa batas"
+                    title={
+                      user.subscriptionTier === "PRO_FREELANCE"
+                        ? "Tingkatkan ke Studio Agency (Galeri Tanpa Batas)"
+                        : "Tingkatkan ke Pro untuk galeri tanpa batas"
+                    }
                   >
                     <IconCrown className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Upgrade Pro</span>
+                    <span className="hidden sm:inline">
+                      {user.subscriptionTier === "PRO_FREELANCE" ? "Upgrade Studio" : "Upgrade Pro"}
+                    </span>
                   </button>
                 )}
 
