@@ -1,6 +1,6 @@
 "use client";
 
-import { IconFolder, IconWhatsApp, IconKey, IconCrown } from "@/components/Icons";
+import { IconWhatsApp, IconKey, IconCrown, IconSettings } from "@/components/Icons";
 
 interface StudioHeroBannerProps {
   user: {
@@ -10,22 +10,23 @@ interface StudioHeroBannerProps {
     hasGoogleApiKey?: boolean;
     subscriptionTier: string;
   } | null;
-  stats: {
+  stats?: {
     activeGalleries: number;
     quotaLimit: number;
     totalSelections: number;
     totalPhotos?: number;
   } | null;
   onUpgradeClick?: () => void;
+  onSettingsClick?: () => void;
 }
 
 export default function StudioHeroBanner({
   user,
   stats,
   onUpgradeClick,
+  onSettingsClick,
 }: StudioHeroBannerProps) {
   const isPro = user?.subscriptionTier === "PRO_FREELANCE" || user?.subscriptionTier === "STUDIO";
-  const quota = stats?.quotaLimit === 999 || isPro ? "Unlimited" : `${stats?.quotaLimit || 2} Galeri`;
 
   const tierBadgeText =
     user?.subscriptionTier === "PRO_FREELANCE"
@@ -77,20 +78,23 @@ export default function StudioHeroBanner({
           </h2>
         </div>
 
-        {/* Right: Quick Metadata (No duplicate CTA buttons) */}
-        <div className="flex flex-wrap items-center sm:justify-end gap-4 sm:gap-6 text-xs text-[#818898] border-t sm:border-t-0 pt-3 sm:pt-0 border-[#eceff3]">
-          <span className="flex items-center gap-1.5">
-            <IconFolder className="w-3.5 h-3.5 text-[#5e4cff]" />
-            <span>
-              <strong className="text-[#272835] font-semibold">{stats?.activeGalleries || 0}</strong> Galeri (Kuota: {quota})
-            </span>
-          </span>
-
+        {/* Right: Studio WhatsApp & Edit Info Studio Button (No redundant quota text) */}
+        <div className="flex flex-wrap items-center sm:justify-end gap-3 text-xs border-t sm:border-t-0 pt-3 sm:pt-0 border-[#eceff3]">
           {user?.studioWhatsapp && (
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] bg-[#f6f8fa] border border-[#cdd2d9] text-[#272835] text-[11px] font-mono">
               <IconWhatsApp className="w-3.5 h-3.5 text-[#10b981]" />
-              <span className="text-[#36394a]">WA: {user.studioWhatsapp}</span>
+              <span>WA: {user.studioWhatsapp}</span>
             </span>
+          )}
+
+          {onSettingsClick && (
+            <button
+              onClick={onSettingsClick}
+              className="py-1 px-2.5 rounded-[6px] border border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-[11px] font-medium text-[#666d80] hover:text-[#272835] transition flex items-center gap-1.5 shadow-xs"
+            >
+              <IconSettings className="w-3.5 h-3.5 text-[#818898]" />
+              <span>Edit Info Studio</span>
+            </button>
           )}
         </div>
       </div>

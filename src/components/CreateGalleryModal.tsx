@@ -268,7 +268,7 @@ export default function CreateGalleryModal({
             ) : (
               <>
                 <IconPlus className="w-4 h-4" />
-                <span>Terbitkan Galeri Klien</span>
+                <span>Simpan &amp; Buat Galeri</span>
               </>
             )}
           </button>
