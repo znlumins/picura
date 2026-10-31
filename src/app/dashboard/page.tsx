@@ -236,10 +236,12 @@ export default function DashboardPage() {
                   <IconSearch className="w-4 h-4 text-[#818898] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
+                    disabled={galleries.length === 0}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Cari galeri..."
-                    className="w-full text-xs pl-9 pr-3 py-1.5 rounded-[8px] border border-[#cdd2d9] bg-[#f6f8fa] text-[#36394a] placeholder-[#a4abb8] focus:outline-none focus:border-[#5e4cff]"
+                    placeholder={galleries.length === 0 ? "Belum ada galeri..." : "Cari galeri..."}
+                    className="w-full text-xs pl-9 pr-3 py-1.5 rounded-[8px] border border-[#cdd2d9] bg-[#f6f8fa] text-[#36394a] placeholder-[#a4abb8] focus:outline-none focus:border-[#5e4cff] disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={galleries.length === 0 ? "Buat galeri pertama untuk mengaktifkan pencarian" : "Cari galeri"}
                   />
                 </div>
 
@@ -344,14 +346,6 @@ export default function DashboardPage() {
           <StudioHeroBanner
             user={user}
             stats={stats}
-            onCreateClick={() => {
-              if (!isPro && (stats?.activeGalleries || 0) >= 2) {
-                setIsUpgradeOpen(true);
-              } else {
-                setIsCreateOpen(true);
-              }
-            }}
-            onSettingsClick={() => setIsSettingsOpen(true)}
             onUpgradeClick={() => setIsUpgradeOpen(true)}
           />
 

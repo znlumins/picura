@@ -42,8 +42,8 @@ export default function Sidebar({
 
   return (
     <aside className="w-[260px] shrink-0 h-screen sticky top-0 hidden lg:flex flex-col justify-between p-5 border-r border-[#cdd2d9] bg-[#f6f8fa] z-20 select-none">
+      {/* Top section: Logo & Nav */}
       <div className="space-y-6">
-        {/* Top Logo Area */}
         <Link href="/" className="flex items-center gap-2.5 group" title="Kembali ke Beranda Picura">
           <PicuraLogo className="h-7 w-auto text-[#272835] transition-opacity group-hover:opacity-85" />
           <span
@@ -93,10 +93,10 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* Bottom Account Card */}
-      <div className="space-y-2">
+      {/* Bottom Account Card: Pushed cleanly to bottom edge */}
+      <div className="mt-auto pt-4 space-y-2">
         {user ? (
-          <div className="bg-white p-3.5 rounded-[12px] border border-[#cdd2d9] space-y-3">
+          <div className="bg-white p-3.5 rounded-[12px] border border-[#cdd2d9] space-y-3 shadow-xs">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-semibold text-[#272835] truncate">
@@ -117,24 +117,30 @@ export default function Sidebar({
               </span>
             </div>
 
-            <div className="space-y-1">
-              <div className="text-[11px] text-[#666d80] flex justify-between">
-                <span>Galeri Aktif:</span>
-                <span className="font-mono text-[#272835] font-semibold">
-                  {stats?.activeGalleries || 0} / {isPro ? "∞" : stats?.quotaLimit || 2}
-                </span>
+            {/* Quota Display: No misleading 100% full bar for Unlimited users */}
+            {isPro ? (
+              <div className="py-1 px-2.5 rounded-[6px] bg-[#dfdbff]/40 border border-[#beb5ff] text-[11px] text-[#5e4cff] font-medium flex items-center justify-between">
+                <span>Kuota Galeri:</span>
+                <span className="font-semibold">Tanpa Batas (∞)</span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-[#eceff3] overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[#5e4cff] transition-all"
-                  style={{
-                    width: isPro
-                      ? "100%"
-                      : `${Math.min(100, ((stats?.activeGalleries || 0) / (stats?.quotaLimit || 2)) * 100)}%`,
-                  }}
-                />
+            ) : (
+              <div className="space-y-1">
+                <div className="text-[11px] text-[#666d80] flex justify-between">
+                  <span>Galeri Aktif:</span>
+                  <span className="font-mono text-[#272835] font-semibold">
+                    {stats?.activeGalleries || 0} / {stats?.quotaLimit || 2}
+                  </span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-[#eceff3] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[#5e4cff] transition-all"
+                    style={{
+                      width: `${Math.min(100, (((stats?.activeGalleries || 0)) / (stats?.quotaLimit || 2)) * 100)}%`,
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {!isPro ? (
               <button
@@ -148,7 +154,7 @@ export default function Sidebar({
 
             <button
               onClick={onLogout}
-              className="w-full pt-1.5 border-t border-[#eceff3] text-[#818898] hover:text-[#272835] text-xs font-medium transition flex items-center justify-center gap-1.5"
+              className="w-full pt-2 border-t border-[#eceff3] text-[#818898] hover:text-[#272835] text-xs font-medium transition flex items-center justify-center gap-1.5"
             >
               <IconLogOut className="w-3.5 h-3.5" />
               <span>Keluar Akun</span>
