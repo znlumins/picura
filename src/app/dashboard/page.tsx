@@ -138,6 +138,10 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const paramTheme = urlParams.get("theme");
+      const paramTab = urlParams.get("tab");
+      if (paramTab === "settings") {
+        setActiveTab("settings");
+      }
       const savedTheme = paramTheme || localStorage.getItem("picura_theme");
       if (savedTheme === "dark") {
         setIsDarkMode(true);
@@ -446,6 +450,7 @@ export default function DashboardPage() {
               user={user}
               onSuccess={fetchDashboardData}
               onBack={() => setActiveTab("dashboard")}
+              onLogout={handleLogout}
               isDarkMode={isDarkMode}
             />
           )}

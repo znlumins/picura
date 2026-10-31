@@ -146,33 +146,17 @@ export default function Sidebar({
                 {user.studioName || user.email}
               </div>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span
-                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] shrink-0 ${
-                  isPro
-                    ? "bg-[#dfdbff] text-[#5e4cff] border border-[#beb5ff]"
-                    : isDarkMode
-                    ? "bg-slate-800 text-slate-400 border border-slate-700"
-                    : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
-                }`}
-              >
-                {isPro ? "PRO" : "FREE"}
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setShowLogoutModal(true)}
-                title="Keluar Akun"
-                aria-label="Keluar Akun"
-                className={`p-1.5 rounded-[6px] transition border ${
-                  isDarkMode
-                    ? "border-[#2e334a] text-slate-400 hover:text-[#ef4444] hover:bg-[#ef4444]/15 hover:border-[#ef4444]/30"
-                    : "border-[#cdd2d9] text-[#818898] hover:text-[#ef4444] hover:bg-[#fef2f2] hover:border-[#fecdd3]"
-                }`}
-              >
-                <IconLogOut className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            <span
+              className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] shrink-0 ${
+                isPro
+                  ? "bg-[#dfdbff] text-[#5e4cff] border border-[#beb5ff]"
+                  : isDarkMode
+                  ? "bg-slate-800 text-slate-400 border border-slate-700"
+                  : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
+              }`}
+            >
+              {isPro ? "PRO" : "FREE"}
+            </span>
           </div>
 
           {/* Quota Display */}

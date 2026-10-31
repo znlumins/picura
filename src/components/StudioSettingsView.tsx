@@ -11,6 +11,7 @@ import {
   IconSpinner,
   IconArrowRight,
   IconFolder,
+  IconLogOut,
 } from "@/components/Icons";
 
 interface StudioSettingsViewProps {
@@ -25,6 +26,7 @@ interface StudioSettingsViewProps {
   } | null;
   onSuccess: () => void;
   onBack: () => void;
+  onLogout?: () => void;
   isDarkMode?: boolean;
 }
 
@@ -32,6 +34,7 @@ export default function StudioSettingsView({
   user,
   onSuccess,
   onBack,
+  onLogout,
   isDarkMode = false,
 }: StudioSettingsViewProps) {
   const [studioName, setStudioName] = useState(user?.studioName || "");
@@ -41,6 +44,7 @@ export default function StudioSettingsView({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -321,6 +325,84 @@ export default function StudioSettingsView({
           </button>
         </div>
       </form>
+
+      {/* Sesi Akun Studio & Keluar */}
+      {user && (
+        <div
+          className={`p-5 rounded-[12px] border space-y-3 ${
+            isDarkMode ? "bg-[#141624] border-[#25283a]" : "bg-white border-[#cdd2d9]"
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className={`text-sm font-heading font-semibold ${isDarkMode ? "text-white" : "text-[#272835]"}`}>
+                Sesi Akun Studio
+              </h3>
+              <p className="text-xs text-[#818898] mt-0.5">
+                Saat ini masuk sebagai <strong className={isDarkMode ? "text-slate-200" : "text-[#272835]"}>{user.name}</strong> ({user.studioName || user.email}).
+              </p>
+            </div>
+
+            {onLogout && (
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(true)}
+                className="py-2 px-4 rounded-[8px] border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white text-xs font-medium transition flex items-center gap-2 shadow-xs shrink-0 active:scale-95"
+              >
+                <IconLogOut className="w-3.5 h-3.5" />
+                <span>Keluar dari Akun</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Dialog Modal for Logout */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 bg-[#272835]/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div
+            className={`rounded-[12px] max-w-sm w-full p-5 shadow-2xl border space-y-4 animate-in fade-in duration-150 ${
+              isDarkMode ? "bg-[#141624] border-[#2e334a] text-white" : "bg-white border-[#cdd2d9] text-[#272835]"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#fef2f2] text-[#ef4444] flex items-center justify-center shrink-0">
+                <IconAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-heading font-semibold text-sm">Konfirmasi Keluar</h4>
+                <p className="text-xs text-[#818898] mt-0.5">
+                  Apakah Anda yakin ingin keluar dari akun studio ini?
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#eceff3] dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                className={`py-1.5 px-3 rounded-[8px] border text-xs font-medium transition ${
+                  isDarkMode
+                    ? "border-slate-700 hover:bg-slate-800 text-slate-300"
+                    : "border-[#cdd2d9] hover:bg-[#f6f8fa] text-[#666d80]"
+                }`}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowLogoutModal(false);
+                  if (onLogout) onLogout();
+                }}
+                className="py-1.5 px-3.5 rounded-[8px] bg-[#ef4444] hover:bg-[#dc2626] text-white text-xs font-medium transition shadow-xs"
+              >
+                Ya, Keluar Akun
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
