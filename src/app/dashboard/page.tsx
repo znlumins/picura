@@ -2,8 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
-import StudioHeroBanner from "@/components/StudioHeroBanner";
-import MetricsGrid from "@/components/MetricsGrid";
 import RecentActivity, { ActivityItem } from "@/components/RecentActivity";
 import StudioSettingsView from "@/components/StudioSettingsView";
 import CreateGalleryModal from "@/components/CreateGalleryModal";
@@ -252,6 +250,10 @@ export default function DashboardPage() {
 
   const isPro = user?.subscriptionTier === "PRO_FREELANCE" || user?.subscriptionTier === "STUDIO";
 
+  const activeCount = galleries.length;
+  const waitingCount = galleries.filter((g) => (g.latestSelectedCount || 0) === 0).length;
+  const completedCount = galleries.filter((g) => (g.latestSelectedCount || 0) > 0).length;
+
   const filteredGalleries = galleries.filter((g) =>
     g.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -409,22 +411,31 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {/* 1. Real Studio Hero Banner */}
-              <StudioHeroBanner
-                user={user}
-                stats={stats}
-                onUpgradeClick={() => setIsUpgradeOpen(true)}
-                onSettingsClick={() => setActiveTab("settings")}
-              />
-
-              {/* 2. Real Metrics Grid */}
-              <MetricsGrid
-                activeGalleries={stats?.activeGalleries || galleries.length}
-                quotaLimit={isPro ? 999 : stats?.quotaLimit || 2}
-                totalPhotos={totalPhotosCount}
-                totalSelections={stats?.totalSelections || 0}
-                tier={user?.subscriptionTier || "FREEMIUM"}
-              />
+              {/* Single concise summary line (no cards, no borders, tabular-nums) */}
+              {user && (
+                <div className="text-xs text-[#666d80] dark:text-[#94a3b8] flex flex-wrap items-center gap-2 select-none py-1">
+                  <span>
+                    <strong className="font-semibold text-[#272835] dark:text-white tabular-nums">
+                      {activeCount}
+                    </strong>{" "}
+                    aktif
+                  </span>
+                  <span>·</span>
+                  <span>
+                    <strong className="font-semibold text-[#272835] dark:text-white tabular-nums">
+                      {waitingCount}
+                    </strong>{" "}
+                    menunggu klien
+                  </span>
+                  <span>·</span>
+                  <span>
+                    <strong className="font-semibold text-[#272835] dark:text-white tabular-nums">
+                      {completedCount}
+                    </strong>{" "}
+                    selesai dipilih
+                  </span>
+                </div>
+              )}
 
               {/* 3. Real Galleries Management */}
               <div
