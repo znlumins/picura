@@ -50,6 +50,40 @@ interface GalleryItem {
   createdAt?: string;
 }
 
+const DEMO_USER = {
+  id: "demo-user-1",
+  name: "Demo Fotografer",
+  email: "demo@picura.id",
+  avatarUrl: null,
+  studioName: "Lumina Studio Jakarta",
+  studioWhatsapp: "6281234567890",
+  hasGoogleApiKey: true,
+  subscriptionTier: "PRO_FREELANCE",
+};
+
+const DEMO_STATS = {
+  activeGalleries: 1,
+  quotaLimit: 999,
+  totalSelections: 0,
+  totalPhotos: 15,
+};
+
+const DEMO_GALLERIES: GalleryItem[] = [
+  {
+    id: "demo-gallery-1",
+    title: "Sesi Foto Wedding Rian & Dina",
+    slug: "sesi-foto-wedding-rian-dina",
+    maxSelectionQuota: 25,
+    totalPhotos: 15,
+    latestSelectedCount: 0,
+    latestSelection: null,
+    editorWhatsappNumber: "6281234567890",
+    hasPassword: false,
+    expiresAt: null,
+    createdAt: new Date().toISOString(),
+  },
+];
+
 export default function DashboardPage() {
   const [user, setUser] = useState<{
     id: string;
@@ -60,18 +94,18 @@ export default function DashboardPage() {
     studioWhatsapp?: string | null;
     hasGoogleApiKey?: boolean;
     subscriptionTier: string;
-  } | null>(null);
+  } | null>(DEMO_USER);
 
   const [stats, setStats] = useState<{
     activeGalleries: number;
     quotaLimit: number;
     totalSelections: number;
     totalPhotos?: number;
-  } | null>(null);
+  } | null>(DEMO_STATS);
 
-  const [galleries, setGalleries] = useState<GalleryItem[]>([]);
+  const [galleries, setGalleries] = useState<GalleryItem[]>(DEMO_GALLERIES);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Tab & Theme states
   const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
@@ -100,10 +134,15 @@ export default function DashboardPage() {
   // Initialize theme from storage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("picura_theme");
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramTheme = urlParams.get("theme");
+      const savedTheme = paramTheme || localStorage.getItem("picura_theme");
       if (savedTheme === "dark") {
         setIsDarkMode(true);
         document.documentElement.classList.add("dark");
+      } else {
+        setIsDarkMode(false);
+        document.documentElement.classList.remove("dark");
       }
     }
   }, []);
@@ -124,7 +163,7 @@ export default function DashboardPage() {
   };
 
   const fetchDashboardData = useCallback(async () => {
-    setIsLoading(true);
+    // Keep responsive without blanking loader
     const token = typeof window !== "undefined" ? localStorage.getItem("picura_token") : null;
 
     try {
