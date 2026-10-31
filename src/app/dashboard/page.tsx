@@ -28,6 +28,7 @@ import {
   IconCrown,
   IconSun,
   IconMoon,
+  IconMenu,
 } from "@/components/Icons";
 
 interface GalleryItem {
@@ -107,9 +108,10 @@ export default function DashboardPage() {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Tab & Theme states
+  // Tab, Nav & Theme states
   const [activeTab, setActiveTab] = useState<"dashboard" | "settings">("dashboard");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -308,34 +310,53 @@ export default function DashboardPage() {
         onAuthClick={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
         isDarkMode={isDarkMode}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Main Content Area: Independent Vertical Scroll, Sidebar Stays 100% Pinned */}
-      <div className="flex-1 h-screen overflow-y-auto flex flex-col min-w-0">
-        {/* Header */}
+      <div className="flex-1 h-screen overflow-y-auto overflow-x-hidden flex flex-col min-w-0">
+        {/* Header: Spacious, balanced padding & full mobile responsive */}
         <header
-          className={`h-16 px-6 sm:px-8 border-b flex items-center justify-between sticky top-0 z-20 transition-colors ${
+          className={`min-h-[64px] sm:h-20 py-3 sm:py-3.5 px-3.5 sm:px-6 lg:px-8 border-b flex items-center justify-between sticky top-0 z-20 transition-colors w-full ${
             isDarkMode ? "bg-[#0f111a] border-[#222533]" : "bg-white border-[#cdd2d9]"
           }`}
         >
-          <div>
-            <h1
-              className={`font-heading font-semibold text-xl tracking-tight leading-none ${
-                isDarkMode ? "text-white" : "text-[#272835]"
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            {/* Mobile Hamburger Drawer Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className={`lg:hidden p-1.5 sm:p-2 rounded-[8px] border transition shrink-0 ${
+                isDarkMode
+                  ? "border-[#2e334a] bg-[#1a1d2d] text-slate-300 hover:text-white"
+                  : "border-[#cdd2d9] bg-[#f6f8fa] text-[#666d80] hover:text-[#272835]"
               }`}
+              title="Buka menu navigasi"
+              aria-label="Buka menu navigasi"
             >
-              {activeTab === "settings" ? "Pengaturan Studio" : "Overview Studio"}
-            </h1>
-            <p className="text-xs text-[#818898] mt-1 hidden sm:block">
-              {user ? `Halo, ${user.name}` : "Silakan masuk ke akun fotografer"}
-            </p>
+              <IconMenu className="w-4 h-4" />
+            </button>
+
+            <div className="min-w-0">
+              <h1
+                className={`font-heading font-semibold text-base sm:text-xl tracking-tight leading-tight truncate ${
+                  isDarkMode ? "text-white" : "text-[#272835]"
+                }`}
+              >
+                {activeTab === "settings" ? "Pengaturan Studio" : "Overview Studio"}
+              </h1>
+              <p className="text-xs text-[#818898] mt-0.5 truncate hidden sm:block">
+                {user ? `Halo, ${user.name}` : "Silakan masuk ke akun fotografer"}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {user ? (
               <>
                 {/* Search Bar: Disabled when 0 galleries */}
-                <div className="relative hidden md:block w-52">
+                <div className="relative hidden md:block w-48 lg:w-56">
                   <IconSearch className="w-4 h-4 text-[#818898] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
@@ -345,7 +366,7 @@ export default function DashboardPage() {
                     placeholder={
                       galleries.length === 0 ? "Belum ada galeri..." : "Cari galeri..."
                     }
-                    className={`w-full text-xs pl-9 pr-3 py-1.5 rounded-[8px] border transition focus:outline-none focus:border-[#5e4cff] disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full text-xs pl-9 pr-3 py-2 rounded-[8px] border transition focus:outline-none focus:border-[#5e4cff] disabled:opacity-50 disabled:cursor-not-allowed ${
                       isDarkMode
                         ? "bg-[#1a1d2d] border-[#2e334a] text-white placeholder-slate-500"
                         : "bg-[#f6f8fa] border-[#cdd2d9] text-[#36394a] placeholder-[#a4abb8]"
@@ -362,7 +383,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={toggleTheme}
-                  className={`p-2 rounded-[8px] border transition ${
+                  className={`p-1.5 sm:p-2 rounded-[8px] border transition shrink-0 ${
                     isDarkMode
                       ? "border-[#2e334a] bg-[#1a1d2d] text-amber-400 hover:bg-[#25283a]"
                       : "border-[#cdd2d9] bg-white hover:bg-[#f6f8fa] text-[#666d80]"
@@ -379,7 +400,7 @@ export default function DashboardPage() {
                 {!isPro && (
                   <button
                     onClick={() => setIsUpgradeOpen(true)}
-                    className="py-1.5 px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs"
+                    className="py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0"
                     title="Tingkatkan ke Pro untuk galeri tanpa batas"
                   >
                     <IconCrown className="w-3.5 h-3.5" />
@@ -397,19 +418,20 @@ export default function DashboardPage() {
                         setIsCreateOpen(true);
                       }
                     }}
-                    className="py-2 px-3.5 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm active:scale-95"
+                    className="py-1.5 sm:py-2 px-2.5 sm:px-3.5 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0"
                   >
-                    <IconPlus className="w-4 h-4" />
-                    <span>Buat Galeri</span>
+                    <IconPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span className="hidden sm:inline">Buat Galeri</span>
+                    <span className="sm:hidden font-medium">Galeri</span>
                   </button>
                 )}
               </>
             ) : (
               <button
                 onClick={() => setIsAuthOpen(true)}
-                className="py-2 px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm"
+                className="py-1.5 sm:py-2 px-3 sm:px-4 rounded-[8px] bg-[#5e4cff] text-white text-xs font-medium hover:opacity-90 transition flex items-center gap-1.5 shadow-sm shrink-0"
               >
-                <IconLogIn className="w-4 h-4" />
+                <IconLogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                 <span>Masuk / Daftar</span>
               </button>
             )}
@@ -417,7 +439,7 @@ export default function DashboardPage() {
         </header>
 
         {/* Dashboard Body Content */}
-        <main className="flex-1 p-6 sm:p-8 space-y-6 max-w-[1200px] w-full">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1280px] w-full">
           {/* TAB 1: STUDIO SETTINGS VIEW */}
           {activeTab === "settings" && (
             <StudioSettingsView
