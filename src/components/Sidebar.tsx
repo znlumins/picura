@@ -155,7 +155,11 @@ export default function Sidebar({
                   : "bg-[#f6f8fa] text-[#818898] border border-[#cdd2d9]"
               }`}
             >
-              {isPro ? "PRO" : "FREE"}
+              {user?.subscriptionTier === "STUDIO"
+                ? "STUDIO"
+                : isPro
+                ? "PRO"
+                : "FREE"}
             </span>
           </div>
 
@@ -264,7 +268,11 @@ export default function Sidebar({
                   : "bg-[#eceff3] text-[#818898]"
               }`}
             >
-              {isPro ? "PRO" : "FREE"}
+              {user?.subscriptionTier === "STUDIO"
+                ? "STUDIO"
+                : isPro
+                ? "PRO"
+                : "FREE"}
             </span>
           </Link>
 
@@ -315,7 +323,11 @@ export default function Sidebar({
                     : "bg-[#eceff3] text-[#818898]"
                 }`}
               >
-                {isPro ? "PRO" : "FREE"}
+                {user?.subscriptionTier === "STUDIO"
+                ? "STUDIO"
+                : isPro
+                ? "PRO"
+                : "FREE"}
               </span>
             </Link>
 

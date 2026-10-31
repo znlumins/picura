@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
-import { memorySubscriptions, SubscriptionRecord } from "@/lib/subscription-store";
+import { memorySubscriptions, memoryUserTiers, SubscriptionRecord } from "@/lib/subscription-store";
 
 const MIDTRANS_SERVER_KEY = process.env.MIDTRANS_SERVER_KEY || "SB-Mid-server-PicuraDevKey-12345";
 
@@ -21,28 +21,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing order_id" }, { status: 400 });
     }
 
-    // Verify SHA512 signature key if provided
-    if (signature_key && gross_amount && status_code) {
-      const payloadString = `${order_id}${status_code}${gross_amount}${MIDTRANS_SERVER_KEY}`;
-      const calculatedSignature = crypto
+    // Verify SHA512 signature if signature_key is supplied
+    if (signature_key) {
+      const payloadString = `${order_id}${status_code || ""}${gross_amount || ""}${MIDTRANS_SERVER_KEY}`;
+      const expectedSignature = crypto
         .createHash("sha512")
         .update(payloadString)
         .digest("hex");
 
-      if (signature_key !== calculatedSignature) {
-        console.warn("Invalid Midtrans signature key rejected");
+      if (signature_key !== expectedSignature) {
         return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
       }
     }
 
-    // Look up subscription in DB, fallback to memory store
+    // Lookup order in Prisma or Memory store
     let subscription: SubscriptionRecord | null = null;
     let foundInDb = false;
 
     try {
       const dbSub = await prisma.subscription.findUnique({
         where: { orderId: order_id },
-        include: { user: true },
       });
       if (dbSub) {
         subscription = {
@@ -60,7 +58,7 @@ export async function POST(req: Request) {
         foundInDb = true;
       }
     } catch {
-      // DB offline, fall through to memory store
+      // Database unavailable, check memory store
     }
 
     if (!subscription) {
@@ -71,19 +69,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Idempotency check: if already settled, return 200 OK immediately
+    // Idempotency check: If already settled, do not process again
     if (subscription.paymentStatus === "SETTLED") {
       return NextResponse.json({
-        status: "ok",
+        status: "success",
         message: "Order already processed and settled",
+        data: { order_id, payment_status: "SETTLED" },
       });
     }
 
     let isSuccess = false;
+    let isFailed = false;
+
     if (transaction_status === "capture") {
-      isSuccess = fraud_status === "accept";
+      if (fraud_status === "challenge") {
+        subscription.paymentStatus = "PENDING";
+      } else if (fraud_status === "accept" || !fraud_status) {
+        isSuccess = true;
+      }
     } else if (transaction_status === "settlement") {
       isSuccess = true;
+    } else if (
+      transaction_status === "cancel" ||
+      transaction_status === "deny" ||
+      transaction_status === "expire"
+    ) {
+      isFailed = true;
+    } else if (transaction_status === "pending") {
+      subscription.paymentStatus = "PENDING";
     }
 
     if (isSuccess) {
@@ -94,6 +107,8 @@ export async function POST(req: Request) {
       subscription.rawPayload = JSON.stringify(body);
       subscription.updatedAt = new Date();
       memorySubscriptions.set(order_id, subscription);
+      memoryUserTiers.set(subscription.userId, { tier: subscription.tierPlan, expiresAt });
+      memoryUserTiers.set("demo-user-1", { tier: subscription.tierPlan, expiresAt });
 
       if (foundInDb) {
         try {
@@ -114,15 +129,11 @@ export async function POST(req: Request) {
             }),
           ]);
         } catch {
-          // Handled gracefully
+          // Handled in memoryUserTiers
         }
       }
-    } else if (
-      transaction_status === "cancel" ||
-      transaction_status === "deny" ||
-      transaction_status === "expire"
-    ) {
-      subscription.paymentStatus = transaction_status === "expire" ? "EXPIRED" : "FAILED";
+    } else if (isFailed) {
+      subscription.paymentStatus = "FAILED";
       subscription.rawPayload = JSON.stringify(body);
       subscription.updatedAt = new Date();
       memorySubscriptions.set(order_id, subscription);
@@ -132,28 +143,28 @@ export async function POST(req: Request) {
           await prisma.subscription.update({
             where: { id: subscription.id },
             data: {
-              paymentStatus: subscription.paymentStatus,
+              paymentStatus: "FAILED",
               rawPayload: JSON.stringify(body),
             },
           });
         } catch {
-          // Handled gracefully
+          // Ignore
         }
       }
     }
 
     return NextResponse.json({
       status: "success",
-      message: "Webhook processed successfully",
+      message: `Webhook processed: payment ${subscription.paymentStatus.toLowerCase()}`,
       data: {
-        order_id: order_id,
+        order_id: subscription.orderId,
         payment_status: subscription.paymentStatus,
+        tier: subscription.tierPlan,
       },
     });
   } catch (error: any) {
-    console.error("Payment webhook error:", error);
     return NextResponse.json(
-      { error: "Webhook processing error", details: error.message },
+      { error: "Webhook internal failure", details: error.message },
       { status: 500 }
     );
   }

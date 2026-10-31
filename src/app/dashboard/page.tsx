@@ -401,7 +401,7 @@ export default function DashboardPage() {
                   {isDarkMode ? <IconSun className="w-4 h-4" /> : <IconMoon className="w-4 h-4" />}
                 </button>
 
-                {user.subscriptionTier !== "STUDIO" && (
+                {user.subscriptionTier !== "STUDIO" ? (
                   <button
                     onClick={() => setIsUpgradeOpen(true)}
                     className="py-2 px-3 rounded-[8px] border border-[#beb5ff] bg-[#dfdbff]/60 text-[#5e4cff] hover:bg-[#dfdbff] text-xs font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0"
@@ -415,6 +415,15 @@ export default function DashboardPage() {
                     <span className="hidden sm:inline">
                       {user.subscriptionTier === "PRO_FREELANCE" ? "Upgrade Studio" : "Upgrade Pro"}
                     </span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsUpgradeOpen(true)}
+                    className="py-1.5 px-3 rounded-[8px] border border-amber-200/80 dark:border-amber-900/40 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 text-xs font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0"
+                    title="Paket Studio Agency Aktif (Klik untuk melihat detail langganan)"
+                  >
+                    <IconCrown className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="hidden sm:inline">Studio Aktif</span>
                   </button>
                 )}
 

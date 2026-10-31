@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { ensureSeedData } from "@/lib/seed";
 import { verifyToken } from "@/lib/auth";
-import { memorySubscriptions, SubscriptionRecord } from "@/lib/subscription-store";
+import { memorySubscriptions, memoryUserTiers, SubscriptionRecord } from "@/lib/subscription-store";
 
 const PRICING_PLANS: Record<string, { name: string; amount: number }> = {
   PRO_FREELANCE: { name: "Pro Freelance", amount: 49000 },
@@ -96,6 +96,9 @@ export async function POST(req: Request) {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30); // 30 days active
 
+      memoryUserTiers.set(user.id, { tier, expiresAt });
+      memoryUserTiers.set("demo-user-1", { tier, expiresAt });
+
       try {
         await prisma.user.update({
           where: { id: user.id },
@@ -105,7 +108,7 @@ export async function POST(req: Request) {
           },
         });
       } catch {
-        // Handled in demo state
+        // Handled in demo state and memory store
       }
     }
 
